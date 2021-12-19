@@ -1,4 +1,4 @@
-package dev.unethical.oneclick;
+package dev.hoot.oneclick;
 
 import com.google.inject.Inject;
 import com.google.inject.Provides;
@@ -139,7 +139,7 @@ public class HootOneClickPlugin extends Plugin
 	@Subscribe
 	public void onConfigChanged(ConfigChanged e)
 	{
-		if (!e.getGroup().equals("net/runelite/client/plugins/hootoneclick"))
+		if (!e.getGroup().equals("hootoneclick"))
 		{
 			return;
 		}

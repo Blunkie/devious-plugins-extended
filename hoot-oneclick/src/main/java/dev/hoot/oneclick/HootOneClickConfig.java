@@ -1,4 +1,4 @@
-package dev.unethical.oneclick;
+package dev.hoot.oneclick;
 
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;

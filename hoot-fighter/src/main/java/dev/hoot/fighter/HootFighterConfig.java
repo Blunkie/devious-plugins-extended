@@ -1,4 +1,4 @@
-package dev.unethical.fighter;
+package dev.hoot.fighter;
 
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;

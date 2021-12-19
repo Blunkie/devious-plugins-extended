@@ -1,4 +1,4 @@
-package dev.unethical.fighter;
+package dev.hoot.fighter;
 
 import dev.hoot.api.game.Skills;
 import dev.hoot.api.magic.Regular;

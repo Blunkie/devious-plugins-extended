@@ -1,4 +1,4 @@
-package dev.unethical.fighter;
+package dev.hoot.fighter;
 
 import com.google.inject.Provides;
 import dev.hoot.api.entities.Players;
