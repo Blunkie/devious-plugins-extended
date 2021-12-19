@@ -1,4 +1,4 @@
-package net.runelite.client.plugins.hootoneclick;
+package dev.unethical.oneclick;
 
 import com.google.inject.Inject;
 import com.google.inject.Provides;

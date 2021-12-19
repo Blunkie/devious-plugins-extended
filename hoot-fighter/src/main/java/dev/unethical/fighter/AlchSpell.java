@@ -1,4 +1,4 @@
-package net.runelite.client.plugins.hootfighter;
+package dev.unethical.fighter;
 
 import dev.hoot.api.game.Skills;
 import dev.hoot.api.magic.Regular;

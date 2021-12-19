@@ -1,4 +1,4 @@
-package net.runelite.client.plugins.hootfighter;
+package dev.unethical.fighter;
 
 import com.google.inject.Provides;
 import dev.hoot.api.entities.Players;
