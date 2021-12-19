@@ -12,6 +12,8 @@ plugins {
 }
 
 project.extra["GithubUrl"] = "https://github.com/buracc/unethicalite-plugins"
+project.extra["GithubUserName"] = "buracc"
+project.extra["GithubRepoName"] = "unethicalite-plugins"
 
 apply<BootstrapPlugin>()
 
