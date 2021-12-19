@@ -27,7 +27,7 @@ open class BootstrapTask : DefaultTask() {
     }
 
     private fun getBootstrap(filename: String): JSONArray? {
-        val bootstrapFile = File(filename).readLines()
+        val bootstrapFile = File(filename).readLines().firstOrNull() ?: return JSONArray()
 
         return JSONObject("{\"plugins\":$bootstrapFile}").getJSONArray("plugins")
     }
@@ -41,7 +41,8 @@ open class BootstrapTask : DefaultTask() {
             bootstrapReleaseDir.mkdirs()
 
             val plugins = ArrayList<JSONObject>()
-            val baseBootstrap = getBootstrap("$bootstrapDir/plugins.json") ?: throw RuntimeException("Base bootstrap is null!")
+            val baseBootstrap = getBootstrap("$bootstrapDir/plugins.json")
+                ?: throw RuntimeException("Base bootstrap is null!")
 
             project.subprojects.forEach {
                 if (it.project.properties.containsKey("PluginName") && it.project.properties.containsKey("PluginDescription")) {
@@ -89,7 +90,10 @@ open class BootstrapTask : DefaultTask() {
                         plugins.add(pluginObject)
                     }
 
-                    plugin.copyTo(Paths.get(bootstrapReleaseDir.toString(), "${it.project.name}-${it.project.version}.jar").toFile())
+                    plugin.copyTo(
+                        Paths.get(bootstrapReleaseDir.toString(), "${it.project.name}-${it.project.version}.jar").toFile(),
+                        overwrite = true
+                    )
                 }
             }
 

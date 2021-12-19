@@ -1,4 +1,5 @@
 import ProjectVersions.openosrsVersion
+import groovy.xml.dom.DOMCategory.attributes
 
 buildscript {
     repositories {
