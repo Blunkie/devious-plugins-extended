@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Owain van Brakel <https:github.com/Owain94>
+ * Copyright (c) 2019, dillydill123 <https://github.com/dillydill123>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,19 +22,24 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package inventorysetups;
 
-rootProject.name = "unethicalite-plugins"
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-include("hoot-fighter")
-include("hoot-oneclick")
-include("inventory-setups")
+@Getter
+@RequiredArgsConstructor
+public enum InventorySetupsSortingID
+{
+	DEFAULT("Default", 0),
+	ALPHABETICAL("Alphabetical", 1);
 
-for (project in rootProject.children) {
-    project.apply {
-        projectDir = file(name)
-        buildFileName = "$name.gradle.kts"
+	@Override
+	public String toString()
+	{
+		return name;
+	}
 
-        require(projectDir.isDirectory) { "Project '${project.path} must have a $projectDir directory" }
-        require(buildFile.isFile) { "Project '${project.path} must have a $buildFile build script" }
-    }
+	private final String name;
+	private final int identifier;
 }

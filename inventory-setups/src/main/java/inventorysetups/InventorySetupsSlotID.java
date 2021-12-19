@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Owain van Brakel <https:github.com/Owain94>
+ * Copyright (c) 2019, dillydill123 <https://github.com/dillydill123>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,19 +22,53 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package inventorysetups;
 
-rootProject.name = "unethicalite-plugins"
+import net.runelite.api.InventoryID;
 
-include("hoot-fighter")
-include("hoot-oneclick")
-include("inventory-setups")
+public enum InventorySetupsSlotID
+{
 
-for (project in rootProject.children) {
-    project.apply {
-        projectDir = file(name)
-        buildFileName = "$name.gradle.kts"
+	INVENTORY(0),
 
-        require(projectDir.isDirectory) { "Project '${project.path} must have a $projectDir directory" }
-        require(buildFile.isFile) { "Project '${project.path} must have a $buildFile build script" }
-    }
+	EQUIPMENT(1),
+
+	RUNE_POUCH(2),
+
+	BOLT_POUCH(3),
+
+	SPELL_BOOK(4),
+
+	ADDITIONAL_ITEMS(5);
+
+	private final int id;
+
+	InventorySetupsSlotID(int id)
+	{
+		this.id = id;
+	}
+
+	public int getId()
+	{
+		return id;
+	}
+
+	public static InventorySetupsSlotID fromInventoryID(final InventoryID inventoryId)
+	{
+		if (inventoryId == null)
+		{
+			return null;
+		}
+
+		switch (inventoryId)
+		{
+			case INVENTORY:
+				return INVENTORY;
+			case EQUIPMENT:
+				return EQUIPMENT;
+		}
+
+		return null;
+	}
+
 }
