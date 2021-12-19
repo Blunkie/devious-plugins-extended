@@ -1,7 +1,7 @@
 version = "0.0.1"
 
 project.extra["PluginName"] = "Hoot One Click"
-project.extra["PluginDescription"] = "Allows you to One-Click certain interactions"
+project.extra["PluginDescription"] = "Allows you to One-Click interactions"
 
 tasks {
     jar {

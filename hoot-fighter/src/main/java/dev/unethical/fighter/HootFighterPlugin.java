@@ -12,7 +12,10 @@ import dev.hoot.api.movement.Reachable;
 import dev.hoot.api.widgets.Dialog;
 import dev.hoot.api.widgets.Prayers;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.*;
+import net.runelite.api.Item;
+import net.runelite.api.NPC;
+import net.runelite.api.Player;
+import net.runelite.api.TileItem;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.GameTick;
@@ -21,9 +24,9 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import org.pf4j.Extension;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -33,11 +36,11 @@ import java.util.stream.Collectors;
 
 @PluginDescriptor(
 		name = "Hoot Fighter",
-		description = "Weed",
+		description = "A simple auto fighter",
 		enabledByDefault = false
 )
-@Singleton
 @Slf4j
+@Extension
 public class HootFighterPlugin extends Plugin
 {
 	private ScheduledExecutorService executor;

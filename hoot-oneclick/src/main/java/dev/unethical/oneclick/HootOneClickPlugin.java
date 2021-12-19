@@ -20,6 +20,7 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import org.pf4j.Extension;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,9 +28,12 @@ import java.util.Map;
 import java.util.Objects;
 
 @PluginDescriptor(
-		name = "Hoot One Click"
+		name = "Hoot One Click",
+		description = "Allows you to One-Click interactions",
+		enabledByDefault = false
 )
 @Slf4j
+@Extension
 public class HootOneClickPlugin extends Plugin
 {
 	@Inject
