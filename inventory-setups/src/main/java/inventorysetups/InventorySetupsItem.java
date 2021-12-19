@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Owain van Brakel <https:github.com/Owain94>
+ * Copyright (c) 2019, dillydill123 <https://github.com/dillydill123>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,19 +22,36 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package inventorysetups;
 
-rootProject.name = "unethicalite-plugins"
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-include("hoot-fighter")
-include("hoot-oneclick")
-include("inventory-setups")
+@AllArgsConstructor
+public class InventorySetupsItem
+{
+	@Getter
+	private final int id;
+	@Getter
+	private final String name;
+	@Getter
+	private final int quantity;
+	@Getter
+	@Setter
+	private boolean fuzzy;
+	@Getter
+	@Setter
+	private InventorySetupsStackCompareID stackCompare;
 
-for (project in rootProject.children) {
-    project.apply {
-        projectDir = file(name)
-        buildFileName = "$name.gradle.kts"
+	public void toggleIsFuzzy()
+	{
+		fuzzy = !fuzzy;
+	}
 
-        require(projectDir.isDirectory) { "Project '${project.path} must have a $projectDir directory" }
-        require(buildFile.isFile) { "Project '${project.path} must have a $buildFile build script" }
-    }
+	public static InventorySetupsItem getDummyItem()
+	{
+		return new InventorySetupsItem(-1, "", 0, false, InventorySetupsStackCompareID.None);
+	}
+
 }

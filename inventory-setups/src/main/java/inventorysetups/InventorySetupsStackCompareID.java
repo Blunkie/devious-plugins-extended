@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Owain van Brakel <https:github.com/Owain94>
+ * Copyright (c) 2019, dillydill123 <https://github.com/dillydill123>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,19 +22,71 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package inventorysetups;
 
-rootProject.name = "unethicalite-plugins"
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-include("hoot-fighter")
-include("hoot-oneclick")
-include("inventory-setups")
+public enum InventorySetupsStackCompareID
+{
+	// Don't highlight at all
+	None(0),
 
-for (project in rootProject.children) {
-    project.apply {
-        projectDir = file(name)
-        buildFileName = "$name.gradle.kts"
+	// Only highlight if stacks are equal
+	Standard(1),
 
-        require(projectDir.isDirectory) { "Project '${project.path} must have a $projectDir directory" }
-        require(buildFile.isFile) { "Project '${project.path} must have a $buildFile build script" }
-    }
+	// Only highlight if stack is less than what is in the setup
+	Less_Than(2),
+
+	// Only highlight if stack is greater than what is in the setup
+	Greater_Than(3);
+
+	private final int type;
+
+	private static final List<InventorySetupsStackCompareID> VALUES;
+
+	static
+	{
+		VALUES = new ArrayList<>();
+		Collections.addAll(VALUES, InventorySetupsStackCompareID.values());
+	}
+
+	InventorySetupsStackCompareID(int type)
+	{
+		this.type = type;
+	}
+
+	public int getType()
+	{
+		return type;
+	}
+
+	public static List<InventorySetupsStackCompareID> getValues()
+	{
+		return VALUES;
+	}
+
+	public static String getStringFromValue(final InventorySetupsStackCompareID stackCompare)
+	{
+		if (stackCompare == null)
+		{
+			return "";
+		}
+
+		switch (stackCompare)
+		{
+			case None:
+				return "";
+			case Standard:
+				return "!=";
+			case Less_Than:
+				return "<";
+			case Greater_Than:
+				return ">";
+		}
+
+		return "";
+	}
+
 }

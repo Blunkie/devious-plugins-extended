@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Owain van Brakel <https:github.com/Owain94>
+ * Copyright (c) 2019, dillydill123 <https://github.com/dillydill123>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,19 +22,48 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package inventorysetups;
 
-rootProject.name = "unethicalite-plugins"
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-include("hoot-fighter")
-include("hoot-oneclick")
-include("inventory-setups")
+public enum InventorySetupsFilteringModeID
+{
+	// All items
+	ALL(0),
 
-for (project in rootProject.children) {
-    project.apply {
-        projectDir = file(name)
-        buildFileName = "$name.gradle.kts"
+	// Only Inventory
+	INVENTORY(1),
 
-        require(projectDir.isDirectory) { "Project '${project.path} must have a $projectDir directory" }
-        require(buildFile.isFile) { "Project '${project.path} must have a $buildFile build script" }
-    }
+	// Only Equipment
+	EQUIPMENT(2),
+
+	// Only Additional Filtered Items
+	ADDITIONAL_FILTERED_ITEMS(3);
+
+	private final int type;
+
+	private static final List<InventorySetupsFilteringModeID> VALUES;
+
+	static
+	{
+		VALUES = new ArrayList<>();
+		Collections.addAll(VALUES, InventorySetupsFilteringModeID.values());
+	}
+
+	InventorySetupsFilteringModeID(int type)
+	{
+		this.type = type;
+	}
+
+	public int getType()
+	{
+		return type;
+	}
+
+	public static List<InventorySetupsFilteringModeID> getValues()
+	{
+		return VALUES;
+	}
 }
