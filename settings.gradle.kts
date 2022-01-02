@@ -28,6 +28,7 @@ rootProject.name = "unethicalite-plugins"
 include("hoot-fighter")
 include("hoot-oneclick")
 include("hoot-agility")
+include("hoot-autologin")
 include("inventory-setups")
 
 for (project in rootProject.children) {

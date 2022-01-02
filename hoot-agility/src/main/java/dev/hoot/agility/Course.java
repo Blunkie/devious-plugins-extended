@@ -217,12 +217,15 @@ public enum Course
 
 	public int getRequiredLevel()
 	{
-		return switch (this)
-				{
-					case GNOME_COURSE -> 0;
-					case DRAYNOR_COURSE -> 10;
-					default -> (ordinal() + 1) * 10;
-				};
+		switch (this)
+		{
+			case GNOME_COURSE:
+				return 0;
+			case DRAYNOR_COURSE:
+				return 10;
+			default:
+				return (ordinal() + 1) * 10;
+		}
 	}
 
 	@Override
