@@ -29,6 +29,8 @@ include("hoot-fighter")
 include("hoot-oneclick")
 include("hoot-agility")
 include("hoot-autologin")
+include("hoot-tempoross")
+include("hoot-blackjack")
 include("inventory-setups")
 
 for (project in rootProject.children) {

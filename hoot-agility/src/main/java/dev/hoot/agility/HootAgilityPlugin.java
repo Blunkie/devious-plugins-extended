@@ -7,16 +7,14 @@ import dev.hoot.api.entities.Players;
 import dev.hoot.api.entities.TileItems;
 import dev.hoot.api.entities.TileObjects;
 import dev.hoot.api.movement.Movement;
+import dev.hoot.api.plugins.LoopedPlugin;
 import dev.hoot.api.widgets.Dialog;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.Player;
 import net.runelite.api.TileItem;
 import net.runelite.api.TileObject;
-import net.runelite.api.events.GameTick;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import org.pf4j.Extension;
 
@@ -26,7 +24,7 @@ import org.pf4j.Extension;
 )
 @Slf4j
 @Extension
-public class HootAgilityPlugin extends Plugin
+public class HootAgilityPlugin extends LoopedPlugin
 {
 	@Inject
 	private HootAgilityConfig hootAgilityConfig;
@@ -48,14 +46,19 @@ public class HootAgilityPlugin extends Plugin
 		}
 	}
 
-	@SuppressWarnings("unused")
-	@Subscribe
-	private void onGameTick(GameTick e)
+	@Provides
+	public HootAgilityConfig getConfig(ConfigManager configManager)
 	{
+		return configManager.getConfig(HootAgilityConfig.class);
+	}
+
+	@Override
+	protected int loop()
+	 {
 		if (Dialog.canContinue())
 		{
 			Dialog.continueSpace();
-			return;
+			return -1;
 		}
 
 		Player local = Players.getLocal();
@@ -64,7 +67,7 @@ public class HootAgilityPlugin extends Plugin
 		if (obstacle == null)
 		{
 			log.error("No obstacle detected");
-			return;
+			return -1;
 		}
 
 		TileObject obs = obstacle.getId() != 0 ? TileObjects.getNearest(obstacle.getId())
@@ -73,33 +76,28 @@ public class HootAgilityPlugin extends Plugin
 		if (client.getEnergy() > Rand.nextInt(5, 55) && !Movement.isRunEnabled())
 		{
 			Movement.toggleRun();
-			return;
+			return -1;
 		}
 
 		TileItem mark = TileItems.getNearest("Mark of grace");
 		if (mark != null && obstacle.getArea().contains(mark.getTile()))
 		{
 			mark.pickup();
-			return;
+			return -1;
 		}
 
 		if (obs != null)
 		{
 			if (local.getAnimation() != -1 || local.isMoving())
 			{
-				return;
+				return -1;
 			}
 
 			obs.interact(obstacle.getAction());
-			return;
+			return -1;
 		}
 
 		log.error("Obstacle was null");
-	}
-
-	@Provides
-	public HootAgilityConfig getConfig(ConfigManager configManager)
-	{
-		return configManager.getConfig(HootAgilityConfig.class);
+		return -1;
 	}
 }
