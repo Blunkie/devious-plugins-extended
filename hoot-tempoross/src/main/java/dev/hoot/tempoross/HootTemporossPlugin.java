@@ -1,12 +1,14 @@
 package dev.hoot.tempoross;
 
 import com.google.inject.Provides;
+import dev.hoot.api.coords.ScenePoint;
 import dev.hoot.api.entities.NPCs;
 import dev.hoot.api.entities.Players;
 import dev.hoot.api.entities.TileObjects;
 import dev.hoot.api.items.Inventory;
 import dev.hoot.api.movement.Movement;
 import dev.hoot.api.plugins.LoopedPlugin;
+import dev.hoot.api.scene.Tiles;
 import dev.hoot.api.widgets.Widgets;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -25,27 +27,25 @@ import net.runelite.client.plugins.PluginDescriptor;
 import org.pf4j.Extension;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.*;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Extension
 @PluginDescriptor(
         name = "Hoot Tempoross"
 )
-@Singleton
 @Slf4j
-public class HootTempoross extends LoopedPlugin {
+public class HootTemporossPlugin extends LoopedPlugin {
 
     @Inject
     private Client client;
 
-    @Inject
-    private HootTemporossConfig config;
+    private TemporossWorkArea workArea = null;
 
     private final static int HARPOON_ID = 311;
     private final static int EMPTY_BUCKET_ID = 1925;
@@ -73,7 +73,7 @@ public class HootTempoross extends LoopedPlugin {
     private final static int AMMO_CRATE_NPC = 10576; // fill
     private final static int AMMO_CRATE = 40968; // fill
 
-    private final static int DAMAGED_TOTEM_OBJECT_ID =41010;
+    private final static int DAMAGED_TOTEM_OBJECT_ID = 41010;
     private final static int DAMAGED_MAST_OBJECT_ID = 40996;
     private final static int MAST_OBJECT_ID = 41352;
     private final static int TOTEM_OBJECT_ID = 41354;
@@ -102,9 +102,8 @@ public class HootTempoross extends LoopedPlugin {
     @Override
     protected int loop() {
         Player player = Players.getLocal();
-        int hammerCount = Inventory.getCount(HAMMER_ID);
-        int ropeCount = Inventory.getCount(ROPE_ID);
         if (!client.isInInstancedRegion()) {
+            workArea = null;
             incomingWave = false;
             scriptState = State.INITIAL_CATCH;
             DEPOSITED_FISH = 0;
@@ -132,6 +131,78 @@ public class HootTempoross extends LoopedPlugin {
             }
 
             return 1000;
+        }
+
+        if (workArea == null) {
+            for (TemporossWorkArea area : TemporossWorkArea.values()) {
+                if (area.getStartPoint().contains(ScenePoint.fromWorld(player.getWorldLocation()))) {
+                    log.info("Found work area: {}", area);
+                    workArea = area;
+                    return -1;
+                }
+            }
+
+            return -1;
+        }
+
+        int harpoonCount = Inventory.getCount(HARPOON_ID);
+        if (harpoonCount != 1) {
+            if (Movement.isWalking()) {
+                return -1;
+            }
+
+            if (harpoonCount > 1) {
+                Inventory.getFirst(HARPOON_ID).interact("Drop");
+                return -3;
+            }
+
+            workArea.getHarpoonCrate().interact("Take");
+            return -2;
+        }
+
+        int bucketCount = Inventory.getCount(EMPTY_BUCKET_ID, WATER_BUCKET_ID);
+        if (bucketCount != 5) {
+            if (Movement.isWalking()) {
+                return -1;
+            }
+
+            if (bucketCount > 5) {
+                Inventory.getFirst(EMPTY_BUCKET_ID).interact("Drop");
+                return -3;
+            }
+
+            workArea.getBucketCrate().interact("Take");
+            return -2;
+        }
+
+        int ropeCount = Inventory.getCount(ROPE_ID);
+        if (ropeCount != 1) {
+            if (Movement.isWalking()) {
+                return -1;
+            }
+
+            if (ropeCount > 1) {
+                Inventory.getFirst(ROPE_ID).interact("Drop");
+                return -3;
+            }
+
+            workArea.getRopeCrate().interact("Take");
+            return -2;
+        }
+
+        int hammerCount = Inventory.getCount(HAMMER_ID);
+        if (hammerCount != 1) {
+            if (Movement.isWalking()) {
+                return -1;
+            }
+
+            if (hammerCount > 1) {
+                Inventory.getFirst(HAMMER_ID).interact("Drop");
+                return -3;
+            }
+
+            workArea.getHammerCrate().interact("Take");
+            return -2;
         }
 
         /**
@@ -162,7 +233,11 @@ public class HootTempoross extends LoopedPlugin {
         NPC fire = NPCs.getNearest(FIRE_NPC_ID);
         if (fire != null && fire.getWorldLocation().distanceToPath(client, player.getWorldLocation()) < 8) {
             if (bucketOfWaterCount == 0) {
-                forfeitMatch();
+                if (Movement.isWalking()) {
+                    return -1;
+                }
+
+                workArea.getPump().interact("Use");
                 return 1000;
             }
 
@@ -170,22 +245,19 @@ public class HootTempoross extends LoopedPlugin {
             return 1000;
         }
 
-        TileObject damagedMast = TileObjects.getNearest(DAMAGED_MAST_OBJECT_ID);
-        if (hammerCount > 0 && damagedMast != null && damagedMast.getWorldLocation().distanceToPath(client, player.getWorldLocation()) < 15) {
+        TileObject damagedMast = TileObjects.getFirstAt(Tiles.getAt(workArea.getMastPoint()), DAMAGED_MAST_OBJECT_ID);
+        if (damagedMast != null && damagedMast.getWorldLocation().distanceToPath(client, player.getWorldLocation()) < 15) {
             damagedMast.interact("Repair");
             return 1000;
         }
 
         if (incomingWave) {
             if (!tethered) {
-                TileObject tether = TileObjects.getNearest(TOTEM_OBJECT_ID, MAST_OBJECT_ID);
-                if (tether != null) {
-                    tether.interact("Tether");
-                    return 2000;
-                } else {
-                    forfeitMatch();
-                    return 1000;
-                }
+                TileObject tether = Stream.of(workArea.getMast(), workArea.getTotem())
+                        .min(Comparator.comparing(point -> point.distanceTo(player.getWorldLocation())))
+                        .orElse(null);
+                tether.interact("Tether");
+                return 2000;
             }
 
             return 1000;
@@ -227,6 +299,7 @@ public class HootTempoross extends LoopedPlugin {
                 .collect(Collectors.toList());
         final Predicate<NPC> filterDangerousNPCs = (NPC npc) -> !dangerousTiles.contains(npc.getWorldLocation());
 
+        log.info("State: " + scriptState);
         /**
          * Gather tasks
          */
@@ -254,7 +327,7 @@ public class HootTempoross extends LoopedPlugin {
             case INITIAL_COOK:
             case SECOND_COOK:
             case THIRD_COOK:
-                TileObject range = TileObjects.getNearest(COOKING_SHRINE);
+                TileObject range = workArea.getRange();
                 if (range != null && rawFishCount > 0) {
                     if (player.getAnimation() == COOKING_ANIM_ID || player.isMoving()) {
                         return 1000;
@@ -263,6 +336,7 @@ public class HootTempoross extends LoopedPlugin {
                     range.interact("Cook-at");
                     return 1200;
                 } else if (range == null) {
+                    log.warn("Can't find cooking shrine");
                     walkToSafePoint();
                 }
                 break;
@@ -272,13 +346,10 @@ public class HootTempoross extends LoopedPlugin {
             case INITIAL_FILL:
                 NPC ammoCrate = NPCs.getNearest(x -> x.getId() == AMMO_CRATE_NPC && filterDangerousNPCs.test(x));
                 if (ammoCrate != null && !ammoCrate.equals(player.getInteracting())) {
-                    if (Inventory.getCount(COOKED_FISH_ID) == 0) {
-                        return 1000;
-                    }
-
                     ammoCrate.interact("Fill");
                     return 1000;
                 } else if (ammoCrate == null) {
+                    log.warn("Can't find the ammo crate");
                     walkToSafePoint();
                 }
                 break;
@@ -288,7 +359,7 @@ public class HootTempoross extends LoopedPlugin {
                 if (temporossPool != null && !temporossPool.equals(player.getInteracting())) {
                     temporossPool.interact("Harpoon");
                     return 1000;
-                } else if(temporossPool == null) {
+                } else if (temporossPool == null) {
                     walkToSafePoint();
                 }
                 break;
@@ -301,7 +372,7 @@ public class HootTempoross extends LoopedPlugin {
         ATTACK_TEMPOROSS(() -> ENERGY >= 98, null),
         SECOND_FILL(() -> DEPOSITED_FISH >= 36, ATTACK_TEMPOROSS),
         THIRD_COOK(() -> Inventory.getCount(RAW_FISH_ID) == 0 || INTENSITY >= 92, SECOND_FILL),
-        THIRD_CATCH(() -> Inventory.getCount(RAW_FISH_ID, COOKED_FISH_ID) >= 36 - DEPOSITED_FISH, SECOND_FILL),
+        THIRD_CATCH(() -> Inventory.getCount(RAW_FISH_ID, COOKED_FISH_ID) >= 36 - DEPOSITED_FISH, THIRD_COOK),
         EMERGENCY_FILL(() -> Inventory.getCount(COOKED_FISH_ID) == 0, THIRD_CATCH),
         INITIAL_FILL(() -> DEPOSITED_FISH >= 17, THIRD_CATCH),
         SECOND_COOK(() -> Inventory.getCount(RAW_FISH_ID) == 0, INITIAL_FILL),
@@ -324,7 +395,8 @@ public class HootTempoross extends LoopedPlugin {
     private State scriptState = State.INITIAL_CATCH;
 
     @Override
-    protected void startUp() {
+    protected void startUp() throws Exception {
+        super.startUp();
         scriptState = State.INITIAL_CATCH;
     }
 
@@ -384,6 +456,7 @@ public class HootTempoross extends LoopedPlugin {
     }
 
     HashMap<Skill, Integer> skillExpTable = new HashMap<>();
+
     @Subscribe
     public void onStatChanged(StatChanged event) {
         Player player = client.getLocalPlayer();
