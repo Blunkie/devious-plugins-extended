@@ -2,6 +2,7 @@ package dev.hoot.tempoross;
 
 import dev.hoot.api.coords.SceneArea;
 import dev.hoot.api.coords.ScenePoint;
+import dev.hoot.api.entities.Players;
 import dev.hoot.api.entities.TileObjects;
 import dev.hoot.api.scene.Tiles;
 import lombok.Getter;
@@ -13,6 +14,7 @@ import net.runelite.api.TileObject;
 public enum TemporossWorkArea {
     EAST(
             new SceneArea(71, 44, 6, 10, 0),
+            new ScenePoint(60, 33, 0),
             new ScenePoint(77, 47, 0),
             new ScenePoint(77, 48, 0),
             new ScenePoint(77, 51, 0),
@@ -24,6 +26,7 @@ public enum TemporossWorkArea {
     ),
     WEST(
             new SceneArea(49, 44, 6, 10, 0),
+            new ScenePoint(60, 62, 0),
             new ScenePoint(49, 51, 0),
             new ScenePoint(49, 50, 0),
             new ScenePoint(49, 47, 0),
@@ -37,6 +40,7 @@ public enum TemporossWorkArea {
     ;
 
     private final SceneArea startPoint;
+    private final ScenePoint safePoint;
     private final ScenePoint bucketPoint;
     private final ScenePoint pumpPoint;
     private final ScenePoint ropePoint;
@@ -67,14 +71,34 @@ public enum TemporossWorkArea {
     }
 
     public TileObject getMast() {
-        return TileObjects.getFirstAt(Tiles.getAt(mastPoint), x -> x.hasAction("Tether"));
+        return TileObjects.getFirstAt(Tiles.getAt(mastPoint), x -> x.hasAction("Tether", "Untether"));
     }
 
     public TileObject getTotem() {
-        return TileObjects.getFirstAt(Tiles.getAt(totemPoint), x -> x.hasAction("Tether"));
+        return TileObjects.getFirstAt(Tiles.getAt(totemPoint), x -> x.hasAction("Tether", "Untether"));
     }
 
     public TileObject getRange() {
         return TileObjects.getFirstAt(Tiles.getAt(rangePoint), x -> x.hasAction("Cook-at"));
+    }
+
+    public TileObject getClosestTether() {
+        TileObject mast = getMast();
+        TileObject totem = getTotem();
+        if (mast != null && totem != null) {
+            int mastDistance = mast.getWorldLocation().distanceTo(Players.getLocal().getWorldLocation());
+            int totemDistance = totem.getWorldLocation().distanceTo(Players.getLocal().getWorldLocation());
+            if (mastDistance < totemDistance) {
+                return mast;
+            }
+
+            return totem;
+        }
+
+        if (mast != null) {
+            return mast;
+        }
+
+        return totem;
     }
 }

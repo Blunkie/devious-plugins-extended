@@ -9,17 +9,13 @@ import dev.hoot.api.items.Inventory;
 import dev.hoot.api.movement.Movement;
 import dev.hoot.api.plugins.LoopedPlugin;
 import dev.hoot.api.scene.Tiles;
+import dev.hoot.api.widgets.Dialog;
 import dev.hoot.api.widgets.Widgets;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
-import net.runelite.api.Actor;
-import net.runelite.api.Client;
-import net.runelite.api.GameObject;
-import net.runelite.api.NPC;
-import net.runelite.api.Player;
 import net.runelite.api.coords.WorldPoint;
-import net.runelite.api.events.*;
+import net.runelite.api.events.ChatMessage;
 import net.runelite.api.widgets.Widget;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -27,13 +23,16 @@ import net.runelite.client.plugins.PluginDescriptor;
 import org.pf4j.Extension;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import static dev.hoot.tempoross.TemporossID.*;
 
 @Extension
 @PluginDescriptor(
@@ -45,160 +44,140 @@ public class HootTemporossPlugin extends LoopedPlugin {
     @Inject
     private Client client;
 
+    private int waves = 0;
     private TemporossWorkArea workArea = null;
 
-    private final static int HARPOON_ID = 311;
-    private final static int EMPTY_BUCKET_ID = 1925;
-    private final static int WATER_BUCKET_ID = 1929;
-    private final static int ROPE_ID = 954;
-    private final static int HAMMER_ID = 2347;
-    private final static int RAW_FISH_ID = 25564;
-    private final static int COOKED_FISH_ID = 25565;
-
-
-    private final static int SINGLE_FISH_SPOT = 10565;
-    private final static int DOUBLE_FISH_SPOT = 10569;
-
-    private final static int COOKING_SHRINE = 41236;
-
-    private final static int FISHING_ANIM_ID = 618;
-    private final static int COOKING_ANIM_ID = 896;
-
-
-    private final static int CLOUD_NPC_ID = 10580;
-    private final static int CLOUD_SHADOW_OBJECT_ID = 41006;
-    private final static int FIRE_NPC_ID = 8643;
-    private final static int FIRE_OBJECT_ID = 37582;
-
-    private final static int AMMO_CRATE_NPC = 10576; // fill
-    private final static int AMMO_CRATE = 40968; // fill
-
-    private final static int DAMAGED_TOTEM_OBJECT_ID = 41010;
-    private final static int DAMAGED_MAST_OBJECT_ID = 40996;
-    private final static int MAST_OBJECT_ID = 41352;
-    private final static int TOTEM_OBJECT_ID = 41354;
-
-    private final static int POINTS_VARP = 11897;
-    private final static int TETHER_VARP = 11895;
-
-    private final static int EXIT_NPC_ID = 10595;
-
-    private final int INIT_WHIRLPOOL = 10570;
-    private final int VULN_WHIRLPOOL = 10571;
-    private final int VULN_TEMPOROSS = 10574;
-
-    private final static int WAITING_ROOM_LADDER_OBJECT_ID = 41305;
-    private final static int WAITING_ROOM_PUMP_OBJECT_ID = 41000;
-
-    private final List<Integer> ESCAPE_NPC = List.of(10593, 10587);
-    private final List<Integer> EXIT_NPC = List.of(10595);
-
-    private Point CENTRAL_POINT = new Point(60, 62);
-
     private static final Pattern DIGIT_PATTERN = Pattern.compile("(\\d+)");
-
-    private static int DEPOSITED_FISH = 0;
 
     @Override
     protected int loop() {
         Player player = Players.getLocal();
+        int animation = player.getAnimation();
         if (!client.isInInstancedRegion()) {
+            waves = 0;
             workArea = null;
             incomingWave = false;
             scriptState = State.INITIAL_CATCH;
-            DEPOSITED_FISH = 0;
 
-            if (player.isMoving()) {
-                return 1000;
+            if (player.isMoving() || player.isAnimating()) {
+                return -5;
             }
 
-            TileObject startLadder = TileObjects.getFirstAt(3135, 2840, 0, WAITING_ROOM_LADDER_OBJECT_ID);
+            TileObject startLadder = TileObjects.getFirstAt(3135, 2840, 0, OBJECT_LOBBY_LADDER);
             if (startLadder == null) {
-                return 1000;
+                return -1;
             }
 
             // If east of ladder, we're not in the room.
             if (player.getWorldLocation().getX() > startLadder.getWorldLocation().getX()) {
                 startLadder.interact("Quick-climb");
-                return 1000;
+                return -6;
             }
 
-            int emptyBuckets = Inventory.getCount(EMPTY_BUCKET_ID);
-            TileObject waterPump = TileObjects.getFirstAt(3135, 2832, 0, WAITING_ROOM_PUMP_OBJECT_ID);
+            int emptyBuckets = Inventory.getCount(ITEM_EMPTY_BUCKET);
+            TileObject waterPump = TileObjects.getFirstAt(3135, 2832, 0, OBJECT_LOBBY_PUMP);
             if (waterPump != null && emptyBuckets > 0) {
                 waterPump.interact("Use");
-                return 2000;
+                return -6;
             }
 
-            return 1000;
+            return -1;
         }
 
         if (workArea == null) {
             for (TemporossWorkArea area : TemporossWorkArea.values()) {
-                if (area.getStartPoint().contains(ScenePoint.fromWorld(player.getWorldLocation()))) {
+                if (area.getStartPoint().contains(ScenePoint.fromWorld(player.getWorldLocation()))
+                        && area.getMast() != null) {
                     log.info("Found work area: {}", area);
                     workArea = area;
                     return -1;
                 }
             }
 
+            forfeitMatch();
             return -1;
         }
 
-        int harpoonCount = Inventory.getCount(HARPOON_ID);
+        NPC leave = NPCs.getNearest(x -> x.hasAction("Leave"));
+        if (leave != null) {
+            leave.interact("Leave");
+            return -6;
+        }
+
+        if (getPhase() >= 2 && needToClearFire(workArea.getClosestTether())) {
+            return -2;
+        }
+
+        int harpoonCount = Inventory.getCount(ITEM_HARPOON);
         if (harpoonCount != 1) {
-            if (Movement.isWalking()) {
-                return -1;
+            if (player.isMoving() || animation == ANIMATION_INTERACTING) {
+                return -2;
             }
 
             if (harpoonCount > 1) {
-                Inventory.getFirst(HARPOON_ID).interact("Drop");
+                Inventory.getFirst(ITEM_HARPOON).interact("Drop");
                 return -3;
+            }
+
+            if (needToClearFire(workArea.getHarpoonCrate()) && getPhase() == 1) {
+                return -2;
             }
 
             workArea.getHarpoonCrate().interact("Take");
             return -2;
         }
 
-        int bucketCount = Inventory.getCount(EMPTY_BUCKET_ID, WATER_BUCKET_ID);
+        int bucketCount = Inventory.getCount(ITEM_EMPTY_BUCKET, ITEM_WATER_BUCKET);
         if (bucketCount != 5) {
-            if (Movement.isWalking()) {
-                return -1;
+            if (player.isMoving() || animation == ANIMATION_INTERACTING) {
+                return -2;
             }
 
             if (bucketCount > 5) {
-                Inventory.getFirst(EMPTY_BUCKET_ID).interact("Drop");
+                Inventory.getFirst(ITEM_EMPTY_BUCKET).interact("Drop");
                 return -3;
+            }
+
+            if (needToClearFire(workArea.getBucketCrate()) && getPhase() == 1) {
+                return -2;
             }
 
             workArea.getBucketCrate().interact("Take");
             return -2;
         }
 
-        int ropeCount = Inventory.getCount(ROPE_ID);
+        int ropeCount = Inventory.getCount(ITEM_ROPE);
         if (ropeCount != 1) {
-            if (Movement.isWalking()) {
-                return -1;
+            if (player.isMoving() || animation == ANIMATION_INTERACTING) {
+                return -2;
             }
 
             if (ropeCount > 1) {
-                Inventory.getFirst(ROPE_ID).interact("Drop");
+                Inventory.getFirst(ITEM_ROPE).interact("Drop");
                 return -3;
+            }
+
+            if (needToClearFire(workArea.getRopeCrate()) && getPhase() == 1) {
+                return -2;
             }
 
             workArea.getRopeCrate().interact("Take");
             return -2;
         }
 
-        int hammerCount = Inventory.getCount(HAMMER_ID);
+        int hammerCount = Inventory.getCount(ITEM_HAMMER);
         if (hammerCount != 1) {
-            if (Movement.isWalking()) {
-                return -1;
+            if (player.isMoving() || animation == ANIMATION_INTERACTING) {
+                return -2;
             }
 
             if (hammerCount > 1) {
-                Inventory.getFirst(HAMMER_ID).interact("Drop");
+                Inventory.getFirst(ITEM_HAMMER).interact("Drop");
                 return -3;
+            }
+
+            if (needToClearFire(workArea.getHammerCrate()) && getPhase() == 1) {
+                return -2;
             }
 
             workArea.getHammerCrate().interact("Take");
@@ -229,56 +208,45 @@ public class HootTemporossPlugin extends LoopedPlugin {
         /**
          * Danger tasks
          */
-        int bucketOfWaterCount = Inventory.getCount(WATER_BUCKET_ID);
-        NPC fire = NPCs.getNearest(FIRE_NPC_ID);
-        if (fire != null && fire.getWorldLocation().distanceToPath(client, player.getWorldLocation()) < 8) {
-            if (bucketOfWaterCount == 0) {
-                if (Movement.isWalking()) {
-                    return -1;
-                }
 
-                workArea.getPump().interact("Use");
-                return 1000;
-            }
-
-            fire.interact("Douse");
-            return 1000;
-        }
-
-        TileObject damagedMast = TileObjects.getFirstAt(Tiles.getAt(workArea.getMastPoint()), DAMAGED_MAST_OBJECT_ID);
+        TileObject damagedMast = TileObjects.getFirstAt(Tiles.getAt(workArea.getMastPoint()), OBJECT_DAMAGED_MAST);
         if (damagedMast != null && damagedMast.getWorldLocation().distanceToPath(client, player.getWorldLocation()) < 15) {
             damagedMast.interact("Repair");
             return 1000;
         }
 
+        TileObject tether = workArea.getClosestTether();
         if (incomingWave) {
-            if (!tethered) {
-                TileObject tether = Stream.of(workArea.getMast(), workArea.getTotem())
-                        .min(Comparator.comparing(point -> point.distanceTo(player.getWorldLocation())))
-                        .orElse(null);
+            if (!isTethered()) {
+                if (tether == null) {
+                    log.warn("Can't find tether object");
+                    return -1;
+                }
+
                 tether.interact("Tether");
-                return 2000;
+                return -3;
             }
 
-            return 1000;
+            return -2;
         }
 
-        NPC exitNpc = NPCs.getNearest(EXIT_NPC_ID);
+        if (tether != null && Players.getLocal().getGraphic() == GRAPHIC_TETHERED) {
+            tether.interact("Untether");
+            return -2;
+        }
+
+        NPC exitNpc = NPCs.getNearest(NPC_EXIT);
         if (exitNpc != null) {
             exitNpc.interact("Leave");
             return 1000;
         }
 
-        if (ESSENCE == 0) {
-            return 1000;
-        }
-
-        NPC doubleSpot = NPCs.getNearest(DOUBLE_FISH_SPOT);
-        if (scriptState.equals(State.INITIAL_COOK) && doubleSpot != null) {
+        NPC doubleSpot = NPCs.getNearest(NPC_DOUBLE_FISH_SPOT);
+        if (scriptState == State.INITIAL_COOK && doubleSpot != null) {
             scriptState = scriptState.next;
         }
 
-        if (INTENSITY >= 94 && scriptState.equals(State.THIRD_COOK)) {
+        if (INTENSITY >= 94 && scriptState == State.THIRD_COOK) {
             forfeitMatch();
             return 1000;
         }
@@ -286,13 +254,17 @@ public class HootTemporossPlugin extends LoopedPlugin {
         if (scriptState.isComplete.getAsBoolean()) {
             scriptState = scriptState.next;
             if (scriptState == null) {
-                DEPOSITED_FISH = 17;
                 scriptState = State.THIRD_CATCH;
             }
         }
 
-        int rawFishCount = Inventory.getCount(RAW_FISH_ID);
-        List<WorldPoint> dangerousTiles = TileObjects.getSurrounding(Players.getLocal().getWorldLocation(), 20, CLOUD_SHADOW_OBJECT_ID, FIRE_OBJECT_ID)
+        NPC temporossPool = NPCs.getNearest(NPC_VULN_WHIRLPOOL);
+        if (temporossPool != null && scriptState != State.ATTACK_TEMPOROSS) {
+            scriptState = State.ATTACK_TEMPOROSS;
+        }
+
+        int rawFishCount = Inventory.getCount(ITEM_RAW_FISH);
+        List<WorldPoint> dangerousTiles = TileObjects.getSurrounding(Players.getLocal().getWorldLocation(), 20, OBJECT_CLOUD_SHADOW, OBJECT_FIRE)
                 .stream()
                 .filter(g -> g instanceof GameObject)
                 .flatMap(g -> ((GameObject) g).getWorldArea().toWorldPointList().stream())
@@ -309,17 +281,26 @@ public class HootTemporossPlugin extends LoopedPlugin {
             case THIRD_CATCH:
                 Comparator<NPC> closest = Comparator.comparingInt(spot -> spot.getWorldLocation().distanceToPath(client, player.getWorldLocation()));
                 Comparator<NPC> byId = Comparator.comparingInt(NPC::getId);
-                Optional<NPC> fishSpot = NPCs.getAll(SINGLE_FISH_SPOT, DOUBLE_FISH_SPOT)
+                Optional<NPC> fishSpot = NPCs.getAll(NPC_SINGLE_FISH_SPOT, NPC_DOUBLE_FISH_SPOT)
                         .stream()
                         .filter(filterDangerousNPCs)
                         .min(rawFishCount < 15 ? byId.reversed().thenComparing(closest) : closest);
                 if (fishSpot.isPresent()) {
-                    if (fishSpot.get().equals(player.getInteracting())) {
+                    if (fishSpot.get().equals(player.getInteracting()) && !Dialog.isOpen()) {
                         return 1000;
                     }
+
+                    if (needToClearFire(fishSpot.get())) {
+                        return -2;
+                    }
+
                     fishSpot.get().interact("Harpoon");
                     return 1000;
                 } else {
+                    if (needToClearFire(workArea.getSafePoint().toWorld())) {
+                        return -2;
+                    }
+
                     walkToSafePoint();
                 }
                 break;
@@ -329,14 +310,22 @@ public class HootTemporossPlugin extends LoopedPlugin {
             case THIRD_COOK:
                 TileObject range = workArea.getRange();
                 if (range != null && rawFishCount > 0) {
-                    if (player.getAnimation() == COOKING_ANIM_ID || player.isMoving()) {
+                    if ((player.getAnimation() == ANIMATION_COOK || player.isMoving()) && !Dialog.isOpen()) {
                         return 1000;
+                    }
+
+                    if (needToClearFire(range)) {
+                        return -2;
                     }
 
                     range.interact("Cook-at");
                     return 1200;
                 } else if (range == null) {
                     log.warn("Can't find cooking shrine");
+                    if (needToClearFire(workArea.getSafePoint().toWorld())) {
+                        return -2;
+                    }
+
                     walkToSafePoint();
                 }
                 break;
@@ -344,41 +333,62 @@ public class HootTemporossPlugin extends LoopedPlugin {
             case EMERGENCY_FILL:
             case SECOND_FILL:
             case INITIAL_FILL:
-                NPC ammoCrate = NPCs.getNearest(x -> x.getId() == AMMO_CRATE_NPC && filterDangerousNPCs.test(x));
-                if (ammoCrate != null && !ammoCrate.equals(player.getInteracting())) {
+                NPC ammoCrate = NPCs.getNearest(x -> x.getId() == NPC_AMMO_CRATE && filterDangerousNPCs.test(x));
+                if (ammoCrate != null && (!ammoCrate.equals(player.getInteracting()) || Dialog.isOpen())) {
+                    if (needToClearFire(ammoCrate)) {
+                        return -2;
+                    }
+
                     ammoCrate.interact("Fill");
                     return 1000;
                 } else if (ammoCrate == null) {
                     log.warn("Can't find the ammo crate");
+                    if (needToClearFire(workArea.getSafePoint().toWorld())) {
+                        return -2;
+                    }
+
                     walkToSafePoint();
                 }
                 break;
 
             case ATTACK_TEMPOROSS:
-                NPC temporossPool = NPCs.getNearest(VULN_WHIRLPOOL);
-                if (temporossPool != null && !temporossPool.equals(player.getInteracting())) {
+                if (temporossPool != null && (!temporossPool.equals(player.getInteracting()) || Dialog.isOpen())) {
+                    if (needToClearFire(temporossPool)) {
+                        return -2;
+                    }
+
                     temporossPool.interact("Harpoon");
                     return 1000;
                 } else if (temporossPool == null) {
+                    if (needToClearFire(workArea.getSafePoint().toWorld())) {
+                        return -2;
+                    }
+
+                    if (ENERGY > 0) {
+                        scriptState = null;
+                        return -1;
+                    }
+
                     walkToSafePoint();
                 }
+
                 break;
         }
 
-        return 100;
+        return -1;
     }
 
     enum State {
         ATTACK_TEMPOROSS(() -> ENERGY >= 98, null),
-        SECOND_FILL(() -> DEPOSITED_FISH >= 36, ATTACK_TEMPOROSS),
-        THIRD_COOK(() -> Inventory.getCount(RAW_FISH_ID) == 0 || INTENSITY >= 92, SECOND_FILL),
-        THIRD_CATCH(() -> Inventory.getCount(RAW_FISH_ID, COOKED_FISH_ID) >= 36 - DEPOSITED_FISH, THIRD_COOK),
-        EMERGENCY_FILL(() -> Inventory.getCount(COOKED_FISH_ID) == 0, THIRD_CATCH),
-        INITIAL_FILL(() -> DEPOSITED_FISH >= 17, THIRD_CATCH),
-        SECOND_COOK(() -> Inventory.getCount(RAW_FISH_ID) == 0, INITIAL_FILL),
-        SECOND_CATCH(() -> Inventory.getCount(RAW_FISH_ID, COOKED_FISH_ID) >= 17, SECOND_COOK),
-        INITIAL_COOK(() -> Inventory.getCount(RAW_FISH_ID) == 0, SECOND_CATCH),
-        INITIAL_CATCH(() -> Inventory.getCount(RAW_FISH_ID) >= 8, INITIAL_COOK);
+        SECOND_FILL(() -> getAllFish() == 0, ATTACK_TEMPOROSS),
+        THIRD_COOK(() -> getRawFish() == 0 || INTENSITY >= 92, SECOND_FILL),
+        THIRD_CATCH(() -> getAllFish() >= 17, THIRD_COOK),
+        EMERGENCY_FILL(() -> getAllFish() == 0, THIRD_CATCH),
+        INITIAL_FILL(() -> getAllFish() == 0, THIRD_CATCH),
+        SECOND_COOK(() -> getRawFish() == 0, INITIAL_FILL),
+        SECOND_CATCH(() -> getAllFish() >= 17, SECOND_COOK),
+        INITIAL_COOK(() -> getRawFish() == 0, SECOND_CATCH),
+        INITIAL_CATCH(() -> getRawFish() >= 8 || getAllFish() >= 17, INITIAL_COOK);
 
         @Getter
         private final BooleanSupplier isComplete;
@@ -401,21 +411,14 @@ public class HootTemporossPlugin extends LoopedPlugin {
     }
 
     private boolean incomingWave = false;
-    private boolean tethered = false;
-
 
     private static int ENERGY = 100;
     private static int ESSENCE = 100;
     private static int INTENSITY = 0;
 
     private void forfeitMatch() {
-        Player player = client.getLocalPlayer();
-        if (player == null) {
-            return;
-        }
-        final NPC npc = NPCs.getNearest(10593, 10587);
-        final Actor target = player.getInteracting();
-        if (npc != null && (target == null || target.equals(npc))) {
+        NPC npc = NPCs.getNearest(x -> x.hasAction("Forfeit"));
+        if (npc != null) {
             npc.interact("Forfeit");
         }
     }
@@ -425,7 +428,8 @@ public class HootTemporossPlugin extends LoopedPlugin {
         if (player == null) {
             return;
         }
-        WorldPoint safePoint = WorldPoint.fromScene(client, CENTRAL_POINT.getX(), CENTRAL_POINT.getY(), client.getPlane());
+
+        WorldPoint safePoint = workArea.getSafePoint().toWorld();
         if (safePoint.distanceTo(player.getWorldLocation()) > 3 && !player.isMoving()) {
             Movement.walk(safePoint);
         }
@@ -435,50 +439,76 @@ public class HootTemporossPlugin extends LoopedPlugin {
     public void onChatMessage(ChatMessage event) {
         ChatMessageType type = event.getType();
         String message = event.getMessage();
-        System.out.println(event.getType().name() + " " + event.getMessage());
 
-        if (type.equals(ChatMessageType.GAMEMESSAGE)) {
+        if (type == ChatMessageType.GAMEMESSAGE) {
             if (message.equals("<col=d30b0b>A colossal wave closes in...</col>")) {
+                waves++;
                 incomingWave = true;
-                tethered = false;
             }
 
-            if (message.contains("the rope keeps you securely") || message.contains("the wave slames into you")) {
+            if (message.contains("the rope keeps you securely") || message.contains("the wave slams into you")) {
                 incomingWave = false;
-            }
-        }
-
-        if (type.equals(ChatMessageType.SPAM)) {
-            if (message.equals("You securely tether yourself to the totem pole.") || message.equals("You securely tether yourself to the mast.")) {
-                tethered = true;
             }
         }
     }
 
-    HashMap<Skill, Integer> skillExpTable = new HashMap<>();
+    private boolean needToClearFire(Locatable locatable) {
+        return needToClearFire(locatable.getWorldLocation());
+    }
 
-    @Subscribe
-    public void onStatChanged(StatChanged event) {
-        Player player = client.getLocalPlayer();
-        if (player == null) {
-            return;
-        }
+    private boolean needToClearFire(WorldPoint destination) {
+        Player player = Players.getLocal();
+        int bucketOfWaterCount = Inventory.getCount(ITEM_WATER_BUCKET);
+        List<WorldPoint> path = player.getWorldLocation().pathTo(client, destination);
+        List<NPC> firesBlockingPath = NPCs.getAll(x -> x.getId() == NPC_FIRE &&
+                x.getWorldArea().toWorldPointList().stream().anyMatch(path::contains));
+        NPC fire = firesBlockingPath.stream()
+                .min(Comparator.comparing(x -> x.getWorldLocation().distanceTo(player.getWorldLocation())))
+                .orElse(null);
+        if (fire != null) {
+            if (bucketOfWaterCount == 0 && Inventory.contains(ITEM_EMPTY_BUCKET)) {
+                if (player.getAnimation() == ANIMATION_INTERACTING) {
+                    return true;
+                }
 
-        Actor target = player.getInteracting();
-        if (target instanceof NPC && ((NPC) target).getId() == VULN_WHIRLPOOL) {
-            return;
-        }
+                if (player.isMoving()) {
+                    return true;
+                }
 
-        int change = event.getXp() - skillExpTable.getOrDefault(event.getSkill(), event.getXp());
-        skillExpTable.put(event.getSkill(), event.getXp());
-        if (event.getSkill().equals(Skill.FISHING)) {
-            // Probably a cannon load but fuck knows
-            NPC cannon = NPCs.getNearest(AMMO_CRATE_NPC);
-            if (cannon != null && cannon.getWorldLocation().distanceTo(player.getWorldLocation()) <= 4 && change > client.getRealSkillLevel(Skill.FISHING)) {
-                System.out.println("Deposited a fish " + DEPOSITED_FISH);
-                DEPOSITED_FISH++;
+                workArea.getPump().interact("Use");
+                return true;
             }
+
+            if (bucketOfWaterCount > 0) {
+                fire.interact("Douse");
+            }
+
+            return true;
         }
+
+        return false;
+    }
+
+    private static boolean isTethered() {
+        int graphic = Players.getLocal().getGraphic();
+        int anim = Players.getLocal().getAnimation();
+        return anim != 832 && (graphic == GRAPHIC_TETHERED || graphic == GRAPHIC_TETHERING);
+    }
+
+    private static int getRawFish() {
+        return Inventory.getCount(ITEM_RAW_FISH);
+    }
+
+    private static int getCookedFish() {
+        return Inventory.getCount(ITEM_COOKED_FISH);
+    }
+
+    private static int getAllFish() {
+        return getRawFish() + getCookedFish();
+    }
+
+    private int getPhase() {
+        return 1 + (waves / 3); // every 3 waves, phase increases by 1
     }
 
     @Provides
