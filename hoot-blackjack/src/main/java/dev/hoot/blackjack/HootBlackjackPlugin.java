@@ -41,9 +41,10 @@ public class HootBlackjackPlugin extends LoopedPlugin {
                         x.hasAction("Knock-Out") &&
                         spot.getArea().contains(x)
         );
-        if (target != null && target.getInteracting() != null && target.getInteracting() == local) {
+        if (target != null && ((target.getInteracting() != null && target.getInteracting() == local)
+                || target.getOverheadText().contains("I'll kill you for that"))) {
             target.interact("Pickpocket");
-            return 333;
+            return 222;
         }
 
         if (pouch != null && pouch.getQuantity() > 5) {
@@ -60,8 +61,12 @@ public class HootBlackjackPlugin extends LoopedPlugin {
         Item food = Inventory.getFirst(config.foodId());
         if (food != null) {
             if (spot.getArea().contains(local)) {
-                Player otherPlayer = Players.getNearest(x -> !x.equals(local) && spot.getArea().contains(x));
+                Player otherPlayer = Players.getNearest(x -> !x.equals(local)
+                        && spot.getArea().contains(x)
+                        && (x.isAnimating() || x.getGraphic() == 245)
+                );
                 if (target == null) {
+                    log.info("Unable to find target");
                     Worlds.hopTo(Worlds.getRandom(x -> x.getActivity().contains("Leagues")));
                     return -3;
                 }
@@ -73,6 +78,7 @@ public class HootBlackjackPlugin extends LoopedPlugin {
                                 spot.getArea().contains(x)
                 );
                 if (otherPlayer != null || otherNpc != null) {
+                    log.info("Other player/npc present, hopping");
                     Worlds.hopTo(Worlds.getRandom(x -> x.getActivity().contains("Leagues")));
                     return -3;
                 }
@@ -102,7 +108,7 @@ public class HootBlackjackPlugin extends LoopedPlugin {
 
                 log.info("Knocking out");
                 target.interact("Knock-Out");
-                return 333;
+                return 222;
             }
 
             Movement.walkTo(spot.getArea());

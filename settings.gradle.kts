@@ -32,6 +32,9 @@ include("hoot-autologin")
 include("hoot-tempoross")
 include("hoot-blackjack")
 include("hoot-trawler")
+include("hoot-pickpocket")
+include("hoot-aerialfishing")
+include("hoot-chins")
 include("inventory-setups")
 
 for (project in rootProject.children) {

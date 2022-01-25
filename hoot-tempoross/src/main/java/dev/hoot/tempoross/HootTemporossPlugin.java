@@ -251,6 +251,10 @@ public class HootTemporossPlugin extends LoopedPlugin {
             return 1000;
         }
 
+        if (scriptState == null) {
+            scriptState = State.THIRD_CATCH;
+        }
+
         if (scriptState.isComplete.getAsBoolean()) {
             scriptState = scriptState.next;
             if (scriptState == null) {
