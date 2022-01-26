@@ -27,7 +27,7 @@ subprojects {
 
     apply<JavaPlugin>()
     apply(plugin = "java-library")
-    apply(plugin = "checkstyle")
+//    apply(plugin = "checkstyle")
 
     repositories {
         jcenter {
