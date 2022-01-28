@@ -35,6 +35,7 @@ include("hoot-trawler")
 include("hoot-pickpocket")
 include("hoot-aerialfishing")
 include("hoot-chins")
+include("interaction-tester")
 
 for (project in rootProject.children) {
     project.apply {

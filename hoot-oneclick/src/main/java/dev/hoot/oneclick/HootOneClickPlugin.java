@@ -4,17 +4,27 @@ import com.google.inject.Inject;
 import com.google.inject.Provides;
 import dev.hoot.api.EntityNameable;
 import dev.hoot.api.Interactable;
-import dev.hoot.api.SceneEntity;
-import dev.hoot.api.entities.*;
+import dev.hoot.api.entities.NPCs;
+import dev.hoot.api.entities.Players;
+import dev.hoot.api.entities.TileItems;
+import dev.hoot.api.entities.TileObjects;
 import dev.hoot.api.game.Game;
 import dev.hoot.api.items.Inventory;
 import dev.hoot.api.widgets.Widgets;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.*;
-import net.runelite.api.events.ClientTick;
-import net.runelite.api.events.MenuOptionClicked;
+import net.runelite.api.Actor;
+import net.runelite.api.Client;
+import net.runelite.api.Item;
+import net.runelite.api.MenuAction;
+import net.runelite.api.NPC;
+import net.runelite.api.Player;
+import net.runelite.api.Tile;
+import net.runelite.api.TileItem;
+import net.runelite.api.TileObject;
+import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.util.Text;
 import net.runelite.api.widgets.Widget;
+import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
@@ -25,7 +35,6 @@ import org.pf4j.Extension;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @PluginDescriptor(
 		name = "Hoot One Click",
@@ -63,80 +72,6 @@ public class HootOneClickPlugin extends Plugin
 	}
 
 	@Subscribe
-	private void onClientTick(ClientTick e)
-	{
-		MenuEntry[] entries = client.getMenuEntries();
-		if (entries.length <= 1)
-		{
-			return;
-		}
-
-		List<? extends SceneEntity> hovered = Entities.getHoveredEntities();
-		if (hovered.isEmpty())
-		{
-			return;
-		}
-
-		SceneEntity top = hovered.stream().filter(x -> isConfigured(x.getName(), gameObjectConfigs) ||
-						isConfigured(x.getName(), npcConfigs) || isConfigured(x.getName(), groundItemConfigs) ||
-						isConfigured(x.getName(), playerConfigs))
-				.findFirst()
-				.orElse(null);
-		if (top == null)
-		{
-			return;
-		}
-
-		if (top.getActions().stream().anyMatch(Objects::nonNull))
-		{
-			return;
-		}
-
-		if (top instanceof GameObject)
-		{
-			client.insertMenuItem(
-					"Hoot One Click",
-					"",
-					MenuAction.GAME_OBJECT_FIRST_OPTION.getId(),
-					top.getId(),
-					((GameObject) top).menuPoint().getX(),
-					((GameObject) top).menuPoint().getY(),
-					true
-			);
-			return;
-		}
-
-		if (top instanceof TileItem)
-		{
-			client.insertMenuItem(
-					"Hoot One Click",
-					"",
-					MenuAction.GROUND_ITEM_FIRST_OPTION.getId(),
-					top.getId(),
-					((TileItem) top).getTile().getSceneLocation().getX(),
-					((TileItem) top).getTile().getSceneLocation().getY(),
-					true
-			);
-			return;
-		}
-
-		if (top instanceof NPC)
-		{
-			client.insertMenuItem("Hoot One Click", "", MenuAction.NPC_FIRST_OPTION.getId(), ((NPC) top).getIndex(), 0,
-					0, true);
-			return;
-		}
-
-		if (top instanceof Player)
-		{
-			client.insertMenuItem("Hoot One Click", "", MenuAction.PLAYER_FIRST_OPTION.getId(), ((Player) top).getIndex(), 0, 0, true);
-			return;
-		}
-
-		log.info("wtf {}", top.getClass());
-	}
-
-	@Subscribe
 	public void onConfigChanged(ConfigChanged e)
 	{
 		if (!e.getGroup().equals("hootoneclick"))
@@ -155,83 +90,82 @@ public class HootOneClickPlugin extends Plugin
 	}
 
 	@Subscribe
-	public void onMenuOptionClicked(MenuOptionClicked e)
+	public void onMenuEntryAdded(MenuEntryAdded e)
 	{
-		int opcode = e.getMenuAction().getId();
+		int opcode = e.getType();
 
 		if (!gameObjectConfigs.isEmpty() && GAME_OBJECT_OPCODES.contains(opcode))
 		{
-			Tile tile = Game.getClient().getScene().getTiles()[Game.getClient().getPlane()][e.getParam0()][e.getParam1()];
-			TileObject obj = TileObjects.getFirstAt(tile, e.getId());
-			if (replace(gameObjectConfigs, obj, e))
+			Tile tile = Game.getClient().getScene().getTiles()[Game.getClient().getPlane()][e.getActionParam0()][e.getActionParam1()];
+			TileObject obj = TileObjects.getFirstAt(tile, e.getIdentifier());
+			if (replace(gameObjectConfigs, obj))
 			{
-				return;
+//				return;
 			}
 		}
 
 		if (!npcConfigs.isEmpty() && NPC_OPCODES.contains(opcode))
 		{
-			NPC npc = NPCs.getNearest(x -> x.getIndex() == e.getId());
-			if (replace(npcConfigs, npc, e))
+			NPC npc = NPCs.getNearest(x -> x.getIndex() == e.getIdentifier());
+			if (replace(npcConfigs, npc))
 			{
-				return;
+//				return;
 			}
 		}
 
 		if (!groundItemConfigs.isEmpty() && GROUND_ITEM_OPCODES.contains(opcode))
 		{
-			Tile tile = Game.getClient().getScene().getTiles()[Game.getClient().getPlane()][e.getParam0()][e.getParam1()];
-			TileItem item = TileItems.getFirstAt(tile, e.getId());
-			if (replace(groundItemConfigs, item, e))
+			Tile tile = Game.getClient().getScene().getTiles()[Game.getClient().getPlane()][e.getActionParam0()][e.getActionParam1()];
+			TileItem item = TileItems.getFirstAt(tile, e.getIdentifier());
+			if (replace(groundItemConfigs, item))
 			{
-				return;
+//				return;
 			}
 		}
 
 		if (!itemConfigs.isEmpty() && ITEM_OPCODES.contains(opcode))
 		{
-			Item item = Inventory.getFirst(e.getId());
-			if (replace(itemConfigs, item, e))
+			Item item = Inventory.getFirst(e.getIdentifier());
+			if (replace(itemConfigs, item))
 			{
-				return;
+//				return;
 			}
 		}
 
 		if (!playerConfigs.isEmpty() && PLAYER_OPCODES.contains(opcode))
 		{
-			Player player = Players.getNearest(x -> x.getIndex() == e.getId());
-			if (replace(playerConfigs, player, e))
+			Player player = Players.getNearest(x -> x.getIndex() == e.getIdentifier());
+			if (replace(playerConfigs, player))
 			{
-				return;
+//				return;
 			}
 		}
 
 		if (!widgetConfigs.isEmpty() && WIDGET_OPCODES.contains(opcode))
 		{
-			String action = Text.removeTags(e.getMenuOption()) + " " + Text.removeTags(e.getMenuTarget());
-			Widget widget = Widgets.fromId(e.getParam1());
+			String action = Text.removeTags(e.getOption()) + " " + Text.removeTags(e.getTarget());
+			Widget widget = Widgets.fromId(e.getActionParam1());
 			if (widget != null && widgetConfigs.containsKey(action))
 			{
 				String replaced = widgetConfigs.get(action);
-				e.consume();
 
 				if (isUseOn(replaced))
 				{
 					Item usedItem = getUsedItem(replaced);
 					if (usedItem != null)
 					{
-						usedItem.useOn(widget);
+						useOn(usedItem, widget);
 					}
 
 					return;
 				}
 
-				widget.interact(replaced);
+				widget.getMenu(action).toEntry(client);
 			}
 		}
 	}
 
-	private <T extends Interactable> boolean replace(Map<String, String> replacements, T t, MenuOptionClicked event)
+	private <T extends Interactable> boolean replace(Map<String, String> replacements, T t)
 	{
 		if (!(t instanceof EntityNameable))
 		{
@@ -243,8 +177,6 @@ public class HootOneClickPlugin extends Plugin
 		{
 			return false;
 		}
-
-		event.consume();
 
 		String replacement;
 		if (config.exactEntityNames())
@@ -270,14 +202,93 @@ public class HootOneClickPlugin extends Plugin
 			Item usedItem = getUsedItem(replacement);
 			if (usedItem != null)
 			{
-				usedItem.useOn(t);
+				useOn(usedItem, t);
 			}
 
 			return true;
 		}
 
-		t.interact(replacement);
+		t.getMenu(replacement).toEntry(client, "<col=00ff00>" + replacement, ((EntityNameable) t).getName(), null);
 		return true;
+	}
+
+	private void useOn(Item item, Interactable target)
+	{
+		if (target instanceof TileItem)
+		{
+			target.getMenu(0, MenuAction.ITEM_USE_ON_GROUND_ITEM.getId()).toEntry(client,
+					"<col=00ff00>" + item.getName() + " ->",
+					((TileItem) target).getName(),
+					x ->
+			{
+				client.setSelectedItemWidget(item.getWidgetId());
+				client.setSelectedItemSlot(item.getSlot());
+				client.setSelectedItemID(item.getId());
+			});
+
+			return;
+		}
+
+		if (target instanceof TileObject)
+		{
+			target.getMenu(0, MenuAction.ITEM_USE_ON_GAME_OBJECT.getId()).toEntry(client,
+					"<col=00ff00>" + item.getName() + " ->",
+					((TileObject) target).getName(),
+					x ->
+			{
+				client.setSelectedItemWidget(item.getWidgetId());
+				client.setSelectedItemSlot(item.getSlot());
+				client.setSelectedItemID(item.getId());
+			});
+
+			return;
+		}
+
+		if (target instanceof Item)
+		{
+			item.getMenu(0, MenuAction.ITEM_USE_ON_WIDGET_ITEM.getId()).toEntry(client,
+					"<col=00ff00>" + item.getName() + " ->",
+					((Item) target).getName(),
+					x ->
+			{
+				client.setSelectedItemWidget(item.getWidgetId());
+				client.setSelectedItemSlot(((Item) target).getSlot());
+				client.setSelectedItemID(((Item) target).getId());
+			});
+
+			return;
+		}
+
+		if (target instanceof Actor)
+		{
+			MenuAction menuAction = target instanceof NPC ? MenuAction.ITEM_USE_ON_NPC : MenuAction.ITEM_USE_ON_PLAYER;
+			target.getMenu(0, menuAction.getId()).toEntry(client,
+					"<col=00ff00>" + item.getName() + " ->",
+					((Actor) target).getName(),
+					x ->
+			{
+				client.setSelectedItemWidget(item.getWidgetId());
+				client.setSelectedItemSlot(item.getSlot());
+				client.setSelectedItemID(item.getId());
+			});
+
+			return;
+		}
+
+		if (target instanceof Widget)
+		{
+			int widgetId = ((Widget) target).getId();
+			target.getMenu(0, MenuAction.ITEM_USE_ON_WIDGET.getId()).toEntry(client,
+					"<col=00ff00>" + item.getName() + " ->",
+					"Widget[" + WidgetInfo.TO_GROUP(((Widget) target).getId()) + ", "
+							+ WidgetInfo.TO_CHILD(widgetId) + "]",
+					x ->
+			{
+				client.setSelectedItemWidget(item.getWidgetId());
+				client.setSelectedItemSlot(item.getSlot());
+				client.setSelectedItemID(item.getId());
+			});
+		}
 	}
 
 	private Item getUsedItem(String action)

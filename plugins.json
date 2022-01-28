@@ -232,4 +232,17 @@
       "requires": "^1.0.0"
     }
   ]
+}, {
+  "projectUrl": "https://discord.gg/WTvTbSPknJ",
+  "provider": "unethicalite",
+  "name": "Interaction Tester",
+  "description": "Test interaction",
+  "id": "interactiontester-plugin",
+  "releases": [{
+    "date": "2022-01-28",
+    "sha512sum": "123842003BD0827EE0D93A3E7B1B4759556BEE9F0BEAB830C50DD977DE3C6A37A0D232CDAD9D4C43A71B5397D76341FC3D1A6277950E950EC8B05A6FFF2180A7",
+    "version": "0.0.1",
+    "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/interaction-tester-0.0.1.jar",
+    "requires": "^1.0.0"
+  }]
 }]
