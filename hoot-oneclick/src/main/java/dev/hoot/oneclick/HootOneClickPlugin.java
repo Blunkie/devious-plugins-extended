@@ -51,11 +51,11 @@ public class HootOneClickPlugin extends Plugin
 	@Inject
 	private Client client;
 
-	private static final List<Integer> GAME_OBJECT_OPCODES = List.of(1, 2, 3, 4, 5, 6, 1001);
-	private static final List<Integer> NPC_OPCODES = List.of(7, 8, 9, 10, 11, 12, 13);
-	private static final List<Integer> GROUND_ITEM_OPCODES = List.of(18, 19, 20, 21, 22);
+	private static final List<Integer> GAME_OBJECT_OPCODES = List.of(1, 2, 3, 4, 5, 6, 1001, 1002);
+	private static final List<Integer> NPC_OPCODES = List.of(7, 8, 9, 10, 11, 12, 13, 1003);
+	private static final List<Integer> GROUND_ITEM_OPCODES = List.of(18, 19, 20, 21, 22, 1004);
 	private static final List<Integer> WIDGET_OPCODES = List.of(24, 25, 26, 28, 29, 30, 39, 40, 41, 42, 43);
-	private static final List<Integer> ITEM_OPCODES = List.of(33, 34, 35, 36, 37, 38);
+	private static final List<Integer> ITEM_OPCODES = List.of(33, 34, 35, 36, 37, 38, 1005);
 	private static final List<Integer> PLAYER_OPCODES = List.of(44, 45, 46, 47, 48, 49, 50, 51);
 
 	private final Map<String, String> gameObjectConfigs = new HashMap<>();
