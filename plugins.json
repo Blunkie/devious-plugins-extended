@@ -140,6 +140,19 @@
 }, {
   "projectUrl": "https://discord.gg/WTvTbSPknJ",
   "provider": "unethicalite",
+  "name": "Hoot Notifier",
+  "description": "Custom notifier",
+  "id": "hootnotifier-plugin",
+  "releases": [{
+    "date": "2022-01-30",
+    "sha512sum": "75C06C6C40C32843068AA34F15A1036C0280F630DA8352B83268396C2C2DF197196AA48312B3A9C5A6CDB41438D3F1DA0B8B82EBCD234DBAB111BD10FABF043D",
+    "version": "0.0.1",
+    "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-notifier-0.0.1.jar",
+    "requires": "^1.0.0"
+  }]
+}, {
+  "projectUrl": "https://discord.gg/WTvTbSPknJ",
+  "provider": "unethicalite",
   "name": "Hoot One Click",
   "description": "Allows you to One-Click interactions",
   "id": "hootoneclick-plugin",
