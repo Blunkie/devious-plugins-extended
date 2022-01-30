@@ -1,4 +1,4 @@
-version = "0.0.2"
+version = "0.0.3"
 
 project.extra["PluginName"] = "Hoot Agility"
 project.extra["PluginDescription"] = "Automatically completes rooftop agility courses"

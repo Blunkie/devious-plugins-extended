@@ -1,4 +1,4 @@
-version = "0.0.2"
+version = "0.0.3"
 
 project.extra["PluginName"] = "Hoot Aerial Fishing"
 project.extra["PluginDescription"] = "Auto Aerial Fishing"
