@@ -16,6 +16,7 @@ import net.runelite.api.Actor;
 import net.runelite.api.Client;
 import net.runelite.api.Item;
 import net.runelite.api.MenuAction;
+import net.runelite.api.MenuEntry;
 import net.runelite.api.NPC;
 import net.runelite.api.Player;
 import net.runelite.api.Tile;
@@ -50,6 +51,8 @@ public class HootOneClickPlugin extends Plugin
 
 	@Inject
 	private Client client;
+
+	private static final String ONECLICK_MENUOPTION_PREFIX = "<col=00ff00>OC:</col> ";
 
 	private static final List<Integer> GAME_OBJECT_OPCODES = List.of(1, 2, 3, 4, 5, 6, 1001, 1002);
 	private static final List<Integer> NPC_OPCODES = List.of(7, 8, 9, 10, 11, 12, 13, 1003);
@@ -92,24 +95,33 @@ public class HootOneClickPlugin extends Plugin
 	@Subscribe
 	public void onMenuEntryAdded(MenuEntryAdded e)
 	{
+		if (e.getOption().startsWith(ONECLICK_MENUOPTION_PREFIX))
+		{
+			return;
+		}
+
 		int opcode = e.getType();
 
 		if (!gameObjectConfigs.isEmpty() && GAME_OBJECT_OPCODES.contains(opcode))
 		{
 			Tile tile = Game.getClient().getScene().getTiles()[Game.getClient().getPlane()][e.getActionParam0()][e.getActionParam1()];
 			TileObject obj = TileObjects.getFirstAt(tile, e.getIdentifier());
-			if (replace(gameObjectConfigs, obj))
+			MenuEntry replaced = replace(gameObjectConfigs, obj);
+			if (replaced != null)
 			{
-//				return;
+				client.setMenuEntries(new MenuEntry[]{replaced});
+				return;
 			}
 		}
 
 		if (!npcConfigs.isEmpty() && NPC_OPCODES.contains(opcode))
 		{
 			NPC npc = NPCs.getNearest(x -> x.getIndex() == e.getIdentifier());
-			if (replace(npcConfigs, npc))
+			MenuEntry replaced = replace(npcConfigs, npc);
+			if (replaced != null)
 			{
-//				return;
+				client.setMenuEntries(new MenuEntry[]{replaced});
+				return;
 			}
 		}
 
@@ -117,27 +129,33 @@ public class HootOneClickPlugin extends Plugin
 		{
 			Tile tile = Game.getClient().getScene().getTiles()[Game.getClient().getPlane()][e.getActionParam0()][e.getActionParam1()];
 			TileItem item = TileItems.getFirstAt(tile, e.getIdentifier());
-			if (replace(groundItemConfigs, item))
+			MenuEntry replaced = replace(groundItemConfigs, item);
+			if (replaced != null)
 			{
-//				return;
+				client.setMenuEntries(new MenuEntry[]{replaced});
+				return;
 			}
 		}
 
 		if (!itemConfigs.isEmpty() && ITEM_OPCODES.contains(opcode))
 		{
 			Item item = Inventory.getFirst(e.getIdentifier());
-			if (replace(itemConfigs, item))
+			MenuEntry replaced = replace(itemConfigs, item);
+			if (replaced != null)
 			{
-//				return;
+				client.setMenuEntries(new MenuEntry[]{replaced});
+				return;
 			}
 		}
 
 		if (!playerConfigs.isEmpty() && PLAYER_OPCODES.contains(opcode))
 		{
 			Player player = Players.getNearest(x -> x.getIndex() == e.getIdentifier());
-			if (replace(playerConfigs, player))
+			MenuEntry replaced = replace(playerConfigs, player);
+			if (replaced != null)
 			{
-//				return;
+				client.setMenuEntries(new MenuEntry[]{replaced});
+				return;
 			}
 		}
 
@@ -154,28 +172,28 @@ public class HootOneClickPlugin extends Plugin
 					Item usedItem = getUsedItem(replaced);
 					if (usedItem != null)
 					{
-						useOn(usedItem, widget);
+						client.setMenuEntries(new MenuEntry[]{useOn(usedItem, widget)});
 					}
 
 					return;
 				}
 
-				widget.getMenu(action).toEntry(client);
+				client.setMenuEntries(new MenuEntry[]{widget.getMenu(action).toEntry(client)});
 			}
 		}
 	}
 
-	private <T extends Interactable> boolean replace(Map<String, String> replacements, T t)
+	private <T extends Interactable> MenuEntry replace(Map<String, String> replacements, T t)
 	{
 		if (!(t instanceof EntityNameable))
 		{
-			return false;
+			return null;
 		}
 
 		if ((!config.exactEntityNames() || !replacements.containsKey(((EntityNameable) t).getName()))
 				&& replacements.keySet().stream().noneMatch(x -> ((EntityNameable) t).getName().toLowerCase().contains(x.toLowerCase())))
 		{
-			return false;
+			return null;
 		}
 
 		String replacement;
@@ -194,7 +212,12 @@ public class HootOneClickPlugin extends Plugin
 
 		if (replacement == null)
 		{
-			return false;
+			return null;
+		}
+
+		if (!t.hasAction(replacement))
+		{
+			return null;
 		}
 
 		if (isUseOn(replacement))
@@ -202,52 +225,47 @@ public class HootOneClickPlugin extends Plugin
 			Item usedItem = getUsedItem(replacement);
 			if (usedItem != null)
 			{
-				useOn(usedItem, t);
+				return useOn(usedItem, t);
 			}
 
-			return true;
+			return null;
 		}
 
-		t.getMenu(replacement).toEntry(client, "<col=00ff00>" + replacement, ((EntityNameable) t).getName(), null);
-		return true;
+		return t.getMenu(replacement).toEntry(client, ONECLICK_MENUOPTION_PREFIX + replacement, ((EntityNameable) t).getName(), null);
 	}
 
-	private void useOn(Item item, Interactable target)
+	private MenuEntry useOn(Item item, Interactable target)
 	{
 		if (target instanceof TileItem)
 		{
-			target.getMenu(0, MenuAction.ITEM_USE_ON_GROUND_ITEM.getId()).toEntry(client,
-					"<col=00ff00>" + item.getName() + " ->",
+			return target.getMenu(0, MenuAction.ITEM_USE_ON_GROUND_ITEM.getId()).toEntry(client,
+					ONECLICK_MENUOPTION_PREFIX + item.getName() + " ->",
 					((TileItem) target).getName(),
 					x ->
-			{
-				client.setSelectedItemWidget(item.getWidgetId());
-				client.setSelectedItemSlot(item.getSlot());
-				client.setSelectedItemID(item.getId());
-			});
-
-			return;
+					{
+						client.setSelectedItemWidget(item.getWidgetId());
+						client.setSelectedItemSlot(item.getSlot());
+						client.setSelectedItemID(item.getId());
+					});
 		}
 
 		if (target instanceof TileObject)
 		{
-			target.getMenu(0, MenuAction.ITEM_USE_ON_GAME_OBJECT.getId()).toEntry(client,
-					"<col=00ff00>" + item.getName() + " ->",
+			return target.getMenu(0, MenuAction.ITEM_USE_ON_GAME_OBJECT.getId()).toEntry(client,
+					ONECLICK_MENUOPTION_PREFIX + item.getName() + " ->",
 					((TileObject) target).getName(),
 					x ->
-			{
-				client.setSelectedItemWidget(item.getWidgetId());
-				client.setSelectedItemSlot(item.getSlot());
-				client.setSelectedItemID(item.getId());
-			});
-
-			return;
+					{
+						client.setSelectedItemWidget(item.getWidgetId());
+						client.setSelectedItemSlot(item.getSlot());
+						client.setSelectedItemID(item.getId());
+					});
 		}
 
 		if (target instanceof Item)
 		{
-			item.getMenu(0, MenuAction.ITEM_USE_ON_WIDGET_ITEM.getId()).toEntry(client,
-					"<col=00ff00>" + item.getName() + " ->",
+			return item.getMenu(0, MenuAction.ITEM_USE_ON_WIDGET_ITEM.getId()).toEntry(client,
+					ONECLICK_MENUOPTION_PREFIX + item.getName() + " ->",
 					((Item) target).getName(),
 					x ->
 			{
@@ -255,15 +273,13 @@ public class HootOneClickPlugin extends Plugin
 				client.setSelectedItemSlot(((Item) target).getSlot());
 				client.setSelectedItemID(((Item) target).getId());
 			});
-
-			return;
 		}
 
 		if (target instanceof Actor)
 		{
 			MenuAction menuAction = target instanceof NPC ? MenuAction.ITEM_USE_ON_NPC : MenuAction.ITEM_USE_ON_PLAYER;
-			target.getMenu(0, menuAction.getId()).toEntry(client,
-					"<col=00ff00>" + item.getName() + " ->",
+			return target.getMenu(0, menuAction.getId()).toEntry(client,
+					ONECLICK_MENUOPTION_PREFIX + item.getName() + " ->",
 					((Actor) target).getName(),
 					x ->
 			{
@@ -271,15 +287,13 @@ public class HootOneClickPlugin extends Plugin
 				client.setSelectedItemSlot(item.getSlot());
 				client.setSelectedItemID(item.getId());
 			});
-
-			return;
 		}
 
 		if (target instanceof Widget)
 		{
 			int widgetId = ((Widget) target).getId();
-			target.getMenu(0, MenuAction.ITEM_USE_ON_WIDGET.getId()).toEntry(client,
-					"<col=00ff00>" + item.getName() + " ->",
+			return target.getMenu(0, MenuAction.ITEM_USE_ON_WIDGET.getId()).toEntry(client,
+					ONECLICK_MENUOPTION_PREFIX + item.getName() + " ->",
 					"Widget[" + WidgetInfo.TO_GROUP(((Widget) target).getId()) + ", "
 							+ WidgetInfo.TO_CHILD(widgetId) + "]",
 					x ->
@@ -289,6 +303,8 @@ public class HootOneClickPlugin extends Plugin
 				client.setSelectedItemID(item.getId());
 			});
 		}
+
+		return null;
 	}
 
 	private Item getUsedItem(String action)

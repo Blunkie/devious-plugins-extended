@@ -233,6 +233,13 @@
       "version": "0.0.6",
       "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-oneclick-0.0.6.jar",
       "requires": "^1.0.0"
+    },
+    {
+      "date": "2022-02-06",
+      "sha512sum": "688D74EF9FDA9873935EAD258A13989A00FB3044809B8D6F3D9013285ED7E64B4D37A9CF72E45CBE7959CEC3FC6FE99457F1DA4CC7915BA277D32700230E7177",
+      "version": "0.0.7",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-oneclick-0.0.7.jar",
+      "requires": "^1.0.0"
     }
   ]
 }, {
