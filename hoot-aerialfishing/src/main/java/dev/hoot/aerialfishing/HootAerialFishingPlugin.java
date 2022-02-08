@@ -19,39 +19,45 @@ import java.util.function.Predicate;
 
 @Extension
 @PluginDescriptor(name = "Hoot Aerial Fishing", enabledByDefault = false)
-public class HootAerialFishingPlugin extends LoopedPlugin {
-    @Inject
-    private Client client;
+public class HootAerialFishingPlugin extends LoopedPlugin
+{
+	@Inject
+	private Client client;
 
-    private static final Predicate<NPC> VALID_SPOT = x -> x.getName() != null && x.getName().equals("Fishing spot")
-            && Players.getNearest(p -> p.getInteracting() != null && p.getInteracting().equals(x)) == null
-            && Projectiles.getNearest(p -> p.getTarget() != null && p.getTarget().equals(x.getLocalLocation())) == null;
+	private static final Predicate<NPC> VALID_SPOT = x -> x.getName() != null && x.getName().equals("Fishing spot")
+			&& Players.getNearest(p -> p.getInteracting() != null && p.getInteracting().equals(x)) == null
+			&& Projectiles.getNearest(p -> p.getTarget() != null && p.getTarget().equals(x.getLocalLocation())) == null;
 
-    @Override
-    protected int loop() {
-        NPC arrowFishSpot = NPCs.getNearest(x -> VALID_SPOT.test(x) && client.getHintArrowNpc() == x);
-        NPC fishSpot = NPCs.getNearest(VALID_SPOT);
-        Item fish = Inventory.getFirst("Bluegill", "Common tench", "Mottled eel", "Greater siren");
-        if (fish != null) {
-            fish.useOn(Inventory.getFirst("Knife"));
-            Time.sleep(100);
-        }
+	@Override
+	protected int loop()
+	{
+		NPC arrowFishSpot = NPCs.getNearest(x -> VALID_SPOT.test(x) && client.getHintArrowNpc() == x);
+		NPC fishSpot = NPCs.getNearest(VALID_SPOT);
+		Item fish = Inventory.getFirst("Bluegill", "Common tench", "Mottled eel", "Greater siren");
+		if (fish != null)
+		{
+			fish.useOn(Inventory.getFirst("Knife"));
+			Time.sleep(100);
+		}
 
-        if (arrowFishSpot != null) {
-            arrowFishSpot.interact("Catch");
-            return -1;
-        }
+		if (arrowFishSpot != null)
+		{
+			arrowFishSpot.interact("Catch");
+			return -1;
+		}
 
-        if (fishSpot != null) {
-            fishSpot.interact("Catch");
-            return -1;
-        }
+		if (fishSpot != null)
+		{
+			fishSpot.interact("Catch");
+			return -1;
+		}
 
-        return -1;
-    }
+		return -1;
+	}
 
-    @Provides
-    HootAerialFishingConfig provideConfig(ConfigManager configManager) {
-        return configManager.getConfig(HootAerialFishingConfig.class);
-    }
+	@Provides
+	HootAerialFishingConfig provideConfig(ConfigManager configManager)
+	{
+		return configManager.getConfig(HootAerialFishingConfig.class);
+	}
 }

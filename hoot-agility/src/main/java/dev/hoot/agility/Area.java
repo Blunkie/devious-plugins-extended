@@ -94,7 +94,8 @@ public class Area
 			}
 
 			tile = (Location) var3.next();
-		} while (!location.equals(tile.toWorldPoint()));
+		}
+		while (!location.equals(tile.toWorldPoint()));
 
 		return true;
 	}

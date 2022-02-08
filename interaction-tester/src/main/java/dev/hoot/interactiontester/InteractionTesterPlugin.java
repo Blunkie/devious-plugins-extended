@@ -21,61 +21,65 @@ import org.pf4j.Extension;
 @PluginDescriptor(name = "Interaction Tester")
 @Extension
 @Slf4j
-public class InteractionTesterPlugin extends LoopedPlugin {
-    @Inject
-    private InteractionTesterConfig config;
+public class InteractionTesterPlugin extends LoopedPlugin
+{
+	@Inject
+	private InteractionTesterConfig config;
 
-    @Override
-    protected int loop() {
-        Player local = Players.getLocal();
-        WorldPoint loc = local.getWorldLocation();
+	@Override
+	protected int loop()
+	{
+		Player local = Players.getLocal();
+		WorldPoint loc = local.getWorldLocation();
 
-        switch (config.entity()) {
-            case NPC:
-                NPCs.getNearest(x ->
-                            x.getId() == config.entityId() || x.getName().equals(config.entityName()))
-                        .interact(config.action());
-                break;
-            case PLAYER:
-                Players.getNearest(x ->
-                                x.getId() == config.entityId() || x.getName().equals(config.entityName()))
-                        .interact(config.action());
-                break;
-            case TILE_OBJECT:
-                TileObjects.getFirstSurrounding(loc, config.scanRadius(), x ->
-                                x.getId() == config.entityId() || x.getName().equals(config.entityName()))
-                        .interact(config.action());
-                break;
-            case TILE_ITEM:
-                TileItems.getFirstSurrounding(loc, config.scanRadius(), x ->
-                                x.getId() == config.entityId() || x.getName().equals(config.entityName()))
-                        .interact(config.action());
-                break;
-            case INV_ITEM:
-                Inventory.getFirst(x ->
-                                x.getId() == config.entityId() || x.getName().equals(config.entityName()))
-                        .interact(config.action());
-                break;
-            case EQUIP_ITEM:
-                Equipment.getFirst(x ->
-                                x.getId() == config.entityId() || x.getName().equals(config.entityName()))
-                        .interact(config.action());
-                break;
-            case BANK_ITEM:
-                Bank.getFirst(x ->
-                                x.getId() == config.entityId() || x.getName().equals(config.entityName()))
-                        .interact(config.action());
-                break;
-            case WIDGET:
-                Widgets.fromId(config.entityId()).interact(config.action());
-                break;
-        }
+		switch (config.entity())
+		{
+			case NPC:
+				NPCs.getNearest(x ->
+								x.getId() == config.entityId() || x.getName().equals(config.entityName()))
+						.interact(config.action());
+				break;
+			case PLAYER:
+				Players.getNearest(x ->
+								x.getId() == config.entityId() || x.getName().equals(config.entityName()))
+						.interact(config.action());
+				break;
+			case TILE_OBJECT:
+				TileObjects.getFirstSurrounding(loc, config.scanRadius(), x ->
+								x.getId() == config.entityId() || x.getName().equals(config.entityName()))
+						.interact(config.action());
+				break;
+			case TILE_ITEM:
+				TileItems.getFirstSurrounding(loc, config.scanRadius(), x ->
+								x.getId() == config.entityId() || x.getName().equals(config.entityName()))
+						.interact(config.action());
+				break;
+			case INV_ITEM:
+				Inventory.getFirst(x ->
+								x.getId() == config.entityId() || x.getName().equals(config.entityName()))
+						.interact(config.action());
+				break;
+			case EQUIP_ITEM:
+				Equipment.getFirst(x ->
+								x.getId() == config.entityId() || x.getName().equals(config.entityName()))
+						.interact(config.action());
+				break;
+			case BANK_ITEM:
+				Bank.getFirst(x ->
+								x.getId() == config.entityId() || x.getName().equals(config.entityName()))
+						.interact(config.action());
+				break;
+			case WIDGET:
+				Widgets.fromId(config.entityId()).interact(config.action());
+				break;
+		}
 
-        return config.loopTimeOut();
-    }
+		return config.loopTimeOut();
+	}
 
-    @Provides
-    InteractionTesterConfig provideConfig(ConfigManager configManager) {
-        return configManager.getConfig(InteractionTesterConfig.class);
-    }
+	@Provides
+	InteractionTesterConfig provideConfig(ConfigManager configManager)
+	{
+		return configManager.getConfig(InteractionTesterConfig.class);
+	}
 }

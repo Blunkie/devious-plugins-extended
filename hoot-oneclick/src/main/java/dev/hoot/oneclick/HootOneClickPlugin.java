@@ -268,11 +268,11 @@ public class HootOneClickPlugin extends Plugin
 					ONECLICK_MENUOPTION_PREFIX + item.getName() + " ->",
 					((Item) target).getName(),
 					x ->
-			{
-				client.setSelectedItemWidget(item.getWidgetId());
-				client.setSelectedItemSlot(((Item) target).getSlot());
-				client.setSelectedItemID(((Item) target).getId());
-			});
+					{
+						client.setSelectedItemWidget(item.getWidgetId());
+						client.setSelectedItemSlot(((Item) target).getSlot());
+						client.setSelectedItemID(((Item) target).getId());
+					});
 		}
 
 		if (target instanceof Actor)
@@ -282,11 +282,11 @@ public class HootOneClickPlugin extends Plugin
 					ONECLICK_MENUOPTION_PREFIX + item.getName() + " ->",
 					((Actor) target).getName(),
 					x ->
-			{
-				client.setSelectedItemWidget(item.getWidgetId());
-				client.setSelectedItemSlot(item.getSlot());
-				client.setSelectedItemID(item.getId());
-			});
+					{
+						client.setSelectedItemWidget(item.getWidgetId());
+						client.setSelectedItemSlot(item.getSlot());
+						client.setSelectedItemID(item.getId());
+					});
 		}
 
 		if (target instanceof Widget)
@@ -297,11 +297,11 @@ public class HootOneClickPlugin extends Plugin
 					"Widget[" + WidgetInfo.TO_GROUP(((Widget) target).getId()) + ", "
 							+ WidgetInfo.TO_CHILD(widgetId) + "]",
 					x ->
-			{
-				client.setSelectedItemWidget(item.getWidgetId());
-				client.setSelectedItemSlot(item.getSlot());
-				client.setSelectedItemID(item.getId());
-			});
+					{
+						client.setSelectedItemWidget(item.getWidgetId());
+						client.setSelectedItemSlot(item.getSlot());
+						client.setSelectedItemID(item.getId());
+					});
 		}
 
 		return null;

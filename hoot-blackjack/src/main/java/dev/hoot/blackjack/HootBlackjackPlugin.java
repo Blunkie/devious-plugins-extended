@@ -26,121 +26,139 @@ import java.util.Comparator;
 @Extension
 @PluginDescriptor(name = "Hoot Blackjack")
 @Slf4j
-public class HootBlackjackPlugin extends LoopedPlugin {
-    @Inject
-    private HootBlackjackConfig config;
+public class HootBlackjackPlugin extends LoopedPlugin
+{
+	@Inject
+	private HootBlackjackConfig config;
 
-    @Override
-    protected int loop() {
-        BlackjackSpot spot = config.blackjackSpot();
-        Item pouch = Inventory.getFirst("Coin pouch");
-        Player local = Players.getLocal();
-        NPC target = NPCs.getNearest(x ->
-                x.getName() != null &&
-                        x.getName().equals(spot.getNpcName()) &&
-                        x.hasAction("Knock-Out") &&
-                        spot.getArea().contains(x)
-        );
-        if (target != null && ((target.getInteracting() != null && target.getInteracting() == local)
-                || target.getOverheadText().contains("I'll kill you for that"))) {
-            target.interact("Pickpocket");
-            return 222;
-        }
+	@Override
+	protected int loop()
+	{
+		BlackjackSpot spot = config.blackjackSpot();
+		Item pouch = Inventory.getFirst("Coin pouch");
+		Player local = Players.getLocal();
+		NPC target = NPCs.getNearest(x ->
+				x.getName() != null &&
+						x.getName().equals(spot.getNpcName()) &&
+						x.hasAction("Knock-Out") &&
+						spot.getArea().contains(x)
+		);
+		if (target != null && ((target.getInteracting() != null && target.getInteracting() == local)
+				|| target.getOverheadText().contains("I'll kill you for that")))
+		{
+			target.interact("Pickpocket");
+			return 222;
+		}
 
-        if (pouch != null && pouch.getQuantity() > 5) {
-            pouch.interact("Open-all");
-            return -1;
-        }
+		if (pouch != null && pouch.getQuantity() > 5)
+		{
+			pouch.interact("Open-all");
+			return -1;
+		}
 
-        Item jug = Inventory.getFirst("Jug");
-        if (jug != null) {
-            jug.interact("Drop");
-            return -1;
-        }
+		Item jug = Inventory.getFirst("Jug");
+		if (jug != null)
+		{
+			jug.interact("Drop");
+			return -1;
+		}
 
-        Item food = Inventory.getFirst(config.foodId());
-        if (food != null) {
-            if (spot.getArea().contains(local)) {
-                Player otherPlayer = Players.getNearest(x -> !x.equals(local)
-                        && spot.getArea().contains(x)
-                        && (x.isAnimating() || x.getGraphic() == 245)
-                );
-                if (target == null) {
-                    log.info("Unable to find target");
-                    Worlds.hopTo(Worlds.getRandom(x -> x.getActivity().contains("Leagues")));
-                    return -3;
-                }
+		Item food = Inventory.getFirst(config.foodId());
+		if (food != null)
+		{
+			if (spot.getArea().contains(local))
+			{
+				Player otherPlayer = Players.getNearest(x -> !x.equals(local)
+						&& spot.getArea().contains(x)
+						&& (x.isAnimating() || x.getGraphic() == 245)
+				);
+				if (target == null)
+				{
+					log.info("Unable to find target");
+					Worlds.hopTo(Worlds.getRandom(x -> x.getActivity().contains("Leagues")));
+					return -3;
+				}
 
-                NPC otherNpc = NPCs.getNearest(x ->
-                        !x.equals(target) &&
-                                x.getName() != null && x.getName().equals(spot.getNpcName()) &&
-                                x.hasAction("Knock-Out") &&
-                                spot.getArea().contains(x)
-                );
-                if (otherPlayer != null || otherNpc != null) {
-                    log.info("Other player/npc present, hopping");
-                    Worlds.hopTo(Worlds.getRandom(x -> x.getActivity().contains("Leagues")));
-                    return -3;
-                }
+				NPC otherNpc = NPCs.getNearest(x ->
+						!x.equals(target) &&
+								x.getName() != null && x.getName().equals(spot.getNpcName()) &&
+								x.hasAction("Knock-Out") &&
+								spot.getArea().contains(x)
+				);
+				if (otherPlayer != null || otherNpc != null)
+				{
+					log.info("Other player/npc present, hopping");
+					Worlds.hopTo(Worlds.getRandom(x -> x.getActivity().contains("Leagues")));
+					return -3;
+				}
 
-                if (Combat.getMissingHealth() >= config.eatHp()) {
-                    food.interact(0);
-                    return -1;
-                }
+				if (Combat.getMissingHealth() >= config.eatHp())
+				{
+					food.interact(0);
+					return -1;
+				}
 
-                if (local.getGraphic() == 245) {
-                    return -1;
-                }
+				if (local.getGraphic() == 245)
+				{
+					return -1;
+				}
 
-                TileObject curtain = TileObjects.within(spot.getArea().offset(1), x -> x.hasAction("Close"))
-                        .stream().min(Comparator.comparingInt(x -> x.getWorldLocation().distanceTo(local.getWorldLocation())))
-                        .orElse(null);
-                if (curtain != null) {
-                    curtain.interact("Close");
-                    return -1;
-                }
+				TileObject curtain = TileObjects.within(spot.getArea().offset(1), x -> x.hasAction("Close"))
+						.stream().min(Comparator.comparingInt(x -> x.getWorldLocation().distanceTo(local.getWorldLocation())))
+						.orElse(null);
+				if (curtain != null)
+				{
+					curtain.interact("Close");
+					return -1;
+				}
 
-                if (target.getOverheadText() != null && target.getOverheadText().contains("Zzz")) {
-                    log.info("Pickpocketing");
-                    target.interact("Pickpocket");
-                    return -2;
-                }
+				if (target.getOverheadText() != null && target.getOverheadText().contains("Zzz"))
+				{
+					log.info("Pickpocketing");
+					target.interact("Pickpocket");
+					return -2;
+				}
 
-                log.info("Knocking out");
-                target.interact("Knock-Out");
-                return 222;
-            }
+				log.info("Knocking out");
+				target.interact("Knock-Out");
+				return 222;
+			}
 
-            Movement.walkTo(spot.getArea());
-            return -1;
-        }
+			Movement.walkTo(spot.getArea());
+			return -1;
+		}
 
-        if (config.buyWines()) {
-            if (Movement.isWalking()) {
-                return -1;
-            }
+		if (config.buyWines())
+		{
+			if (Movement.isWalking())
+			{
+				return -1;
+			}
 
-            if (Shop.isOpen()) {
-                Shop.buyFifty(config.foodId());
-                return -1;
-            }
+			if (Shop.isOpen())
+			{
+				Shop.buyFifty(config.foodId());
+				return -1;
+			}
 
-            NPC shop = NPCs.getNearest("Ali The barman");
-            if (shop == null || !Reachable.isInteractable(shop)) {
-                Movement.walkTo(3359, 2958, 0);
-                return -1;
-            }
+			NPC shop = NPCs.getNearest("Ali The barman");
+			if (shop == null || !Reachable.isInteractable(shop))
+			{
+				Movement.walkTo(3359, 2958, 0);
+				return -1;
+			}
 
-            shop.interact("Trade");
-            return -1;
-        }
+			shop.interact("Trade");
+			return -1;
+		}
 
-        log.info("We are idle");
-        return -1;
-    }
+		log.info("We are idle");
+		return -1;
+	}
 
-    @Provides
-    HootBlackjackConfig provideConfig(ConfigManager configManager) {
-        return configManager.getConfig(HootBlackjackConfig.class);
-    }
+	@Provides
+	HootBlackjackConfig provideConfig(ConfigManager configManager)
+	{
+		return configManager.getConfig(HootBlackjackConfig.class);
+	}
 }

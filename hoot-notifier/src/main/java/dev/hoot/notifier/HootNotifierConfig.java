@@ -5,22 +5,25 @@ import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 
 @ConfigGroup("hootnotifier")
-public interface HootNotifierConfig extends Config {
-    @ConfigItem(
-            keyName = "objectIds",
-            name = "Object IDs",
-            description = "Objects to track"
-    )
-    default String objectIds() {
-        return "";
-    }
+public interface HootNotifierConfig extends Config
+{
+	@ConfigItem(
+			keyName = "objectIds",
+			name = "Object IDs",
+			description = "Objects to track"
+	)
+	default String objectIds()
+	{
+		return "";
+	}
 
-    @ConfigItem(
-            keyName = "npcIds",
-            name = "NPC IDs",
-            description = "NPCs to track"
-    )
-    default String npcIds() {
-        return "";
-    }
+	@ConfigItem(
+			keyName = "npcIds",
+			name = "NPC IDs",
+			description = "NPCs to track"
+	)
+	default String npcIds()
+	{
+		return "";
+	}
 }
