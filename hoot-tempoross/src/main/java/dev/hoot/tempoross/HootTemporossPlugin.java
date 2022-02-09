@@ -1,7 +1,6 @@
 package dev.hoot.tempoross;
 
 import com.google.inject.Provides;
-import dev.hoot.api.coords.ScenePoint;
 import dev.hoot.api.entities.NPCs;
 import dev.hoot.api.entities.Players;
 import dev.hoot.api.entities.TileObjects;
@@ -31,35 +30,14 @@ import org.pf4j.Extension;
 import javax.inject.Inject;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static dev.hoot.tempoross.TemporossID.ANIMATION_COOK;
-import static dev.hoot.tempoross.TemporossID.ANIMATION_INTERACTING;
-import static dev.hoot.tempoross.TemporossID.GRAPHIC_TETHERED;
-import static dev.hoot.tempoross.TemporossID.GRAPHIC_TETHERING;
-import static dev.hoot.tempoross.TemporossID.ITEM_COOKED_FISH;
-import static dev.hoot.tempoross.TemporossID.ITEM_EMPTY_BUCKET;
-import static dev.hoot.tempoross.TemporossID.ITEM_HAMMER;
-import static dev.hoot.tempoross.TemporossID.ITEM_HARPOON;
-import static dev.hoot.tempoross.TemporossID.ITEM_RAW_FISH;
-import static dev.hoot.tempoross.TemporossID.ITEM_ROPE;
-import static dev.hoot.tempoross.TemporossID.ITEM_WATER_BUCKET;
-import static dev.hoot.tempoross.TemporossID.NPC_AMMO_CRATE;
-import static dev.hoot.tempoross.TemporossID.NPC_DOUBLE_FISH_SPOT;
-import static dev.hoot.tempoross.TemporossID.NPC_EXIT;
-import static dev.hoot.tempoross.TemporossID.NPC_FIRE;
-import static dev.hoot.tempoross.TemporossID.NPC_SINGLE_FISH_SPOT;
-import static dev.hoot.tempoross.TemporossID.NPC_VULN_WHIRLPOOL;
-import static dev.hoot.tempoross.TemporossID.OBJECT_CLOUD_SHADOW;
-import static dev.hoot.tempoross.TemporossID.OBJECT_DAMAGED_MAST;
-import static dev.hoot.tempoross.TemporossID.OBJECT_FIRE;
-import static dev.hoot.tempoross.TemporossID.OBJECT_LOBBY_LADDER;
-import static dev.hoot.tempoross.TemporossID.OBJECT_LOBBY_PUMP;
+import static dev.hoot.tempoross.TemporossID.*;
 
 @Extension
 @PluginDescriptor(
@@ -80,7 +58,11 @@ public class HootTemporossPlugin extends LoopedPlugin
 	@Override
 	protected int loop()
 	{
-		Player player = Players.getLocal();
+		Player player = client.getLocalPlayer();
+		if (player == null)
+		{
+			return 1000;
+		}
 		int animation = player.getAnimation();
 		if (!client.isInInstancedRegion())
 		{
@@ -120,18 +102,19 @@ public class HootTemporossPlugin extends LoopedPlugin
 
 		if (workArea == null)
 		{
-			for (TemporossWorkArea area : TemporossWorkArea.values())
+			NPC npc = NPCs.getNearest(x -> x.hasAction("Forfeit"));
+			NPC temporossPool = NPCs.getNearest("Tempoross");
+
+			if (npc == null || temporossPool == null)
 			{
-				if (area.getStartPoint().contains(ScenePoint.fromWorld(player.getWorldLocation()))
-						&& area.getMast() != null)
-				{
-					log.info("Found work area: {}", area);
-					workArea = area;
-					return -1;
-				}
+				Movement.walkTo(player.getWorldLocation().dx(1));
+				return -4;
 			}
 
-			forfeitMatch();
+			boolean isWest = npc.getWorldLocation().getX() < temporossPool.getWorldLocation().getX();
+			TemporossWorkArea area = new TemporossWorkArea(npc.getWorldLocation(), isWest);
+			log.info("Found work area: {}", area);
+			workArea = area;
 			return -1;
 		}
 
@@ -353,37 +336,39 @@ public class HootTemporossPlugin extends LoopedPlugin
 			case INITIAL_CATCH:
 			case SECOND_CATCH:
 			case THIRD_CATCH:
-				Comparator<NPC> closest = Comparator.comparingInt(spot -> spot.getWorldLocation().distanceToPath(client, player.getWorldLocation()));
-				Comparator<NPC> byId = Comparator.comparingInt(NPC::getId);
-				Optional<NPC> fishSpot = NPCs.getAll(NPC_SINGLE_FISH_SPOT, NPC_DOUBLE_FISH_SPOT)
-						.stream()
-						.filter(filterDangerousNPCs)
-						.min(rawFishCount < 15 ? byId.reversed().thenComparing(closest) : closest);
-				if (fishSpot.isPresent())
+				NPC fishSpot = NPCs.getNearest(it ->
+								NPC_DOUBLE_FISH_SPOT == it.getId()
+								&& it.getWorldLocation().distanceTo(workArea.getRangePoint()) <= 20
+								&& filterDangerousNPCs.test(it));
+
+				if (fishSpot == null) {
+					fishSpot = NPCs.getNearest(it ->
+								Set.of(NPC_SINGLE_FISH_SPOT, NPC_SINGLE_FISH_SPOT_SECOND).contains(it.getId())
+								&& it.getWorldLocation().distanceTo(workArea.getRangePoint()) <= 20
+								&& filterDangerousNPCs.test(it));
+				}
+
+				if (fishSpot != null)
 				{
-					if (fishSpot.get().equals(player.getInteracting()) && !Dialog.isOpen())
+					if (fishSpot.equals(player.getInteracting()) && !Dialog.isOpen())
 					{
 						return 1000;
 					}
 
-					if (needToClearFire(fishSpot.get()))
+					if (needToClearFire(fishSpot))
 					{
 						return -2;
 					}
 
-					fishSpot.get().interact("Harpoon");
+					fishSpot.interact("Harpoon");
 					return 1000;
 				}
 				else
 				{
-					if (needToClearFire(workArea.getSafePoint().toWorld()))
-					{
-						return -2;
-					}
-
-					walkToSafePoint();
+					// if fish are null walk to the totem pole since it's in the center of the fish spots.
+					Movement.walkTo(workArea.getTotemPoint());
+					return 1000;
 				}
-				break;
 
 			case INITIAL_COOK:
 			case SECOND_COOK:
@@ -406,20 +391,17 @@ public class HootTemporossPlugin extends LoopedPlugin
 				}
 				else if (range == null)
 				{
-					log.warn("Can't find cooking shrine");
-					if (needToClearFire(workArea.getSafePoint().toWorld()))
-					{
-						return -2;
-					}
-
-					walkToSafePoint();
+					Movement.walkTo(workArea.getRangePoint());
+					return 1000;
 				}
-				break;
 
 			case EMERGENCY_FILL:
 			case SECOND_FILL:
 			case INITIAL_FILL:
-				NPC ammoCrate = NPCs.getNearest(x -> x.getId() == NPC_AMMO_CRATE && filterDangerousNPCs.test(x));
+				NPC ammoCrate = NPCs.getNearest(x -> x.hasAction("Fill")
+						&& x.getWorldLocation().distanceTo(workArea.getSafePoint()) <= 10
+						&& x.hasAction("Check-ammo")
+						&& filterDangerousNPCs.test(x));
 				if (ammoCrate != null && (!ammoCrate.equals(player.getInteracting()) || Dialog.isOpen()))
 				{
 					if (needToClearFire(ammoCrate))
@@ -433,7 +415,7 @@ public class HootTemporossPlugin extends LoopedPlugin
 				else if (ammoCrate == null)
 				{
 					log.warn("Can't find the ammo crate");
-					if (needToClearFire(workArea.getSafePoint().toWorld()))
+					if (needToClearFire(workArea.getSafePoint()))
 					{
 						return -2;
 					}
@@ -455,7 +437,7 @@ public class HootTemporossPlugin extends LoopedPlugin
 				}
 				else if (temporossPool == null)
 				{
-					if (needToClearFire(workArea.getSafePoint().toWorld()))
+					if (needToClearFire(workArea.getSafePoint()))
 					{
 						return -2;
 					}
@@ -533,7 +515,7 @@ public class HootTemporossPlugin extends LoopedPlugin
 			return;
 		}
 
-		WorldPoint safePoint = workArea.getSafePoint().toWorld();
+		WorldPoint safePoint = workArea.getSafePoint();
 		if (safePoint.distanceTo(player.getWorldLocation()) > 3 && !player.isMoving())
 		{
 			Movement.walk(safePoint);
