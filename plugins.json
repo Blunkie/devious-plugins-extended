@@ -305,6 +305,13 @@
       "version": "0.0.4",
       "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-tempoross-0.0.4.jar",
       "requires": "^1.0.0"
+    },
+    {
+      "date": "2022-02-09",
+      "sha512sum": "0FFB76DF80B6CF2C0CDDDA34B514FFC1B1A4211E22BCF44A05E95B3D0DBF75828B70F9F37493AF8CBF0CDCF06F278E1F4DB7C861AEC89AD970F56965124B27B0",
+      "version": "0.0.5",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-tempoross-0.0.5.jar",
+      "requires": "^1.0.0"
     }
   ]
 }, {

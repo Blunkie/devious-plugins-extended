@@ -103,15 +103,14 @@ public class HootTemporossPlugin extends LoopedPlugin
 		if (workArea == null)
 		{
 			NPC npc = NPCs.getNearest(x -> x.hasAction("Forfeit"));
-			NPC temporossPool = NPCs.getNearest("Tempoross");
+			NPC ammoCrate = NPCs.getNearest(x -> x.hasAction("Fill") && x.hasAction("Check-ammo"));
 
-			if (npc == null || temporossPool == null)
+			if (npc == null || ammoCrate == null)
 			{
-				Movement.walkTo(player.getWorldLocation().dx(1));
-				return -4;
+				return -1;
 			}
 
-			boolean isWest = npc.getWorldLocation().getX() < temporossPool.getWorldLocation().getX();
+			boolean isWest = npc.getWorldLocation().getX() < ammoCrate.getWorldLocation().getX();
 			TemporossWorkArea area = new TemporossWorkArea(npc.getWorldLocation(), isWest);
 			log.info("Found work area: {}", area);
 			workArea = area;
