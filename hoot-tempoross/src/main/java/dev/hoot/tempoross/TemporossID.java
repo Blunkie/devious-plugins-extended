@@ -1,5 +1,7 @@
 package dev.hoot.tempoross;
 
+import net.runelite.api.NpcID;
+
 public interface TemporossID
 {
 	int ANIMATION_COOK = 896;
@@ -20,8 +22,9 @@ public interface TemporossID
 	int ITEM_RAW_FISH = 25564;
 	int ITEM_COOKED_FISH = 25565;
 
-	int NPC_SINGLE_FISH_SPOT = 10565;
-	int NPC_DOUBLE_FISH_SPOT = 10569;
+	int NPC_SINGLE_FISH_SPOT = NpcID.FISHING_SPOT_10565;
+	int NPC_SINGLE_FISH_SPOT_SECOND =  NpcID.FISHING_SPOT_10568;
+	int NPC_DOUBLE_FISH_SPOT = NpcID.FISHING_SPOT_10569;
 	int NPC_CLOUD = 10580;
 	int NPC_FIRE = 8643;
 	int NPC_AMMO_CRATE = 10576;

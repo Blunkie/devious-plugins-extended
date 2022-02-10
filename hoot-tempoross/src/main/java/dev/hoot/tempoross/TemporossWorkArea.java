@@ -1,94 +1,89 @@
 package dev.hoot.tempoross;
 
-import dev.hoot.api.coords.SceneArea;
-import dev.hoot.api.coords.ScenePoint;
 import dev.hoot.api.entities.Players;
 import dev.hoot.api.entities.TileObjects;
-import dev.hoot.api.scene.Tiles;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.runelite.api.TileObject;
+import net.runelite.api.coords.WorldPoint;
 
-@RequiredArgsConstructor
 @Getter
-public enum TemporossWorkArea
+public class TemporossWorkArea
 {
-	EAST(
-			new SceneArea(71, 44, 6, 10, 0),
-			new ScenePoint(60, 33, 0),
-			new ScenePoint(77, 47, 0),
-			new ScenePoint(77, 48, 0),
-			new ScenePoint(77, 51, 0),
-			new ScenePoint(77, 52, 0),
-			new ScenePoint(76, 53, 0),
-			new ScenePoint(74, 49, 0),
-			new ScenePoint(59, 33, 0),
-			new ScenePoint(51, 27, 0)
-	),
-	WEST(
-			new SceneArea(49, 44, 6, 10, 0),
-			new ScenePoint(60, 62, 0),
-			new ScenePoint(49, 51, 0),
-			new ScenePoint(49, 50, 0),
-			new ScenePoint(49, 47, 0),
-			new ScenePoint(49, 46, 0),
-			new ScenePoint(50, 45, 0),
-			new ScenePoint(52, 49, 0),
-			new ScenePoint(60, 67, 0),
-			new ScenePoint(55, 73, 0)
-	),
+	private final WorldPoint exitNpc;
 
-	;
+	private final WorldPoint safePoint;
+	private final WorldPoint bucketPoint;
+	private final WorldPoint pumpPoint;
+	private final WorldPoint ropePoint;
+	private final WorldPoint hammerPoint;
+	private final WorldPoint harpoonPoint;
+	private final WorldPoint mastPoint;
+	private final WorldPoint totemPoint;
+	private final WorldPoint rangePoint;
 
-	private final SceneArea startPoint;
-	private final ScenePoint safePoint;
-	private final ScenePoint bucketPoint;
-	private final ScenePoint pumpPoint;
-	private final ScenePoint ropePoint;
-	private final ScenePoint hammerPoint;
-	private final ScenePoint harpoonPoint;
-	private final ScenePoint mastPoint;
-	private final ScenePoint totemPoint;
-	private final ScenePoint rangePoint;
+	public TemporossWorkArea(WorldPoint exitNpc, boolean isWest) {
+		this.exitNpc = exitNpc;
+		this.safePoint = exitNpc.dx(1).dy(1);
+
+		if (isWest) {
+			this.bucketPoint = exitNpc.dx(-3).dy(-1);
+			this.pumpPoint = exitNpc.dx(-3).dy(-2);
+			this.ropePoint = exitNpc.dx(-3).dy(-5);
+			this.hammerPoint = exitNpc.dx(-3).dy(-6);
+			this.harpoonPoint = exitNpc.dx(-2).dy(-7);
+			this.mastPoint = exitNpc.dx(0).dy(-3);
+			this.totemPoint = exitNpc.dx(8).dy(15);
+			this.rangePoint = exitNpc.dx(3).dy(21);
+		} else {
+			this.bucketPoint = exitNpc.dx(3).dy(1);
+			this.pumpPoint = exitNpc.dx(3).dy(2);
+			this.ropePoint = exitNpc.dx(3).dy(5);
+			this.hammerPoint = exitNpc.dx(3).dy(6);
+			this.harpoonPoint = exitNpc.dx(2).dy(7);
+			this.mastPoint = exitNpc.dx(0).dy(3);
+			this.totemPoint = exitNpc.dx(-15).dy(-13);
+			this.rangePoint = exitNpc.dx(-23).dy(-19);
+		}
+	}
 
 	public TileObject getBucketCrate()
 	{
-		return TileObjects.getFirstAt(Tiles.getAt(bucketPoint), x -> x.hasAction("Take"));
+		return TileObjects.getFirstAt(bucketPoint, x -> x.hasAction("Take"));
 	}
 
 	public TileObject getPump()
 	{
-		return TileObjects.getFirstAt(Tiles.getAt(pumpPoint), x -> x.hasAction("Use"));
+		return TileObjects.getFirstAt(pumpPoint, x -> x.hasAction("Use"));
 	}
 
 	public TileObject getRopeCrate()
 	{
-		return TileObjects.getFirstAt(Tiles.getAt(ropePoint), x -> x.hasAction("Take"));
+		return TileObjects.getFirstAt(ropePoint, x -> x.hasAction("Take"));
 	}
 
 	public TileObject getHammerCrate()
 	{
-		return TileObjects.getFirstAt(Tiles.getAt(hammerPoint), x -> x.hasAction("Take"));
+		return TileObjects.getFirstAt(hammerPoint, x -> x.hasAction("Take"));
 	}
 
 	public TileObject getHarpoonCrate()
 	{
-		return TileObjects.getFirstAt(Tiles.getAt(harpoonPoint), x -> x.hasAction("Take"));
+		return TileObjects.getFirstAt(harpoonPoint, x -> x.hasAction("Take"));
 	}
 
 	public TileObject getMast()
 	{
-		return TileObjects.getFirstAt(Tiles.getAt(mastPoint), x -> x.hasAction("Tether", "Untether"));
+		return TileObjects.getFirstAt(mastPoint, x -> x.hasAction("Tether", "Untether"));
 	}
 
 	public TileObject getTotem()
 	{
-		return TileObjects.getFirstAt(Tiles.getAt(totemPoint), x -> x.hasAction("Tether", "Untether"));
+		return TileObjects.getFirstAt(totemPoint, x -> x.hasAction("Tether", "Untether"));
 	}
 
 	public TileObject getRange()
 	{
-		return TileObjects.getFirstAt(Tiles.getAt(rangePoint), x -> x.hasAction("Cook-at"));
+		return TileObjects.getFirstAt(rangePoint, x -> x.hasAction("Cook-at"));
 	}
 
 	public TileObject getClosestTether()
