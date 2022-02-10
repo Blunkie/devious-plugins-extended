@@ -215,11 +215,6 @@ public class HootOneClickPlugin extends Plugin
 			return null;
 		}
 
-		if (!t.hasAction(replacement))
-		{
-			return null;
-		}
-
 		if (isUseOn(replacement))
 		{
 			Item usedItem = getUsedItem(replacement);
@@ -228,6 +223,12 @@ public class HootOneClickPlugin extends Plugin
 				return useOn(usedItem, t);
 			}
 
+			log.debug("Used item was null for replacement: {}", replacement);
+			return null;
+		}
+
+		if (!t.hasAction(replacement))
+		{
 			return null;
 		}
 
