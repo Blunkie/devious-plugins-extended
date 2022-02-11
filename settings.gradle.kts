@@ -36,6 +36,7 @@ include("hoot-pickpocket")
 include("hoot-aerialfishing")
 include("hoot-chins")
 include("hoot-notifier")
+include("hoot-butler")
 include("interaction-tester")
 
 for (project in rootProject.children) {

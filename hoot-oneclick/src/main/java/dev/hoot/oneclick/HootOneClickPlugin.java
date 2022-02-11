@@ -217,10 +217,22 @@ public class HootOneClickPlugin extends Plugin
 
 		if (isUseOn(replacement))
 		{
-			Item usedItem = getUsedItem(replacement);
-			if (usedItem != null)
+			String itemName = replacement.substring(4);
+			if (isId(itemName))
 			{
-				return useOn(usedItem, t);
+				Item usedItem = Inventory.getFirst(Integer.parseInt(itemName));
+				if (usedItem != null)
+				{
+					return useOn(usedItem, t);
+				}
+			}
+			else
+			{
+				Item usedItem = getUsedItem(replacement);
+				if (usedItem != null)
+				{
+					return useOn(usedItem, t);
+				}
 			}
 
 			log.debug("Used item was null for replacement: {}", replacement);
@@ -365,5 +377,23 @@ public class HootOneClickPlugin extends Plugin
 		widgetConfigs.clear();
 		itemConfigs.clear();
 		playerConfigs.clear();
+	}
+
+	private boolean isId(String text)
+	{
+		if (text == null)
+		{
+			return false;
+		}
+		try
+		{
+			Integer.parseInt(text);
+		}
+		catch (NumberFormatException nfe)
+		{
+			return false;
+		}
+
+		return true;
 	}
 }

@@ -124,6 +124,19 @@
 }, {
   "projectUrl": "https://discord.gg/WTvTbSPknJ",
   "provider": "unethicalite",
+  "name": "Hoot Butler",
+  "description": "One-Clicks construction butler dialogs",
+  "id": "hootbutler-plugin",
+  "releases": [{
+    "date": "2022-02-11",
+    "sha512sum": "588B882F746A1ECD565B7126AB8C539CEE9CFE756A97E5EE55E24B1A250E2F5DBAA2CAD65AB2835AF2D33FCCAF00599CDE458ADF2EE8465824752BAC4D9B85EC",
+    "version": "0.0.1",
+    "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-butler-0.0.1.jar",
+    "requires": "^1.0.0"
+  }]
+}, {
+  "projectUrl": "https://discord.gg/WTvTbSPknJ",
+  "provider": "unethicalite",
   "name": "Hoot Chins",
   "description": "Auto chins",
   "id": "hootchins-plugin",
