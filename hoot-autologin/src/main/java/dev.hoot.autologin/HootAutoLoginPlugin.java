@@ -18,7 +18,7 @@ import org.pf4j.Extension;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-@PluginDescriptor(name = "Hoot Auto Login")
+@PluginDescriptor(name = "Hoot Auto Login", enabledByDefault = false)
 @Extension
 public class HootAutoLoginPlugin extends Plugin
 {

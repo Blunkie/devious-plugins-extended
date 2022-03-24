@@ -41,7 +41,8 @@ import static dev.hoot.tempoross.TemporossID.*;
 
 @Extension
 @PluginDescriptor(
-		name = "Hoot Tempoross"
+		name = "Hoot Tempoross",
+		enabledByDefault = false
 )
 @Slf4j
 public class HootTemporossPlugin extends LoopedPlugin

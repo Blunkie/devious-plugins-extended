@@ -1,4 +1,4 @@
-version = "0.0.8"
+version = "0.0.9"
 
 project.extra["PluginName"] = "Hoot One Click"
 project.extra["PluginDescription"] = "Allows you to One-Click interactions"

@@ -18,7 +18,7 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.plugins.PluginDescriptor;
 import org.pf4j.Extension;
 
-@PluginDescriptor(name = "Interaction Tester")
+@PluginDescriptor(name = "Interaction Tester", enabledByDefault = false)
 @Extension
 @Slf4j
 public class InteractionTesterPlugin extends LoopedPlugin

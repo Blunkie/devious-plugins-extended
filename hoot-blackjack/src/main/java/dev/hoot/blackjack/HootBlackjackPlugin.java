@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import java.util.Comparator;
 
 @Extension
-@PluginDescriptor(name = "Hoot Blackjack")
+@PluginDescriptor(name = "Hoot Blackjack", enabledByDefault = false)
 @Slf4j
 public class HootBlackjackPlugin extends LoopedPlugin
 {
