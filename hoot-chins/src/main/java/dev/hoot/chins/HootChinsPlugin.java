@@ -1,12 +1,12 @@
 package dev.hoot.chins;
 
 import com.google.inject.Inject;
-import dev.hoot.api.entities.Players;
-import dev.hoot.api.entities.TileItems;
-import dev.hoot.api.entities.TileObjects;
-import dev.hoot.api.items.Inventory;
-import dev.hoot.api.movement.Movement;
-import dev.hoot.api.plugins.LoopedPlugin;
+import dev.unethicalite.api.entities.Players;
+import dev.unethicalite.api.entities.TileItems;
+import dev.unethicalite.api.entities.TileObjects;
+import dev.unethicalite.api.items.Inventory;
+import dev.unethicalite.api.movement.Movement;
+import dev.unethicalite.api.plugins.LoopedPlugin;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.GameObject;

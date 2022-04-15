@@ -1,7 +1,7 @@
 package dev.hoot.tempoross;
 
-import dev.hoot.api.entities.Players;
-import dev.hoot.api.entities.TileObjects;
+import dev.unethicalite.api.entities.Players;
+import dev.unethicalite.api.entities.TileObjects;
 import lombok.Getter;
 import net.runelite.api.TileObject;
 import net.runelite.api.coords.WorldPoint;

@@ -1,9 +1,9 @@
 package dev.hoot.fighter;
 
-import dev.hoot.api.game.Skills;
-import dev.hoot.api.magic.Regular;
-import dev.hoot.api.magic.Rune;
-import dev.hoot.api.movement.pathfinder.RuneRequirement;
+import dev.unethicalite.api.game.Skills;
+import dev.unethicalite.api.magic.Regular;
+import dev.unethicalite.api.magic.Rune;
+import dev.unethicalite.api.movement.pathfinder.RuneRequirement;
 import net.runelite.api.Skill;
 
 import java.util.Arrays;

@@ -1,6 +1,6 @@
 package dev.hoot.agility;
 
-import dev.hoot.api.entities.Players;
+import dev.unethicalite.api.entities.Players;
 import net.runelite.api.Player;
 import net.runelite.api.TileObject;
 

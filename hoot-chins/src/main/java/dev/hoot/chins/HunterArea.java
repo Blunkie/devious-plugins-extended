@@ -1,8 +1,8 @@
 package dev.hoot.chins;
 
-import dev.hoot.api.game.Game;
-import dev.hoot.api.game.Skills;
-import dev.hoot.api.movement.pathfinder.GlobalCollisionMap;
+import dev.unethicalite.api.game.Game;
+import dev.unethicalite.api.game.Skills;
+import dev.unethicalite.api.movement.pathfinder.GlobalCollisionMap;
 import lombok.Getter;
 import net.runelite.api.Skill;
 import net.runelite.api.coords.WorldArea;

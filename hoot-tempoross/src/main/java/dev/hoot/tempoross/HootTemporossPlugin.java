@@ -1,15 +1,15 @@
 package dev.hoot.tempoross;
 
 import com.google.inject.Provides;
-import dev.hoot.api.entities.NPCs;
-import dev.hoot.api.entities.Players;
-import dev.hoot.api.entities.TileObjects;
-import dev.hoot.api.items.Inventory;
-import dev.hoot.api.movement.Movement;
-import dev.hoot.api.plugins.LoopedPlugin;
-import dev.hoot.api.scene.Tiles;
-import dev.hoot.api.widgets.Dialog;
-import dev.hoot.api.widgets.Widgets;
+import dev.unethicalite.api.entities.NPCs;
+import dev.unethicalite.api.entities.Players;
+import dev.unethicalite.api.entities.TileObjects;
+import dev.unethicalite.api.items.Inventory;
+import dev.unethicalite.api.movement.Movement;
+import dev.unethicalite.api.plugins.LoopedPlugin;
+import dev.unethicalite.api.scene.Tiles;
+import dev.unethicalite.api.widgets.Dialog;
+import dev.unethicalite.api.widgets.Widgets;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;

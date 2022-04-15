@@ -1,9 +1,9 @@
 package dev.hoot.notifier;
 
 import com.google.inject.Provides;
-import dev.hoot.api.coords.ScenePoint;
-import dev.hoot.api.entities.TileObjects;
-import dev.hoot.api.scene.Tiles;
+import dev.unethicalite.api.coords.ScenePoint;
+import dev.unethicalite.api.entities.TileObjects;
+import dev.unethicalite.api.scene.Tiles;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.MenuAction;

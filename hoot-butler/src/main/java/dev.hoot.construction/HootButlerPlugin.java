@@ -1,11 +1,11 @@
 package dev.hoot.construction;
 
 import com.google.inject.Provides;
-import dev.hoot.api.entities.NPCs;
-import dev.hoot.api.items.Inventory;
-import dev.hoot.api.packets.DialogPackets;
-import dev.hoot.api.widgets.Dialog;
-import dev.hoot.api.widgets.DialogOption;
+import dev.unethicalite.api.entities.NPCs;
+import dev.unethicalite.api.items.Inventory;
+import dev.unethicalite.api.packets.DialogPackets;
+import dev.unethicalite.api.widgets.Dialog;
+import dev.unethicalite.api.widgets.DialogOption;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.Item;

@@ -1,16 +1,16 @@
 package dev.hoot.blackjack;
 
 import com.google.inject.Provides;
-import dev.hoot.api.entities.NPCs;
-import dev.hoot.api.entities.Players;
-import dev.hoot.api.entities.TileObjects;
-import dev.hoot.api.game.Combat;
-import dev.hoot.api.game.Worlds;
-import dev.hoot.api.items.Inventory;
-import dev.hoot.api.items.Shop;
-import dev.hoot.api.movement.Movement;
-import dev.hoot.api.movement.Reachable;
-import dev.hoot.api.plugins.LoopedPlugin;
+import dev.unethicalite.api.entities.NPCs;
+import dev.unethicalite.api.entities.Players;
+import dev.unethicalite.api.entities.TileObjects;
+import dev.unethicalite.api.game.Combat;
+import dev.unethicalite.api.game.Worlds;
+import dev.unethicalite.api.items.Inventory;
+import dev.unethicalite.api.items.Shop;
+import dev.unethicalite.api.movement.Movement;
+import dev.unethicalite.api.movement.Reachable;
+import dev.unethicalite.api.plugins.LoopedPlugin;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Item;
 import net.runelite.api.NPC;

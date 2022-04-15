@@ -2,12 +2,12 @@ package dev.hoot.aerialfishing;
 
 import com.google.inject.Inject;
 import com.google.inject.Provides;
-import dev.hoot.api.commons.Time;
-import dev.hoot.api.entities.NPCs;
-import dev.hoot.api.entities.Players;
-import dev.hoot.api.entities.Projectiles;
-import dev.hoot.api.items.Inventory;
-import dev.hoot.api.plugins.LoopedPlugin;
+import dev.unethicalite.api.commons.Time;
+import dev.unethicalite.api.entities.NPCs;
+import dev.unethicalite.api.entities.Players;
+import dev.unethicalite.api.entities.Projectiles;
+import dev.unethicalite.api.items.Inventory;
+import dev.unethicalite.api.plugins.LoopedPlugin;
 import net.runelite.api.Client;
 import net.runelite.api.Item;
 import net.runelite.api.NPC;

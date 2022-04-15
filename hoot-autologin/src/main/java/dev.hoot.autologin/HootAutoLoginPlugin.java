@@ -2,9 +2,9 @@ package dev.hoot.autologin;
 
 import com.google.inject.Inject;
 import com.google.inject.Provides;
-import dev.hoot.api.events.LoginStateChanged;
-import dev.hoot.api.game.Game;
-import dev.hoot.api.input.Keyboard;
+import dev.unethicalite.api.events.LoginStateChanged;
+import dev.unethicalite.api.game.Game;
+import dev.unethicalite.api.input.Keyboard;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.events.GameStateChanged;
