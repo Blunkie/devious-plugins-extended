@@ -1,7 +1,7 @@
-version = "0.0.2"
+version = "0.0.3"
 
 project.extra["PluginName"] = "Hoot Notifier"
-project.extra["PluginDescription"] = "Custom notifier"
+project.extra["PluginDescription"] = "Notifies you for certain events in the game"
 
 tasks {
     jar {

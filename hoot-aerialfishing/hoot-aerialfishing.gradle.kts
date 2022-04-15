@@ -1,7 +1,7 @@
-version = "0.0.4"
+version = "0.0.5"
 
 project.extra["PluginName"] = "Hoot Aerial Fishing"
-project.extra["PluginDescription"] = "Auto Aerial Fishing"
+project.extra["PluginDescription"] = "Trains fishing using aerial fishing"
 
 tasks {
     jar {

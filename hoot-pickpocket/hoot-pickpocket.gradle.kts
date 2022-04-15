@@ -1,7 +1,7 @@
-version = "0.0.4"
+version = "0.0.5"
 
 project.extra["PluginName"] = "Hoot Pickpocket"
-project.extra["PluginDescription"] = "Auto pickpocket"
+project.extra["PluginDescription"] = "Configurable pickpocketer"
 
 tasks {
     jar {

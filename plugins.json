@@ -2,7 +2,7 @@
   "projectUrl": "https://discord.gg/WTvTbSPknJ",
   "provider": "unethicalite",
   "name": "Hoot Aerial Fishing",
-  "description": "Auto Aerial Fishing",
+  "description": "Trains fishing using aerial fishing",
   "id": "hootaerialfishing-plugin",
   "releases": [
     {
@@ -32,13 +32,20 @@
       "version": "0.0.4",
       "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-aerialfishing-0.0.4.jar",
       "requires": "^1.0.0"
+    },
+    {
+      "date": "2022-04-15",
+      "sha512sum": "D85990C6470B5CEE3B03B9F5655DCF41ACF71A053AAB18EB2BB5B1CDDFB10F1B01D7BA284861B176D4CB2D1D15F3ADA72DB33110C5EC9866168F39D0E2A86CAD",
+      "version": "0.0.5",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-aerialfishing-0.0.5.jar",
+      "requires": "^1.0.0"
     }
   ]
 }, {
   "projectUrl": "https://discord.gg/WTvTbSPknJ",
   "provider": "unethicalite",
   "name": "Hoot Agility",
-  "description": "Automatically completes rooftop agility courses",
+  "description": "Completes Rooftop agility courses",
   "id": "hootagility-plugin",
   "releases": [
     {
@@ -68,13 +75,20 @@
       "version": "0.0.4",
       "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-agility-0.0.4.jar",
       "requires": "^1.0.0"
+    },
+    {
+      "date": "2022-04-15",
+      "sha512sum": "4DD1ACBC24F57424E1BBCF91A8E0A51BD4BE0614E7AFF964A55DD800D6E7FEF59944C98EBF5868F4ECBF82159CBF83CACD408DD2DC6226F5904E733DC98B6155",
+      "version": "0.0.5",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-agility-0.0.5.jar",
+      "requires": "^1.0.0"
     }
   ]
 }, {
   "projectUrl": "https://discord.gg/WTvTbSPknJ",
   "provider": "unethicalite",
   "name": "Hoot Auto Login",
-  "description": "Automatically log in",
+  "description": "Automatically logs in specified account in config",
   "id": "hootautologin-plugin",
   "releases": [
     {
@@ -104,13 +118,20 @@
       "version": "0.0.5",
       "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-autologin-0.0.5.jar",
       "requires": "^1.0.0"
+    },
+    {
+      "date": "2022-04-15",
+      "sha512sum": "9702A482491F9C361001591AEC4974CE2D7DE83E0A087B3F6DD673A63F5C21F7215217BADB742F0E2677EF3203E47B1DA7EC4DEA72A2ABBBE39274619B9C4B53",
+      "version": "0.0.6",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-autologin-0.0.6.jar",
+      "requires": "^1.0.0"
     }
   ]
 }, {
   "projectUrl": "https://discord.gg/WTvTbSPknJ",
   "provider": "unethicalite",
   "name": "Hoot Blackjack",
-  "description": "Auto blackjack",
+  "description": "Trains thieving using blackjacking",
   "id": "hootblackjack-plugin",
   "releases": [
     {
@@ -147,6 +168,13 @@
       "version": "0.0.5",
       "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-blackjack-0.0.5.jar",
       "requires": "^1.0.0"
+    },
+    {
+      "date": "2022-04-15",
+      "sha512sum": "58929E8BA739A0B9B06445A17025C4F94CEC77A2FD6425F4E00151CC672FBFB39B7524302D8122B804CEB0724D4A3C1B16247603AF8718285FD115437C53EEFB",
+      "version": "0.0.6",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-blackjack-0.0.6.jar",
+      "requires": "^1.0.0"
     }
   ]
 }, {
@@ -169,13 +197,20 @@
       "version": "0.0.2",
       "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-butler-0.0.2.jar",
       "requires": "^1.0.0"
+    },
+    {
+      "date": "2022-04-15",
+      "sha512sum": "3E6B14DA2BFE6B81F5E1D4E25CFA2F9E7939A48464A7835E7128732DA7F3014AFE63E6E7E53B1F8982F455081010BBA7FB060F944E92F9435F515BCC9D13BD94",
+      "version": "0.0.3",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-butler-0.0.3.jar",
+      "requires": "^1.0.0"
     }
   ]
 }, {
   "projectUrl": "https://discord.gg/WTvTbSPknJ",
   "provider": "unethicalite",
   "name": "Hoot Chins",
-  "description": "Auto chins",
+  "description": "Hunts chinchompas",
   "id": "hootchins-plugin",
   "releases": [
     {
@@ -205,13 +240,20 @@
       "version": "0.0.4",
       "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-chins-0.0.4.jar",
       "requires": "^1.0.0"
+    },
+    {
+      "date": "2022-04-15",
+      "sha512sum": "E9EFC6B4FA8990303AC08AA0FCD6E2393B17B56E5C902A838379B9371274D2504688BE38F323561706D9766B82C14BB120628E433C14A44C98272F91E55132DF",
+      "version": "0.0.5",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-chins-0.0.5.jar",
+      "requires": "^1.0.0"
     }
   ]
 }, {
   "projectUrl": "https://discord.gg/WTvTbSPknJ",
   "provider": "unethicalite",
   "name": "Hoot Fighter",
-  "description": "A simple auto fighter",
+  "description": "Simple fighter, supports eating, looting, alching, prayer potions, prayer flicking",
   "id": "hootfighter-plugin",
   "releases": [
     {
@@ -241,13 +283,20 @@
       "version": "0.0.5",
       "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-fighter-0.0.5.jar",
       "requires": "^1.0.0"
+    },
+    {
+      "date": "2022-04-15",
+      "sha512sum": "B248CA04736DF4A5CAD95FFB714A320D2529241E66A9F8CD48DF123284FEFA10C7D3A4EDF091F50C0C33663AE0D6D9640B35C7B0674CD3D1D8F1CFB27F3C2B56",
+      "version": "0.0.6",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-fighter-0.0.6.jar",
+      "requires": "^1.0.0"
     }
   ]
 }, {
   "projectUrl": "https://discord.gg/WTvTbSPknJ",
   "provider": "unethicalite",
   "name": "Hoot Notifier",
-  "description": "Custom notifier",
+  "description": "Notifies you for certain events in the game",
   "id": "hootnotifier-plugin",
   "releases": [
     {
@@ -262,6 +311,13 @@
       "sha512sum": "74643765009B9492C729BE6B647EA712A1B9FFCC4193D218B3FACD26C47DE14BEEC344E74709560D1AD841B5BA25C541BCB1CE65542DFDD8C51B75B5B1D2ACFA",
       "version": "0.0.2",
       "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-notifier-0.0.2.jar",
+      "requires": "^1.0.0"
+    },
+    {
+      "date": "2022-04-15",
+      "sha512sum": "9E6620F3BCC9D1348791746E7C04961F312F4A066E24D977105A75292B035F11C3045AAD6383C4379813DF03B77A26676C63780501122B7B323A4474C44A43DC",
+      "version": "0.0.3",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-notifier-0.0.3.jar",
       "requires": "^1.0.0"
     }
   ]
@@ -327,13 +383,20 @@
       "version": "0.0.9",
       "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-oneclick-0.0.9.jar",
       "requires": "^1.0.0"
+    },
+    {
+      "date": "2022-04-15",
+      "sha512sum": "149A6E450E4101FB8F4DDFFDD2025B31BC7D45C214B0997CEA4EFCC131FFD918FE0373BA001060023CDBBBAAA1FE76B22FB1B70CA49E0342BFC0AC1CA43F754E",
+      "version": "0.0.10",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-oneclick-0.0.10.jar",
+      "requires": "^1.0.0"
     }
   ]
 }, {
   "projectUrl": "https://discord.gg/WTvTbSPknJ",
   "provider": "unethicalite",
   "name": "Hoot Pickpocket",
-  "description": "Auto pickpocket",
+  "description": "Configurable pickpocketer",
   "id": "hootpickpocket-plugin",
   "releases": [
     {
@@ -363,13 +426,20 @@
       "version": "0.0.4",
       "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-pickpocket-0.0.4.jar",
       "requires": "^1.0.0"
+    },
+    {
+      "date": "2022-04-15",
+      "sha512sum": "07B5C375E2B388B609E5B8278AB8EED2212049ABFA9EC6532370B0557CCC6DA61AD814F2AD60B0CB772592CDAF2A7FCFAC59C812FA02EC71DF0FF99B07E06467",
+      "version": "0.0.5",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-pickpocket-0.0.5.jar",
+      "requires": "^1.0.0"
     }
   ]
 }, {
   "projectUrl": "https://discord.gg/WTvTbSPknJ",
   "provider": "unethicalite",
   "name": "Hoot Tempoross",
-  "description": "Auto Tempoross",
+  "description": "Completes Tempoross",
   "id": "hoottempoross-plugin",
   "releases": [
     {
@@ -413,13 +483,20 @@
       "version": "0.0.6",
       "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-tempoross-0.0.6.jar",
       "requires": "^1.0.0"
+    },
+    {
+      "date": "2022-04-15",
+      "sha512sum": "B38F9FF9428F26D57890FDC909DD2A88C2C5340EE7AD44A89522FBD2DCA65D401C3B27237EDF1F2299643011C4FFDDCE0384BE450096764AAD131E4A69B4DED6",
+      "version": "0.0.7",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-tempoross-0.0.7.jar",
+      "requires": "^1.0.0"
     }
   ]
 }, {
   "projectUrl": "https://discord.gg/WTvTbSPknJ",
   "provider": "unethicalite",
   "name": "Hoot Trawler",
-  "description": "Auto Trawler",
+  "description": "Completes the Fishing Trawler",
   "id": "hoottrawler-plugin",
   "releases": [
     {
@@ -448,6 +525,13 @@
       "sha512sum": "2F06BF0E00B59E47B26D1F611F663CB26E135FE3E7FA0CA6518DD20FEF7AFF5B3A2A942726A5E884127B55A083AC347CACDFB5EBF404873F1894DCEEBD33F64E",
       "version": "0.0.4",
       "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-trawler-0.0.4.jar",
+      "requires": "^1.0.0"
+    },
+    {
+      "date": "2022-04-15",
+      "sha512sum": "A7C93A3FD199C2839FD292CD067B190365B5A9D36CE1D73E63B9CDB9C49757B09F9AEF04A5B732D52158BF639F6A95B213C87CFCAEA7D32636DA841EF5AB8479",
+      "version": "0.0.5",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-trawler-0.0.5.jar",
       "requires": "^1.0.0"
     }
   ]

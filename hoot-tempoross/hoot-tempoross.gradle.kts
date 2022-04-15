@@ -1,7 +1,7 @@
-version = "0.0.6"
+version = "0.0.7"
 
 project.extra["PluginName"] = "Hoot Tempoross"
-project.extra["PluginDescription"] = "Auto Tempoross"
+project.extra["PluginDescription"] = "Completes Tempoross"
 
 tasks {
     jar {

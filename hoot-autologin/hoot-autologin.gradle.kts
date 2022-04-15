@@ -1,7 +1,7 @@
-version = "0.0.5"
+version = "0.0.6"
 
 project.extra["PluginName"] = "Hoot Auto Login"
-project.extra["PluginDescription"] = "Automatically log in"
+project.extra["PluginDescription"] = "Automatically logs in specified account in config"
 
 dependencies {
     implementation("org.jboss.aerogear:aerogear-otp-java:1.0.0")

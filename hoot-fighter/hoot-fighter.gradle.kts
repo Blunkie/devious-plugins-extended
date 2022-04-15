@@ -1,7 +1,7 @@
-version = "0.0.5"
+version = "0.0.6"
 
 project.extra["PluginName"] = "Hoot Fighter"
-project.extra["PluginDescription"] = "A simple auto fighter"
+project.extra["PluginDescription"] = "Simple fighter, supports eating, looting, alching, prayer potions, prayer flicking"
 
 tasks {
     jar {

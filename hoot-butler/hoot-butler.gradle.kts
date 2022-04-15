@@ -1,4 +1,4 @@
-version = "0.0.2"
+version = "0.0.3"
 
 project.extra["PluginName"] = "Hoot Butler"
 project.extra["PluginDescription"] = "One-Clicks construction butler dialogs"

@@ -1,7 +1,7 @@
-version = "0.0.5"
+version = "0.0.6"
 
 project.extra["PluginName"] = "Hoot Blackjack"
-project.extra["PluginDescription"] = "Auto blackjack"
+project.extra["PluginDescription"] = "Trains thieving using blackjacking"
 
 tasks {
     jar {
