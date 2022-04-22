@@ -58,7 +58,7 @@ public class HootOneClickPlugin extends Plugin
 	private static final List<Integer> NPC_OPCODES = List.of(7, 8, 9, 10, 11, 12, 13, 1003);
 	private static final List<Integer> GROUND_ITEM_OPCODES = List.of(18, 19, 20, 21, 22, 1004);
 	private static final List<Integer> WIDGET_OPCODES = List.of(24, 25, 26, 28, 29, 30, 39, 40, 41, 42, 43);
-	private static final List<Integer> ITEM_OPCODES = List.of(33, 34, 35, 36, 37, 38, 1005);
+	private static final List<Integer> ITEM_OPCODES = List.of(33, 34, 35, 36, 37, 38, 1005, 57, 58);
 	private static final List<Integer> PLAYER_OPCODES = List.of(44, 45, 46, 47, 48, 49, 50, 51);
 
 	private final Map<String, String> gameObjectConfigs = new HashMap<>();
@@ -254,12 +254,7 @@ public class HootOneClickPlugin extends Plugin
 			return target.getMenu(0, MenuAction.ITEM_USE_ON_GROUND_ITEM.getId()).toEntry(client,
 					ONECLICK_MENUOPTION_PREFIX + item.getName() + " ->",
 					((TileItem) target).getName(),
-					x ->
-					{
-						client.setSelectedItemWidget(item.getWidgetId());
-						client.setSelectedItemSlot(item.getSlot());
-						client.setSelectedItemID(item.getId());
-					});
+					x -> item.use());
 		}
 
 		if (target instanceof TileObject)
@@ -267,24 +262,19 @@ public class HootOneClickPlugin extends Plugin
 			return target.getMenu(0, MenuAction.ITEM_USE_ON_GAME_OBJECT.getId()).toEntry(client,
 					ONECLICK_MENUOPTION_PREFIX + item.getName() + " ->",
 					((TileObject) target).getName(),
-					x ->
-					{
-						client.setSelectedItemWidget(item.getWidgetId());
-						client.setSelectedItemSlot(item.getSlot());
-						client.setSelectedItemID(item.getId());
-					});
+					x -> item.use());
 		}
 
 		if (target instanceof Item)
 		{
-			return item.getMenu(0, MenuAction.ITEM_USE_ON_WIDGET_ITEM.getId()).toEntry(client,
+			return item.getMenu(0, MenuAction.WIDGET_TARGET_ON_WIDGET.getId()).toEntry(client,
 					ONECLICK_MENUOPTION_PREFIX + item.getName() + " ->",
 					((Item) target).getName(),
 					x ->
 					{
-						client.setSelectedItemWidget(item.getWidgetId());
-						client.setSelectedItemSlot(((Item) target).getSlot());
-						client.setSelectedItemID(((Item) target).getId());
+						client.setSelectedSpellWidget(item.getWidgetId());
+						client.setSelectedSpellChildIndex(((Item) target).getSlot());
+						client.setSelectedSpellItemId(((Item) target).getId());
 					});
 		}
 
@@ -294,27 +284,17 @@ public class HootOneClickPlugin extends Plugin
 			return target.getMenu(0, menuAction.getId()).toEntry(client,
 					ONECLICK_MENUOPTION_PREFIX + item.getName() + " ->",
 					((Actor) target).getName(),
-					x ->
-					{
-						client.setSelectedItemWidget(item.getWidgetId());
-						client.setSelectedItemSlot(item.getSlot());
-						client.setSelectedItemID(item.getId());
-					});
+					x -> item.use());
 		}
 
 		if (target instanceof Widget)
 		{
 			int widgetId = ((Widget) target).getId();
-			return target.getMenu(0, MenuAction.ITEM_USE_ON_WIDGET.getId()).toEntry(client,
+			return target.getMenu(0, MenuAction.WIDGET_TARGET_ON_WIDGET.getId()).toEntry(client,
 					ONECLICK_MENUOPTION_PREFIX + item.getName() + " ->",
 					"Widget[" + WidgetInfo.TO_GROUP(((Widget) target).getId()) + ", "
 							+ WidgetInfo.TO_CHILD(widgetId) + "]",
-					x ->
-					{
-						client.setSelectedItemWidget(item.getWidgetId());
-						client.setSelectedItemSlot(item.getSlot());
-						client.setSelectedItemID(item.getId());
-					});
+					x -> item.use());
 		}
 
 		return null;

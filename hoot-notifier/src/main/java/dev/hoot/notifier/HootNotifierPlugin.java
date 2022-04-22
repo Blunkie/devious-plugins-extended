@@ -35,7 +35,7 @@ public class HootNotifierPlugin extends Plugin
 			MenuAction.GAME_OBJECT_FOURTH_OPTION,
 			MenuAction.GAME_OBJECT_FIFTH_OPTION,
 			MenuAction.ITEM_USE_ON_GAME_OBJECT,
-			MenuAction.SPELL_CAST_ON_GAME_OBJECT
+			MenuAction.WIDGET_TARGET_ON_GAME_OBJECT
 	);
 
 	@Inject
