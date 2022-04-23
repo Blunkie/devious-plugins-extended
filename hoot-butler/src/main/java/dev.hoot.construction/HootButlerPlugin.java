@@ -66,7 +66,7 @@ public class HootButlerPlugin extends Plugin
 	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked event)
 	{
-		if (event.getMenuAction() != MenuAction.ITEM_USE_ON_NPC)
+		if (event.getMenuAction() != MenuAction.WIDGET_TARGET_ON_NPC)
 		{
 			return;
 		}
@@ -151,13 +151,8 @@ public class HootButlerPlugin extends Plugin
 			{
 				String noted = item.isNoted() ? " (N)" : "";
 				String target = item.getName() + noted + " -> " + butler.getName();
-				MenuEntry entry = butler.getMenu(0, MenuAction.ITEM_USE_ON_NPC.getId())
-						.toEntry(client, "<col=00ff00>CONS:</col> ", target, m ->
-						{
-							client.setSelectedItemWidget(item.getWidgetId());
-							client.setSelectedItemSlot(item.getSlot());
-							client.setSelectedItemID(item.getId());
-						});
+				MenuEntry entry = butler.getMenu(0, MenuAction.WIDGET_TARGET_ON_NPC.getId())
+						.toEntry(client, "<col=00ff00>CONS:</col> ", target, m -> item.use());
 
 				client.setMenuEntries(new MenuEntry[]{entry});
 				return;

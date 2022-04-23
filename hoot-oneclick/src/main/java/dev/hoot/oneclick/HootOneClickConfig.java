@@ -69,26 +69,6 @@ public interface HootOneClickConfig extends Config
 	}
 
 	@ConfigSection(
-			name = "Widgets",
-			description = "Replace Widget interactions",
-			closedByDefault = true,
-			position = 3
-	)
-	String widgets = "Widgets";
-
-	@ConfigItem(
-			keyName = "widgets",
-			name = "Config",
-			description = "Usage = WidgetAction:ReplacedAction,WidgetAction:Use ItemName",
-			section = widgets,
-			position = 3
-	)
-	default String widgetConfig()
-	{
-		return "";
-	}
-
-	@ConfigSection(
 			name = "Items",
 			description = "Replace Item interactions",
 			closedByDefault = true,
@@ -132,7 +112,7 @@ public interface HootOneClickConfig extends Config
 			keyName = "exactEntityNames",
 			name = "Use exact entity names",
 			description = "Check for exact entity names",
-			position = 0
+			position = 11
 	)
 	default boolean exactEntityNames()
 	{
@@ -143,7 +123,7 @@ public interface HootOneClickConfig extends Config
 			keyName = "exactItemNames",
 			name = "Use exact used item names",
 			description = "Check for exact item names for items to use",
-			position = 1
+			position = 12
 	)
 	default boolean exactItemNames()
 	{
