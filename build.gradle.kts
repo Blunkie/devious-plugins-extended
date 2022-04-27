@@ -50,10 +50,11 @@ subprojects {
             url = uri("https://maven.pkg.github.com/unethicalite/unethicalite")
             credentials {
                 username = "buracc"
-                password = System.getenv("TOKEN")
+                password = System.getenv("GITHUB_TOKEN")
             }
         }
         mavenCentral()
+        mavenLocal()
     }
 
     dependencies {
