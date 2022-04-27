@@ -29,21 +29,22 @@ subprojects {
 //    apply(plugin = "checkstyle")
 
     repositories {
-        jcenter {
-            content {
-                excludeGroupByRegex("com\\.openosrs.*")
-            }
-        }
+//        jcenter {
+//            content {
+//                excludeGroupByRegex("com\\.openosrs.*")
+//            }
+//        }
+//
+//        exclusiveContent {
+//            forRepository {
+//                mavenLocal()
+//            }
+//
+//            filter {
+//                includeGroupByRegex("com\\.openosrs.*")
+//            }
+//        }
 
-        exclusiveContent {
-            forRepository {
-                mavenLocal()
-            }
-
-            filter {
-                includeGroupByRegex("com\\.openosrs.*")
-            }
-        }
 
         maven {
             url = uri("https://maven.pkg.github.com/unethicalite/unethicalite")
@@ -52,6 +53,7 @@ subprojects {
                 password = System.getenv("TOKEN")
             }
         }
+        mavenCentral()
     }
 
     dependencies {
