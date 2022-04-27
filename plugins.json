@@ -9,35 +9,35 @@
       "date": "2022-01-24",
       "sha512sum": "B5775BB8509168A7FC94A83FF59C7D0B0160632E7143DEFD484ADB2D157395AB5CD7858528F2ED2198E41640C7C989966D088A177FAEC3381583312C857D0DFA",
       "version": "0.0.1",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-aerialfishing-0.0.1.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-aerialfishing-0.0.1.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-01-26",
       "sha512sum": "466E77355C0B8DF48158F1D924C66578E1595CF779AD59E1852D5DF708761756404E2558EB7E2F592E2AE7CF8F7BEA3FFFFECBB07970BFEF40934C654CFE005F",
       "version": "0.0.2",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-aerialfishing-0.0.2.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-aerialfishing-0.0.2.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-01-28",
       "sha512sum": "B53AA48643F945EC9CCB4695D4366477D4826BF464EE6CAD373902BD64DCBE9A6B590F1EB9B714DD19564AD2AD5D45085D2A3F8C05AE794AE1330C47FB0FE407",
       "version": "0.0.3",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-aerialfishing-0.0.3.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-aerialfishing-0.0.3.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-03-15",
       "sha512sum": "8B2FDE58A820BD111B1F99C3FE9D74CE98E680DB423E9471F3A3993C5E6847A589978EA01FB81C9626F09E6354FC16BFE29358B766671BBC6133D169B3F4FD04",
       "version": "0.0.4",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-aerialfishing-0.0.4.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-aerialfishing-0.0.4.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-04-15",
       "sha512sum": "D85990C6470B5CEE3B03B9F5655DCF41ACF71A053AAB18EB2BB5B1CDDFB10F1B01D7BA284861B176D4CB2D1D15F3ADA72DB33110C5EC9866168F39D0E2A86CAD",
       "version": "0.0.5",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-aerialfishing-0.0.5.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-aerialfishing-0.0.5.jar",
       "requires": "^1.0.0"
     }
   ]
@@ -52,35 +52,35 @@
       "date": "2022-01-12",
       "sha512sum": "20A590013E2CD641BBCC835B2BBCAE388E5EF864B8EAF6DFC414D1D45AE71E4AACD32EEF861017E71FA2848DFE419C39D87F7D0BAF685BF41CE83095ABB444E8",
       "version": "0.0.1",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-agility-0.0.1.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-agility-0.0.1.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-01-26",
       "sha512sum": "5594EBC90D5C9100F4E6E8621D06D19A4CB11BF790DB721321C631D5A99B8C97C1B3784AEDB7B508E6AB7DCD10FAC40ECF35D1B53E75716EF151C756A30C30F6",
       "version": "0.0.2",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-agility-0.0.2.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-agility-0.0.2.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-01-28",
       "sha512sum": "E4E07E93313107341AC0702826CF30550E317467A8DAB60DAE6B7FA6C41BE8C262E9673B2ACA9234F06C55A01D4AEC35EA99D76EE7105B7D0BAB7CCC8178DD16",
       "version": "0.0.3",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-agility-0.0.3.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-agility-0.0.3.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-03-15",
       "sha512sum": "B8C06C3159D7D01411B2E081F61593983F2658C54E4FDC603E0FA540F937FD49BE905EC6EFFF94AEA1D972EF3E774CFE90C7108BC22E30055388B96BD8CBD465",
       "version": "0.0.4",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-agility-0.0.4.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-agility-0.0.4.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-04-15",
       "sha512sum": "4DD1ACBC24F57424E1BBCF91A8E0A51BD4BE0614E7AFF964A55DD800D6E7FEF59944C98EBF5868F4ECBF82159CBF83CACD408DD2DC6226F5904E733DC98B6155",
       "version": "0.0.5",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-agility-0.0.5.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-agility-0.0.5.jar",
       "requires": "^1.0.0"
     }
   ]
@@ -95,35 +95,35 @@
       "date": "2022-01-12",
       "sha512sum": "7FC440AAD3B419A5EBD5C939809218ABE0D53A03867049044329ED5854C5A016D48B04C603F1FC4F5B75C4C594EFDFFAFDECE60D62EA2EBAFD4E06176B3CE33A",
       "version": "0.0.2",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-autologin-0.0.2.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-autologin-0.0.2.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-01-26",
       "sha512sum": "52A25D83DD71FB22D3D13A213CF9352441A7BB446DA1BA5A6DF160BEEF8FC6D6B9507D1AA135C6D0B5DB40F9DFCA38E762C2D0D2BF0C8053048170571F0678E5",
       "version": "0.0.3",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-autologin-0.0.3.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-autologin-0.0.3.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-01-28",
       "sha512sum": "7CFD9449961D85934824F4F4735CB907275C06D42F44CEB2A2B1CA51793DED6A5365ABAB70BC9924F359113A67A58F79B6D1D26E2024E6FAC86A57CFB4EFFD0F",
       "version": "0.0.4",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-autologin-0.0.4.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-autologin-0.0.4.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-03-15",
       "sha512sum": "5971B5F43A611B377752C86A088AB613D918013CE72E9E780249913779B91306980E72AA30E92E57C2014D000A7CA6FA32134E3B204DC6E0DDBE03A086C123D6",
       "version": "0.0.5",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-autologin-0.0.5.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-autologin-0.0.5.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-04-15",
       "sha512sum": "9702A482491F9C361001591AEC4974CE2D7DE83E0A087B3F6DD673A63F5C21F7215217BADB742F0E2677EF3203E47B1DA7EC4DEA72A2ABBBE39274619B9C4B53",
       "version": "0.0.6",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-autologin-0.0.6.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-autologin-0.0.6.jar",
       "requires": "^1.0.0"
     }
   ]
@@ -138,42 +138,42 @@
       "date": "2022-01-20",
       "sha512sum": "153318646A2D13ED881012139B34DA93072F1E89B0902E0838CDC9D61C2E4C1835E55283093496F9BB085C90DDE48865B65A087423C78BCDBEB1657DF7328E6C",
       "version": "0.0.1",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-blackjack-0.0.1.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-blackjack-0.0.1.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-01-21",
       "sha512sum": "58258678B0E245C5744D4850FB9A813D553482C8D67AD70D750CF9E1FB240456C4A840A68168EF1ADE14052FD581741FB095B0925345CF4057C83BB86124B7D1",
       "version": "0.0.2",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-blackjack-0.0.2.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-blackjack-0.0.2.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-01-26",
       "sha512sum": "A751D580D9FCA2247A42FBBFE11ACC37A44E2B469A5E33AAFCB4CC34E9540C9599807EDA231A1BE6E6EF5096ADD671E8C46DB09C5CBB0E5F3C2C08F8BA2F2134",
       "version": "0.0.3",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-blackjack-0.0.3.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-blackjack-0.0.3.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-01-28",
       "sha512sum": "D1CCE5E5AD6F80CEB37A4BB0EDDA2F339433FD212085535BCD4BD802E27D391702AEB797689A25EDD3E547625C74F616FC47633802056CAB436CDC9A7030D9F2",
       "version": "0.0.4",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-blackjack-0.0.4.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-blackjack-0.0.4.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-03-15",
       "sha512sum": "48EC253C3D62900D02C9EC90EFF610674D91C1713F6A19214C7553709629EBD3D4BCA72F2FD54000F2B7C98795585F7BEB2746B23FBEC4DCBA9CB224003D6336",
       "version": "0.0.5",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-blackjack-0.0.5.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-blackjack-0.0.5.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-04-15",
       "sha512sum": "58929E8BA739A0B9B06445A17025C4F94CEC77A2FD6425F4E00151CC672FBFB39B7524302D8122B804CEB0724D4A3C1B16247603AF8718285FD115437C53EEFB",
       "version": "0.0.6",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-blackjack-0.0.6.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-blackjack-0.0.6.jar",
       "requires": "^1.0.0"
     }
   ]
@@ -188,21 +188,21 @@
       "date": "2022-02-11",
       "sha512sum": "588B882F746A1ECD565B7126AB8C539CEE9CFE756A97E5EE55E24B1A250E2F5DBAA2CAD65AB2835AF2D33FCCAF00599CDE458ADF2EE8465824752BAC4D9B85EC",
       "version": "0.0.1",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-butler-0.0.1.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-butler-0.0.1.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-03-15",
       "sha512sum": "773865C1F6D81F8C9EC4472DCF27176F6C92E4DB6F7E5D53AB34177DC7ED6D9E49C0DE5CA3E39839F65F6A298461B91E216DDB9C5263E0DF6C7A7AF7EF42D2B2",
       "version": "0.0.2",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-butler-0.0.2.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-butler-0.0.2.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-04-15",
       "sha512sum": "3E6B14DA2BFE6B81F5E1D4E25CFA2F9E7939A48464A7835E7128732DA7F3014AFE63E6E7E53B1F8982F455081010BBA7FB060F944E92F9435F515BCC9D13BD94",
       "version": "0.0.3",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-butler-0.0.3.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-butler-0.0.3.jar",
       "requires": "^1.0.0"
     }
   ]
@@ -217,35 +217,35 @@
       "date": "2022-01-24",
       "sha512sum": "73C87C51C927938E56E797FEDC6178B8B6F716F9ECE1D525C9A2817E27EE60C619EE0F17B0A90B7B93DC9B99F2FC7AFD2C031C46F069CD713A817C8E20B79D46",
       "version": "0.0.1",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-chins-0.0.1.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-chins-0.0.1.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-01-26",
       "sha512sum": "B90912BFAB932B5D4FD29F64A7400CED41F8B6A2C0EBB7C9532786F4DD5D47293BFE867B3F0A30D99E761FA01C9D5D4A9E3BD136112CFB8D5847E5A2CFF0A5C4",
       "version": "0.0.2",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-chins-0.0.2.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-chins-0.0.2.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-01-28",
       "sha512sum": "610E69A89E92507CACB808F05FFBE3316444FE6043F25C21C8D083BD409A1E8305F4379FCF570E8AE971355C9D8C4D4D412DC57270636121662C0196D8097131",
       "version": "0.0.3",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-chins-0.0.3.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-chins-0.0.3.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-03-15",
       "sha512sum": "116511ED7A7B4854F97B9EB7352EEF4EB5310A298E78CA12D2A0E180586E7A46F2DF7C43B70758B0A182A0C19DE74C5FA3DE72C80CFBABA0D7E361DD81065D33",
       "version": "0.0.4",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-chins-0.0.4.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-chins-0.0.4.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-04-15",
       "sha512sum": "E9EFC6B4FA8990303AC08AA0FCD6E2393B17B56E5C902A838379B9371274D2504688BE38F323561706D9766B82C14BB120628E433C14A44C98272F91E55132DF",
       "version": "0.0.5",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-chins-0.0.5.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-chins-0.0.5.jar",
       "requires": "^1.0.0"
     }
   ]
@@ -260,35 +260,35 @@
       "date": "2022-01-12",
       "sha512sum": "A19933D3E556A4B611E363F6E7E9E9FA1D4C593051E6B2BDF7965281CC14729FCDB1FDCD208DE1C43511BBA23B0DE055ECA396A7465E7230D1CF22783DAD1F31",
       "version": "0.0.2",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-fighter-0.0.2.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-fighter-0.0.2.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-01-26",
       "sha512sum": "1DAC75F5DCC6E0B379C72E41A5FFB87DD689E6039B9845032F485BBADE890B63A44BC7DED4EAB4147F2BF31359C1683C0F5E71CBED0D323F9C268D3333913E94",
       "version": "0.0.3",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-fighter-0.0.3.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-fighter-0.0.3.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-01-28",
       "sha512sum": "AC5E9F8072C469E3470D0FABBC7F7855756EA3E35ACC7E8AC32AB63B72BF8438F7B6C35E2FECA0DDCC843AEE3AACAA1FFB057E54DDC4E0A143439F6EEC767E54",
       "version": "0.0.4",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-fighter-0.0.4.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-fighter-0.0.4.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-03-15",
       "sha512sum": "C6C8B7957DE8E94D53CF05FBCCAE14AE2FDA7554E7B75A386FF983EF1CC365154A38AF7132C02827F0CA4489E3B89645E81D6FA9B1E2F2B04EDCB049CC232751",
       "version": "0.0.5",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-fighter-0.0.5.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-fighter-0.0.5.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-04-15",
       "sha512sum": "B248CA04736DF4A5CAD95FFB714A320D2529241E66A9F8CD48DF123284FEFA10C7D3A4EDF091F50C0C33663AE0D6D9640B35C7B0674CD3D1D8F1CFB27F3C2B56",
       "version": "0.0.6",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-fighter-0.0.6.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-fighter-0.0.6.jar",
       "requires": "^1.0.0"
     }
   ]
@@ -303,21 +303,21 @@
       "date": "2022-01-30",
       "sha512sum": "75C06C6C40C32843068AA34F15A1036C0280F630DA8352B83268396C2C2DF197196AA48312B3A9C5A6CDB41438D3F1DA0B8B82EBCD234DBAB111BD10FABF043D",
       "version": "0.0.1",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-notifier-0.0.1.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-notifier-0.0.1.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-03-15",
       "sha512sum": "74643765009B9492C729BE6B647EA712A1B9FFCC4193D218B3FACD26C47DE14BEEC344E74709560D1AD841B5BA25C541BCB1CE65542DFDD8C51B75B5B1D2ACFA",
       "version": "0.0.2",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-notifier-0.0.2.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-notifier-0.0.2.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-04-15",
       "sha512sum": "9E6620F3BCC9D1348791746E7C04961F312F4A066E24D977105A75292B035F11C3045AAD6383C4379813DF03B77A26676C63780501122B7B323A4474C44A43DC",
       "version": "0.0.3",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-notifier-0.0.3.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-notifier-0.0.3.jar",
       "requires": "^1.0.0"
     }
   ]
@@ -332,63 +332,63 @@
       "date": "2022-01-12",
       "sha512sum": "7F1D3695D60A57BA778F29EC67C492739F1E28B8C106573B7F42505EBD3D4199F181F775C4069420C6C5AAAB782D27DC311B860FABCD0CE7C6F037B0BA9C92BA",
       "version": "0.0.2",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-oneclick-0.0.2.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-oneclick-0.0.2.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-01-12",
       "sha512sum": "98A7A13F869D602AC073252B89FBDA4ECF08A921C5C7CDB1947B88EEA9EDFA1B0C3A6A461A702BDB885A971E9EE0801F39D34EC7358B4768A31B4009E6D3672B",
       "version": "0.0.3",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-oneclick-0.0.3.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-oneclick-0.0.3.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-01-26",
       "sha512sum": "5D3B633FAB7F6A167BFA3981BA1C722C9FB7BEBEA639CA5CD10E762396D1D665558880F1D66620CE780E1A279AF51275CA5328FC544E83C7AE24DFA6DEE71114",
       "version": "0.0.4",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-oneclick-0.0.4.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-oneclick-0.0.4.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-01-28",
       "sha512sum": "A05580E5C95946B7097C6A578F447A76C2EE55D539E2E33E02E528570BB025B774F2A1FC82985BE132DCCCF5C651AFC15C90AD6D86A84011E656D43364340141",
       "version": "0.0.5",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-oneclick-0.0.5.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-oneclick-0.0.5.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-01-28",
       "sha512sum": "25984B221D4C84299D335A2C9C626D1BE5BDA083FBFA8CBF7230BEFC4B9DC3E588EB25509DD93E7DFA8162D518616E7AF4C80DD36B38E31311D52E9073A70F50",
       "version": "0.0.6",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-oneclick-0.0.6.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-oneclick-0.0.6.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-02-06",
       "sha512sum": "688D74EF9FDA9873935EAD258A13989A00FB3044809B8D6F3D9013285ED7E64B4D37A9CF72E45CBE7959CEC3FC6FE99457F1DA4CC7915BA277D32700230E7177",
       "version": "0.0.7",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-oneclick-0.0.7.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-oneclick-0.0.7.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-02-10",
       "sha512sum": "666B5438544E0EEEADC706C3939309C717E01B47862B56AD4E632D704CC7CD0394B9A953FCED673DA4190DA8F2074D748ECD01D4F8FE91B72C38A0F562526A22",
       "version": "0.0.8",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-oneclick-0.0.8.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-oneclick-0.0.8.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-03-15",
       "sha512sum": "3216C5E29E5EF8723070AD341542E2831BE99F29281F99F5058E3D1B88CFB668F375F43C97239C62E6AACB86749388C81E9B927F3F2A6531197077BE127BF732",
       "version": "0.0.9",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-oneclick-0.0.9.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-oneclick-0.0.9.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-04-15",
       "sha512sum": "149A6E450E4101FB8F4DDFFDD2025B31BC7D45C214B0997CEA4EFCC131FFD918FE0373BA001060023CDBBBAAA1FE76B22FB1B70CA49E0342BFC0AC1CA43F754E",
       "version": "0.0.10",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-oneclick-0.0.10.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-oneclick-0.0.10.jar",
       "requires": "^1.0.0"
     }
   ]
@@ -403,35 +403,35 @@
       "date": "2022-01-24",
       "sha512sum": "F02A8A5C0DE59835AF6B0CD1BE230C9C0EBA9C7ACE1F97993AE0BD83CA8DAB2FB063C98D44D2779AEDF4FC69FB8767688C7D8482EA33259B87FDB74D0D132800",
       "version": "0.0.1",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-pickpocket-0.0.1.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-pickpocket-0.0.1.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-01-26",
       "sha512sum": "71410C126D01CA40F5CB2FCE4153C034C6C12D2BAC613BD37A85E8DA8D143F94CDFCD0D57B0E3696371609F532956E1CE0637421EF989320209EC5863E91A6A9",
       "version": "0.0.2",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-pickpocket-0.0.2.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-pickpocket-0.0.2.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-01-28",
       "sha512sum": "B3B42442B0BFDD7CC2EE053A7A0088734D0C1BFEA558C9503571FD758344AF16ADED7DE2C4755F1BC7AA61BE4D28F6B31E6106566BD65BE52D24105A938FF1BE",
       "version": "0.0.3",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-pickpocket-0.0.3.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-pickpocket-0.0.3.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-03-15",
       "sha512sum": "8D68F081D8B72380DFD78CAD4C5497960F8F3EDF23F296D9626867A094F7946447C6AB7172CF0FE2C0D07CD0CA5A0DFEBFE4EDD05F68D5C6628D7755EA90A114",
       "version": "0.0.4",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-pickpocket-0.0.4.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-pickpocket-0.0.4.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-04-15",
       "sha512sum": "07B5C375E2B388B609E5B8278AB8EED2212049ABFA9EC6532370B0557CCC6DA61AD814F2AD60B0CB772592CDAF2A7FCFAC59C812FA02EC71DF0FF99B07E06467",
       "version": "0.0.5",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-pickpocket-0.0.5.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-pickpocket-0.0.5.jar",
       "requires": "^1.0.0"
     }
   ]
@@ -446,49 +446,49 @@
       "date": "2022-01-20",
       "sha512sum": "07BA1AF841E1081D8A58934C17F72FCA74E961ED836869810BD033BFE95EF0FCB64B50F67905420B89A4D10331E16FAB11CADC47705879031FC784DB482FD6D6",
       "version": "0.0.1",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-tempoross-0.0.1.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-tempoross-0.0.1.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-01-26",
       "sha512sum": "9F7ABC90FF9A33341C98192470575CA17EE9ED1ABDB2E200D599EE89E0BC6D52667DEA1232AF33E199C0F09782DDFB2507082F68B19858C8E8EC4945C80641D2",
       "version": "0.0.2",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-tempoross-0.0.2.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-tempoross-0.0.2.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-01-28",
       "sha512sum": "2E261C923742D8DB66E2CD61593A799C66E049EA63F68606AE076B03C49F3EF62967518735328F064C6D358FA56D1A95956EF7031603DDE16A1784866813FBEE",
       "version": "0.0.3",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-tempoross-0.0.3.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-tempoross-0.0.3.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-02-09",
       "sha512sum": "345222656826DF0A40C2DEEA488FC712C6F151EBEF45223C93D1F5AD78920B1E0FBCA4337533AB130DF4E4F628F0606D3CEDC9CFE1291CFA56CE7D0A8C116697",
       "version": "0.0.4",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-tempoross-0.0.4.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-tempoross-0.0.4.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-02-09",
       "sha512sum": "0FFB76DF80B6CF2C0CDDDA34B514FFC1B1A4211E22BCF44A05E95B3D0DBF75828B70F9F37493AF8CBF0CDCF06F278E1F4DB7C861AEC89AD970F56965124B27B0",
       "version": "0.0.5",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-tempoross-0.0.5.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-tempoross-0.0.5.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-03-15",
       "sha512sum": "37DCC4C8E9A6885CF8EEAA9BACD13B158D38EC86B156ACEA693997AB196825D08920CD6DD8B2389305C85A757C5DC48C1C9309F41124E18AF88BC6998C3F1BA7",
       "version": "0.0.6",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-tempoross-0.0.6.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-tempoross-0.0.6.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-04-15",
       "sha512sum": "B38F9FF9428F26D57890FDC909DD2A88C2C5340EE7AD44A89522FBD2DCA65D401C3B27237EDF1F2299643011C4FFDDCE0384BE450096764AAD131E4A69B4DED6",
       "version": "0.0.7",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-tempoross-0.0.7.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-tempoross-0.0.7.jar",
       "requires": "^1.0.0"
     }
   ]
@@ -503,35 +503,35 @@
       "date": "2022-01-24",
       "sha512sum": "98383C1F2EA3590133BE3A74DDAE72FF0BA837728FFA4091783EBB91A2789CE0B2CFDC5F0849D81E17E46D39EDDDB6A10B6D68E8649BF45068E95E85B1518588",
       "version": "0.0.1",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-trawler-0.0.1.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-trawler-0.0.1.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-01-26",
       "sha512sum": "458DB4A5709982AEE74BD5B2B78E1DB1CD15C1AEFE332E9A8DA2093B8189D1DDF25AE64E523AA5BCE9D809D40E963794BD9AFB393F7D88650404A304B338AB42",
       "version": "0.0.2",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-trawler-0.0.2.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-trawler-0.0.2.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-01-28",
       "sha512sum": "D487F2336F2333E00DF7AE61B6B04DACCC46930DB1EA03CDDD77E0C2922FB4AC29C30E1436AAB5849FCC9C6D57BDA81CCFE9CC6B0D6E6A68FB86FD4674FA7467",
       "version": "0.0.3",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-trawler-0.0.3.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-trawler-0.0.3.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-03-15",
       "sha512sum": "2F06BF0E00B59E47B26D1F611F663CB26E135FE3E7FA0CA6518DD20FEF7AFF5B3A2A942726A5E884127B55A083AC347CACDFB5EBF404873F1894DCEEBD33F64E",
       "version": "0.0.4",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-trawler-0.0.4.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-trawler-0.0.4.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-04-15",
       "sha512sum": "A7C93A3FD199C2839FD292CD067B190365B5A9D36CE1D73E63B9CDB9C49757B09F9AEF04A5B732D52158BF639F6A95B213C87CFCAEA7D32636DA841EF5AB8479",
       "version": "0.0.5",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/hoot-trawler-0.0.5.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/hoot-trawler-0.0.5.jar",
       "requires": "^1.0.0"
     }
   ]
@@ -546,14 +546,14 @@
       "date": "2022-01-28",
       "sha512sum": "123842003BD0827EE0D93A3E7B1B4759556BEE9F0BEAB830C50DD977DE3C6A37A0D232CDAD9D4C43A71B5397D76341FC3D1A6277950E950EC8B05A6FFF2180A7",
       "version": "0.0.1",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/interaction-tester-0.0.1.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/interaction-tester-0.0.1.jar",
       "requires": "^1.0.0"
     },
     {
       "date": "2022-03-15",
       "sha512sum": "30DDC5B1D0FA6DF65FA5705EC8127151A165738247593594B3F6E571F27F6AE6037A9EFC1A041A1EE5F8C9A5656D6E7D3CE86B95D4F9A8E6CB922F5FBA63827B",
       "version": "0.0.2",
-      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins/master/release/interaction-tester-0.0.2.jar",
+      "url": "https://raw.githubusercontent.com/buracc/unethicalite-plugins-release/master/release/interaction-tester-0.0.2.jar",
       "requires": "^1.0.0"
     }
   ]

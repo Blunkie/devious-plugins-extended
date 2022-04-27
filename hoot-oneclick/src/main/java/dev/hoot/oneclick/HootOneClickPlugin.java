@@ -219,7 +219,7 @@ public class HootOneClickPlugin extends Plugin
 			return null;
 		}
 
-		return target.getMenu(replacement).toEntry(client)
+		return target.getMenu(replacement).toEntry(client, 0)
 				.setOption(ONECLICK_MENUOPTION_PREFIX + replacement)
 				.setTarget(((EntityNameable) target).getName())
 				.setForceLeftClick(true);
@@ -229,7 +229,7 @@ public class HootOneClickPlugin extends Plugin
 	{
 		if (target instanceof TileItem)
 		{
-			return target.getMenu(0, MenuAction.WIDGET_TARGET_ON_GROUND_ITEM.getId()).toEntry(client)
+			return target.getMenu(0, MenuAction.WIDGET_TARGET_ON_GROUND_ITEM.getId()).toEntry(client, 0)
 					.setOption(ONECLICK_MENUOPTION_PREFIX + item.getName() + " ->")
 					.setTarget(((TileItem) target).getName())
 					.onClick(x -> item.use());
@@ -237,7 +237,7 @@ public class HootOneClickPlugin extends Plugin
 
 		if (target instanceof TileObject)
 		{
-			return target.getMenu(0, MenuAction.WIDGET_TARGET_ON_GAME_OBJECT.getId()).toEntry(client)
+			return target.getMenu(0, MenuAction.WIDGET_TARGET_ON_GAME_OBJECT.getId()).toEntry(client, 0)
 					.setOption(ONECLICK_MENUOPTION_PREFIX + item.getName() + " ->")
 					.setTarget(((TileObject) target).getName())
 					.onClick(x -> item.use());
@@ -245,7 +245,7 @@ public class HootOneClickPlugin extends Plugin
 
 		if (target instanceof Item)
 		{
-			return target.getMenu(0, MenuAction.WIDGET_TARGET_ON_WIDGET.getId()).toEntry(client)
+			return target.getMenu(0, MenuAction.WIDGET_TARGET_ON_WIDGET.getId()).toEntry(client, 0)
 					.setOption(ONECLICK_MENUOPTION_PREFIX + item.getName() + " ->")
 					.setTarget(((Item) target).getName())
 					.onClick(x -> item.use());
@@ -254,7 +254,7 @@ public class HootOneClickPlugin extends Plugin
 		if (target instanceof Actor)
 		{
 			MenuAction menuAction = target instanceof NPC ? MenuAction.WIDGET_TARGET_ON_NPC : MenuAction.WIDGET_TARGET_ON_PLAYER;
-			return target.getMenu(0, menuAction.getId()).toEntry(client)
+			return target.getMenu(0, menuAction.getId()).toEntry(client, 0)
 					.setOption(ONECLICK_MENUOPTION_PREFIX + item.getName() + " ->")
 					.setTarget(((Actor) target).getName())
 					.onClick(x -> item.use());
