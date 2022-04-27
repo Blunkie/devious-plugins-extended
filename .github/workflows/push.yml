@@ -18,9 +18,7 @@ jobs:
 
       - name: Push to release branch
         run: |
-          mkdir deploy
-          
-          cp release deploy
+          cp -r release deploy
           cp plugins.json deploy
           cd deploy
           
