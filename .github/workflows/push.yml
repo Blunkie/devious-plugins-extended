@@ -28,4 +28,4 @@ jobs:
           git checkout -b master
           git add -A
           git commit -m 'release'
-          git push -f https://buracc:${{ secrets.GITHUB_TOKEN }}@github.com/unethicalite/unethicalite-plugins-release.git master
+          git push -f https://buracc:${{ secrets.REPO_PAT }}@github.com/unethicalite/unethicalite-plugins-release.git master
