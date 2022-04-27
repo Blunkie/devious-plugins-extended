@@ -1,5 +1,4 @@
 import ProjectVersions.openosrsVersion
-import groovy.xml.dom.DOMCategory.attributes
 
 buildscript {
     repositories {
@@ -43,6 +42,14 @@ subprojects {
 
             filter {
                 includeGroupByRegex("com\\.openosrs.*")
+            }
+        }
+
+        maven {
+            url = uri("https://maven.pkg.github.com/unethicalite/unethicalite")
+            credentials {
+                username = "buracc"
+                password = System.getenv("TOKEN")
             }
         }
     }
