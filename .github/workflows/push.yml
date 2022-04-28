@@ -18,6 +18,7 @@ jobs:
 
       - name: Push to release branch
         run: |
+          git clone https://github.com/unethicalite/unethicalite-plugins-release.git deploy
           cp -r release deploy
           cp plugins.json deploy
           cd deploy
@@ -27,5 +28,5 @@ jobs:
           git init
           git checkout -b master
           git add -A
-          git commit -m 'release'
-          git push -f https://buracc:${{ secrets.REPO_PAT }}@github.com/unethicalite/unethicalite-plugins-release.git master
+          git commit -m 'Plugins auto release'
+          git push https://buracc:${{ secrets.REPO_PAT }}@github.com/unethicalite/unethicalite-plugins-release.git master
