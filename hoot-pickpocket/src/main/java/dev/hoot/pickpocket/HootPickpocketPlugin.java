@@ -8,6 +8,8 @@ import dev.unethicalite.api.entities.Players;
 import dev.unethicalite.api.game.Combat;
 import dev.unethicalite.api.items.Bank;
 import dev.unethicalite.api.items.Inventory;
+import dev.unethicalite.api.magic.Magic;
+import dev.unethicalite.api.magic.Regular;
 import dev.unethicalite.api.movement.Movement;
 import dev.unethicalite.api.movement.Reachable;
 import dev.unethicalite.api.movement.pathfinder.BankLocation;
@@ -40,6 +42,7 @@ public class HootPickpocketPlugin extends LoopedPlugin
 		if (jug != null && config.foodId() == ItemID.JUG_OF_WINE)
 		{
 			jug.interact("Drop");
+			log.debug("Dropping jug {}", jug.getActions().indexOf("Drop"));
 			return -1;
 		}
 
@@ -47,6 +50,7 @@ public class HootPickpocketPlugin extends LoopedPlugin
 		if (pouch != null && pouch.getQuantity() > 5)
 		{
 			pouch.interact("Open-all");
+			log.debug("Opening pouches");
 			return -1;
 		}
 
@@ -57,13 +61,15 @@ public class HootPickpocketPlugin extends LoopedPlugin
 				Item food = Inventory.getFirst(config.foodId());
 				if (food != null)
 				{
-					food.interact(0);
+					food.interact(1);
+					log.debug("Eating food");
 					return -1;
 				}
 
 				if (Bank.isOpen())
 				{
 					Bank.withdraw(config.foodId(), 10, Bank.WithdrawMode.ITEM);
+					log.debug("Withdrawing food");
 					return -1;
 				}
 

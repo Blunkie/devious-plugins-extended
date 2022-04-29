@@ -16,6 +16,7 @@ import net.runelite.api.Item;
 import net.runelite.api.NPC;
 import net.runelite.api.Player;
 import net.runelite.api.TileObject;
+import net.runelite.api.World;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.plugins.PluginDescriptor;
 import org.pf4j.Extension;
@@ -44,14 +45,16 @@ public class HootBlackjackPlugin extends LoopedPlugin
 						spot.getArea().contains(x)
 		);
 		if (target != null && ((target.getInteracting() != null && target.getInteracting() == local)
-				|| target.getOverheadText().contains("I'll kill you for that")))
+				|| target.getOverheadText().startsWith("I'll kill you for that")))
 		{
+			log.debug("Pickpocketing");
 			target.interact("Pickpocket");
 			return 222;
 		}
 
 		if (pouch != null && pouch.getQuantity() > 5)
 		{
+			log.debug("Opening pouches");
 			pouch.interact("Open-all");
 			return -1;
 		}
@@ -59,6 +62,7 @@ public class HootBlackjackPlugin extends LoopedPlugin
 		Item jug = Inventory.getFirst("Jug");
 		if (jug != null)
 		{
+			log.debug("Dropping jug");
 			jug.interact("Drop");
 			return -1;
 		}
@@ -74,8 +78,8 @@ public class HootBlackjackPlugin extends LoopedPlugin
 				);
 				if (target == null)
 				{
-					log.info("Unable to find target");
-					Worlds.hopTo(Worlds.getRandom(x -> x.getActivity().contains("Leagues")));
+					log.debug("Unable to find target");
+					Worlds.hopTo(Worlds.getRandom(World::isNormal));
 					return -3;
 				}
 
@@ -87,19 +91,21 @@ public class HootBlackjackPlugin extends LoopedPlugin
 				);
 				if (otherPlayer != null || otherNpc != null)
 				{
-					log.info("Other player/npc present, hopping");
-					Worlds.hopTo(Worlds.getRandom(x -> x.getActivity().contains("Leagues")));
+					log.debug("Other player/npc present, hopping");
+					Worlds.hopTo(Worlds.getRandom(World::isNormal));
 					return -3;
 				}
 
 				if (Combat.getMissingHealth() >= config.eatHp())
 				{
+					log.debug("Eating food");
 					food.interact(0);
 					return -1;
 				}
 
 				if (local.getGraphic() == 245)
 				{
+					log.debug("We are stunned");
 					return -1;
 				}
 
@@ -108,22 +114,24 @@ public class HootBlackjackPlugin extends LoopedPlugin
 						.orElse(null);
 				if (curtain != null)
 				{
+					log.debug("Closing curtain");
 					curtain.interact("Close");
 					return -1;
 				}
 
 				if (target.getOverheadText() != null && target.getOverheadText().contains("Zzz"))
 				{
-					log.info("Pickpocketing");
+					log.debug("Pickpocketing");
 					target.interact("Pickpocket");
 					return -2;
 				}
 
-				log.info("Knocking out");
+				log.debug("Knocking out");
 				target.interact("Knock-Out");
 				return 222;
 			}
 
+			log.debug("Walking to spot");
 			Movement.walkTo(spot.getArea());
 			return -1;
 		}
@@ -132,11 +140,13 @@ public class HootBlackjackPlugin extends LoopedPlugin
 		{
 			if (Movement.isWalking())
 			{
+				log.debug("On the way to wine shop");
 				return -1;
 			}
 
 			if (Shop.isOpen())
 			{
+				log.debug("attempting to buy wine");
 				Shop.buyFifty(config.foodId());
 				return -1;
 			}
@@ -144,10 +154,12 @@ public class HootBlackjackPlugin extends LoopedPlugin
 			NPC shop = NPCs.getNearest("Ali The barman");
 			if (shop == null || !Reachable.isInteractable(shop))
 			{
+				log.debug("Walking to wine shop");
 				Movement.walkTo(3359, 2958, 0);
 				return -1;
 			}
 
+			log.debug("Trading with wine npc");
 			shop.interact("Trade");
 			return -1;
 		}
