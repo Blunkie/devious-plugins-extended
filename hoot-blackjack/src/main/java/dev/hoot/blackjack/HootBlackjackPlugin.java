@@ -45,7 +45,7 @@ public class HootBlackjackPlugin extends LoopedPlugin
 						spot.getArea().contains(x)
 		);
 		if (target != null && ((target.getInteracting() != null && target.getInteracting() == local)
-				|| target.getOverheadText().startsWith("I'll kill you for that")))
+				|| (target.getOverheadText() != null && target.getOverheadText().startsWith("I'll kill you for that"))))
 		{
 			log.debug("Pickpocketing");
 			target.interact("Pickpocket");
@@ -99,7 +99,7 @@ public class HootBlackjackPlugin extends LoopedPlugin
 				if (Combat.getMissingHealth() >= config.eatHp())
 				{
 					log.debug("Eating food");
-					food.interact(0);
+					food.interact(1);
 					return -1;
 				}
 
@@ -151,7 +151,7 @@ public class HootBlackjackPlugin extends LoopedPlugin
 				return -1;
 			}
 
-			NPC shop = NPCs.getNearest("Ali The barman");
+			NPC shop = NPCs.getNearest("Ali the Barman");
 			if (shop == null || !Reachable.isInteractable(shop))
 			{
 				log.debug("Walking to wine shop");
