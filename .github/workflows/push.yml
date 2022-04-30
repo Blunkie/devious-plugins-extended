@@ -24,7 +24,7 @@ jobs:
       - name: Push to release branch
         run: |
           git clone https://github.com/unethicalite/unethicalite-plugins-release.git deploy
-          cp -r release deploy
+          cp -r ./release/. ./deploy
           cp plugins.json deploy
           cd deploy
           

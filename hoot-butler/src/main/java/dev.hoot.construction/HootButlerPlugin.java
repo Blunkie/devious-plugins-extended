@@ -5,7 +5,7 @@ import dev.unethicalite.api.entities.NPCs;
 import dev.unethicalite.api.items.Inventory;
 import dev.unethicalite.api.packets.DialogPackets;
 import dev.unethicalite.api.widgets.Dialog;
-import dev.unethicalite.api.widgets.DialogOption;
+import net.runelite.api.DialogOption;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.Item;
