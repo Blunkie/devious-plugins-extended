@@ -8,8 +8,6 @@ import dev.unethicalite.api.entities.Players;
 import dev.unethicalite.api.game.Combat;
 import dev.unethicalite.api.items.Bank;
 import dev.unethicalite.api.items.Inventory;
-import dev.unethicalite.api.magic.Magic;
-import dev.unethicalite.api.magic.Regular;
 import dev.unethicalite.api.movement.Movement;
 import dev.unethicalite.api.movement.Reachable;
 import dev.unethicalite.api.movement.pathfinder.BankLocation;

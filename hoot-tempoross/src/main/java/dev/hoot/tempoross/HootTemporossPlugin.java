@@ -37,7 +37,28 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static dev.hoot.tempoross.TemporossID.*;
+import static dev.hoot.tempoross.TemporossID.ANIMATION_COOK;
+import static dev.hoot.tempoross.TemporossID.ANIMATION_INTERACTING;
+import static dev.hoot.tempoross.TemporossID.GRAPHIC_TETHERED;
+import static dev.hoot.tempoross.TemporossID.GRAPHIC_TETHERING;
+import static dev.hoot.tempoross.TemporossID.ITEM_COOKED_FISH;
+import static dev.hoot.tempoross.TemporossID.ITEM_EMPTY_BUCKET;
+import static dev.hoot.tempoross.TemporossID.ITEM_HAMMER;
+import static dev.hoot.tempoross.TemporossID.ITEM_HARPOON;
+import static dev.hoot.tempoross.TemporossID.ITEM_RAW_FISH;
+import static dev.hoot.tempoross.TemporossID.ITEM_ROPE;
+import static dev.hoot.tempoross.TemporossID.ITEM_WATER_BUCKET;
+import static dev.hoot.tempoross.TemporossID.NPC_DOUBLE_FISH_SPOT;
+import static dev.hoot.tempoross.TemporossID.NPC_EXIT;
+import static dev.hoot.tempoross.TemporossID.NPC_FIRE;
+import static dev.hoot.tempoross.TemporossID.NPC_SINGLE_FISH_SPOT;
+import static dev.hoot.tempoross.TemporossID.NPC_SINGLE_FISH_SPOT_SECOND;
+import static dev.hoot.tempoross.TemporossID.NPC_VULN_WHIRLPOOL;
+import static dev.hoot.tempoross.TemporossID.OBJECT_CLOUD_SHADOW;
+import static dev.hoot.tempoross.TemporossID.OBJECT_DAMAGED_MAST;
+import static dev.hoot.tempoross.TemporossID.OBJECT_FIRE;
+import static dev.hoot.tempoross.TemporossID.OBJECT_LOBBY_LADDER;
+import static dev.hoot.tempoross.TemporossID.OBJECT_LOBBY_PUMP;
 
 @Extension
 @PluginDescriptor(
@@ -337,15 +358,16 @@ public class HootTemporossPlugin extends LoopedPlugin
 			case SECOND_CATCH:
 			case THIRD_CATCH:
 				NPC fishSpot = NPCs.getNearest(it ->
-								NPC_DOUBLE_FISH_SPOT == it.getId()
+						NPC_DOUBLE_FISH_SPOT == it.getId()
 								&& it.getWorldLocation().distanceTo(workArea.getRangePoint()) <= 20
 								&& filterDangerousNPCs.test(it));
 
-				if (fishSpot == null) {
+				if (fishSpot == null)
+				{
 					fishSpot = NPCs.getNearest(it ->
-								Set.of(NPC_SINGLE_FISH_SPOT, NPC_SINGLE_FISH_SPOT_SECOND).contains(it.getId())
-								&& it.getWorldLocation().distanceTo(workArea.getRangePoint()) <= 20
-								&& filterDangerousNPCs.test(it));
+							Set.of(NPC_SINGLE_FISH_SPOT, NPC_SINGLE_FISH_SPOT_SECOND).contains(it.getId())
+									&& it.getWorldLocation().distanceTo(workArea.getRangePoint()) <= 20
+									&& filterDangerousNPCs.test(it));
 				}
 
 				if (fishSpot != null)
