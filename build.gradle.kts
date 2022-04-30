@@ -26,26 +26,9 @@ subprojects {
 
     apply<JavaPlugin>()
     apply(plugin = "java-library")
-//    apply(plugin = "checkstyle")
+    apply(plugin = "checkstyle")
 
     repositories {
-//        jcenter {
-//            content {
-//                excludeGroupByRegex("com\\.openosrs.*")
-//            }
-//        }
-//
-//        exclusiveContent {
-//            forRepository {
-//                mavenLocal()
-//            }
-//
-//            filter {
-//                includeGroupByRegex("com\\.openosrs.*")
-//            }
-//        }
-
-
         maven {
             url = uri("https://maven.pkg.github.com/unethicalite/unethicalite")
             credentials {

@@ -42,7 +42,7 @@ public class HootPickpocketPlugin extends LoopedPlugin
 		if (jug != null && config.foodId() == ItemID.JUG_OF_WINE)
 		{
 			jug.interact("Drop");
-			log.debug("Dropping jug {}", jug.getActions().indexOf("Drop"));
+			log.debug("Dropping jug");
 			return -1;
 		}
 
@@ -56,7 +56,7 @@ public class HootPickpocketPlugin extends LoopedPlugin
 
 		if (config.eat())
 		{
-			if (config.eatHp() >= Combat.getMissingHealth())
+			if (Combat.getMissingHealth() >= config.eatHp())
 			{
 				Item food = Inventory.getFirst(config.foodId());
 				if (food != null)
@@ -107,6 +107,11 @@ public class HootPickpocketPlugin extends LoopedPlugin
 
 			Player local = Players.getLocal();
 			if (local.getGraphic() == 245 && !Dialog.isOpen())
+			{
+				return -1;
+			}
+
+			if (local.isMoving() && target.distanceTo(local) > 3)
 			{
 				return -1;
 			}
