@@ -37,7 +37,8 @@ include("hoot-aerialfishing")
 include("hoot-chins")
 include("hoot-notifier")
 include("hoot-butler")
-include("interaction-tester")
+include("kebab-buyer-script")
+include("example-kotlin")
 
 for (project in rootProject.children) {
     project.apply {

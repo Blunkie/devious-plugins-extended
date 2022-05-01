@@ -2,6 +2,7 @@ import ProjectVersions.openosrsVersion
 
 buildscript {
     repositories {
+        mavenCentral()
         gradlePluginPortal()
     }
 }
@@ -9,6 +10,7 @@ buildscript {
 plugins {
     `java-library`
     checkstyle
+    kotlin("jvm") version "1.6.21"
 }
 
 project.extra["GithubUrl"] = "https://github.com/unethicalite/unethicalite-plugins-release"
@@ -17,7 +19,7 @@ project.extra["GithubRepoName"] = "unethicalite-plugins-release"
 
 apply<BootstrapPlugin>()
 
-subprojects {
+allprojects {
     group = "dev.unethicalite"
 
     project.extra["PluginProvider"] = "unethicalite"
@@ -26,18 +28,24 @@ subprojects {
 
     apply<JavaPlugin>()
     apply(plugin = "java-library")
+    apply(plugin = "kotlin")
     apply(plugin = "checkstyle")
 
     repositories {
-        maven {
-            url = uri("https://maven.pkg.github.com/unethicalite/unethicalite")
-            credentials {
-                username = "buracc"
-                password = System.getenv("GITHUB_TOKEN")
-            }
-        }
         mavenCentral()
         mavenLocal()
+        maven {
+            url = uri("https://repo.unethicalite.net/releases/")
+            mavenContent {
+                releasesOnly()
+            }
+        }
+        maven {
+            url = uri("https://repo.unethicalite.net/snapshots/")
+            mavenContent {
+                snapshotsOnly()
+            }
+        }
     }
 
     dependencies {
@@ -68,6 +76,10 @@ subprojects {
             isReproducibleFileOrder = true
             dirMode = 493
             fileMode = 420
+        }
+
+        compileKotlin {
+            kotlinOptions.jvmTarget = "11"
         }
     }
 }

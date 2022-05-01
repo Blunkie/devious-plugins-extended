@@ -24,3 +24,4 @@ hs_err*
 replay_pid*
 release
 plugins.json
+test
