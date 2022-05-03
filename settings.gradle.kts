@@ -38,6 +38,7 @@ include("hoot-chins")
 include("hoot-notifier")
 include("hoot-butler")
 include("kebab-buyer-script")
+include("unethical-prayer")
 include("example-kotlin")
 
 for (project in rootProject.children) {
