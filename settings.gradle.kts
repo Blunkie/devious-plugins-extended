@@ -40,6 +40,7 @@ include("hoot-butler")
 include("kebab-buyer-script")
 include("unethical-prayer")
 include("example-kotlin")
+include("example-utils")
 
 for (project in rootProject.children) {
     project.apply {

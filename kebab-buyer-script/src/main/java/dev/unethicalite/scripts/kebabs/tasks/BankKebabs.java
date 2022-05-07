@@ -19,7 +19,7 @@ public class BankKebabs implements ScriptTask
 	@Override
 	public boolean validate()
 	{
-		return Inventory.isFull();
+		return Inventory.isFull() || !Inventory.contains(ItemID.COINS_995);
 	}
 
 	@Override
