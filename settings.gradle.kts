@@ -40,6 +40,7 @@ include("hoot-butler")
 include("kebab-buyer-script")
 include("unethical-prayer")
 include("unethical-explorer")
+include("unethical-chopper")
 include("example-kotlin")
 include("example-utils")
 
