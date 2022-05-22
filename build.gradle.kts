@@ -54,6 +54,7 @@ allprojects {
 
         compileOnly("com.openosrs:runelite-api:$openosrsVersion+")
         compileOnly("com.openosrs:runelite-client:$openosrsVersion+")
+        compileOnly("com.openosrs:http-api:$openosrsVersion+")
 
         compileOnly(Libraries.guice)
         compileOnly(Libraries.javax)
@@ -80,6 +81,15 @@ allprojects {
 
         compileKotlin {
             kotlinOptions.jvmTarget = "11"
+        }
+
+        withType<Jar> {
+            doLast {
+                copy {
+                    from("./build/libs/")
+                    into(System.getProperty("user.home") + "/.openosrs/plugins/")
+                }
+            }
         }
     }
 }
