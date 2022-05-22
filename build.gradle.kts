@@ -54,6 +54,7 @@ allprojects {
 
         compileOnly("com.openosrs:runelite-api:$openosrsVersion+")
         compileOnly("com.openosrs:runelite-client:$openosrsVersion+")
+        compileOnly("com.openosrs:http-api:$openosrsVersion+")
 
         compileOnly(Libraries.guice)
         compileOnly(Libraries.javax)
