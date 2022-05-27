@@ -1,8 +1,8 @@
 package net.unethicalite.plugins.agility;
 
-import net.unethicalite.api.entities.Players;
 import net.runelite.api.Player;
 import net.runelite.api.TileObject;
+import net.unethicalite.api.entities.Players;
 
 public enum Course
 {

@@ -2,13 +2,6 @@ package net.unethicalite.plugins.agility;
 
 import com.google.inject.Inject;
 import com.google.inject.Provides;
-import net.unethicalite.api.commons.Rand;
-import net.unethicalite.api.entities.Players;
-import net.unethicalite.api.entities.TileItems;
-import net.unethicalite.api.entities.TileObjects;
-import net.unethicalite.api.movement.Movement;
-import net.unethicalite.api.plugins.LoopedPlugin;
-import net.unethicalite.api.widgets.Dialog;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.ItemID;
@@ -17,6 +10,13 @@ import net.runelite.api.TileItem;
 import net.runelite.api.TileObject;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.unethicalite.api.commons.Rand;
+import net.unethicalite.api.entities.Players;
+import net.unethicalite.api.entities.TileItems;
+import net.unethicalite.api.entities.TileObjects;
+import net.unethicalite.api.movement.Movement;
+import net.unethicalite.api.plugins.LoopedPlugin;
+import net.unethicalite.api.widgets.Dialog;
 import org.pf4j.Extension;
 
 @PluginDescriptor(
@@ -108,10 +108,14 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 		return -1;
 	}
 
-	public TileObject findProperObstacle(Obstacle obstacle) {
-		try {
+	public TileObject findProperObstacle(Obstacle obstacle)
+	{
+		try
+		{
 			return TileObjects.getFirstAt(obstacle.getLocation().getX(), obstacle.getLocation().getY(), obstacle.getLocation().getZ(), obstacle.getName());
-		} catch (Exception exception) {
+		}
+		catch (Exception exception)
+		{
 			return obstacle.getId() != 0 ? TileObjects.getNearest(obstacle.getId())
 					: TileObjects.getNearest(x -> x.hasAction(obstacle.getAction()) && x.getName().equals(obstacle.getName()));
 		}

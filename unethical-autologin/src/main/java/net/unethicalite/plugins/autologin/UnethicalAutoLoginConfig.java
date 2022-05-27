@@ -50,6 +50,6 @@ public interface UnethicalAutoLoginConfig extends Config
 	)
 	default int world()
 	{
-		return 0;
+		return 301;
 	}
 }
