@@ -41,4 +41,15 @@ public interface UnethicalAutoLoginConfig extends Config
 	{
 		return "Authenticator";
 	}
+
+	@ConfigItem(
+			keyName = "world",
+			name = "World",
+			description = "World Selector",
+			position = 3
+	)
+	default int world()
+	{
+		return 0;
+	}
 }

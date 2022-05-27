@@ -71,8 +71,7 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 			return -1;
 		}
 
-		TileObject obs = obstacle.getId() != 0 ? TileObjects.getNearest(obstacle.getId())
-				: TileObjects.getNearest(x -> x.hasAction(obstacle.getAction()) && x.getName().equals(obstacle.getName()));
+		TileObject obs = findProperObstacle(obstacle);
 
 		if (client.getEnergy() > Rand.nextInt(5, 55) && !Movement.isRunEnabled())
 		{
@@ -108,4 +107,14 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 		log.error("Obstacle was null");
 		return -1;
 	}
+
+	public TileObject findProperObstacle(Obstacle obstacle) {
+		try {
+			return TileObjects.getFirstAt(obstacle.getLocation().getX(), obstacle.getLocation().getY(), obstacle.getLocation().getZ(), obstacle.getName());
+		} catch (Exception exception) {
+			return obstacle.getId() != 0 ? TileObjects.getNearest(obstacle.getId())
+					: TileObjects.getNearest(x -> x.hasAction(obstacle.getAction()) && x.getName().equals(obstacle.getName()));
+		}
+	}
+
 }

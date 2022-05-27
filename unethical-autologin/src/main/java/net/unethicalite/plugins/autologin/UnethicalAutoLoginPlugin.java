@@ -7,6 +7,7 @@ import net.runelite.api.GameState;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.game.WorldService;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.unethicalite.api.events.LoginStateChanged;
@@ -14,6 +15,10 @@ import net.unethicalite.api.game.Game;
 import net.unethicalite.api.input.Keyboard;
 import org.jboss.aerogear.security.otp.Totp;
 import org.pf4j.Extension;
+import net.runelite.client.util.WorldUtil;
+import net.runelite.http.api.worlds.World;
+import net.runelite.http.api.worlds.WorldResult;
+import net.runelite.http.api.worlds.WorldType;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -30,6 +35,9 @@ public class UnethicalAutoLoginPlugin extends Plugin
 
 	@Inject
 	private Client client;
+
+	@Inject
+	private WorldService worldService;
 
 	@Provides
 	public UnethicalAutoLoginConfig getConfig(ConfigManager configManager)
@@ -66,6 +74,7 @@ public class UnethicalAutoLoginPlugin extends Plugin
 	{
 		client.setUsername(config.username());
 		client.setPassword(config.password());
+		client.changeWorld(createWorld(config.world()));
 		Keyboard.sendEnter();
 		Keyboard.sendEnter();
 	}
@@ -74,5 +83,28 @@ public class UnethicalAutoLoginPlugin extends Plugin
 	{
 		client.setOtp(new Totp(config.auth()).now());
 		Keyboard.sendEnter();
+	}
+
+	private net.runelite.api.World createWorld(int worldId)
+	{
+		assert client.isClientThread();
+
+		WorldResult worldResult = worldService.getWorlds();
+		// Don't try to hop if the world doesn't exist
+		World world = worldResult.findWorld(worldId);
+		if (world == null)
+		{
+			return null;
+		}
+
+		final net.runelite.api.World rsWorld = client.createWorld();
+		rsWorld.setActivity(world.getActivity());
+		rsWorld.setAddress(world.getAddress());
+		rsWorld.setId(world.getId());
+		rsWorld.setPlayerCount(world.getPlayers());
+		rsWorld.setLocation(world.getLocation());
+		rsWorld.setTypes(WorldUtil.toWorldTypes(world.getTypes()));
+
+		return rsWorld;
 	}
 }
