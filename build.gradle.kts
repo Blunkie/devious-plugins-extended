@@ -20,7 +20,7 @@ project.extra["GithubRepoName"] = "unethicalite-plugins-release"
 apply<BootstrapPlugin>()
 
 allprojects {
-    group = "dev.unethicalite"
+    group = "net.unethicalite"
 
     project.extra["PluginProvider"] = "unethicalite"
     project.extra["ProjectSupportUrl"] = "https://discord.gg/WTvTbSPknJ"

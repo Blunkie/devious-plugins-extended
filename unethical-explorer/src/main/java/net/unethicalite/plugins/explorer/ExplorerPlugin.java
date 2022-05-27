@@ -1,10 +1,10 @@
 package net.unethicalite.plugins.explorer;
 
-import dev.unethicalite.api.entities.Players;
-import dev.unethicalite.api.movement.Movement;
-import dev.unethicalite.api.movement.pathfinder.Walker;
-import dev.unethicalite.api.utils.CoordUtils;
-import dev.unethicalite.api.widgets.Widgets;
+import net.unethicalite.api.entities.Players;
+import net.unethicalite.api.movement.Movement;
+import net.unethicalite.api.movement.pathfinder.Walker;
+import net.unethicalite.api.utils.CoordUtils;
+import net.unethicalite.api.widgets.Widgets;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.MenuAction;

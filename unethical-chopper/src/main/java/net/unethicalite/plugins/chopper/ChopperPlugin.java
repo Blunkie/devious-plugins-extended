@@ -1,13 +1,13 @@
 package net.unethicalite.plugins.chopper;
 
 import com.google.inject.Provides;
-import dev.unethicalite.api.entities.Players;
-import dev.unethicalite.api.entities.TileObjects;
-import dev.unethicalite.api.items.Inventory;
-import dev.unethicalite.api.movement.Movement;
-import dev.unethicalite.api.movement.pathfinder.GlobalCollisionMap;
-import dev.unethicalite.api.plugins.LoopedPlugin;
-import dev.unethicalite.api.scene.Tiles;
+import net.unethicalite.api.entities.Players;
+import net.unethicalite.api.entities.TileObjects;
+import net.unethicalite.api.items.Inventory;
+import net.unethicalite.api.movement.Movement;
+import net.unethicalite.api.movement.pathfinder.GlobalCollisionMap;
+import net.unethicalite.api.plugins.LoopedPlugin;
+import net.unethicalite.api.scene.Tiles;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.GameObject;
 import net.runelite.api.coords.WorldArea;
