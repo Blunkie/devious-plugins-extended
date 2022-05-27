@@ -52,4 +52,15 @@ public interface UnethicalAutoLoginConfig extends Config
 	{
 		return 301;
 	}
+
+	@ConfigItem(
+			keyName = "lastWorld",
+			name = "Save last world",
+			description = "Save last world",
+			position = 4
+	)
+	default boolean lastWorld()
+	{
+		return false;
+	}
 }

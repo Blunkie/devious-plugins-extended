@@ -12,7 +12,7 @@ import net.runelite.client.game.WorldService;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.unethicalite.api.events.LoginStateChanged;
-import net.unethicalite.api.game.Game;
+import net.unethicalite.api.events.WorldHopped;
 import net.unethicalite.api.game.Worlds;
 import net.unethicalite.api.input.Keyboard;
 import org.jboss.aerogear.security.otp.Totp;
@@ -37,6 +37,9 @@ public class UnethicalAutoLoginPlugin extends Plugin
 	@Inject
 	private WorldService worldService;
 
+	@Inject
+	private ConfigManager configManager;
+
 	@Provides
 	public UnethicalAutoLoginConfig getConfig(ConfigManager configManager)
 	{
@@ -46,7 +49,7 @@ public class UnethicalAutoLoginPlugin extends Plugin
 	@Subscribe
 	private void onGameStateChanged(GameStateChanged e)
 	{
-		if (e.getGameState() == GameState.LOGIN_SCREEN && Game.getClient().getLoginIndex() == 0)
+		if (e.getGameState() == GameState.LOGIN_SCREEN && client.getLoginIndex() == 0)
 		{
 			executor.schedule(() -> client.setLoginIndex(2), 2000, TimeUnit.MILLISECONDS);
 			executor.schedule(this::login, 2000, TimeUnit.MILLISECONDS);
@@ -65,6 +68,15 @@ public class UnethicalAutoLoginPlugin extends Plugin
 			case 4:
 				enterAuth();
 				break;
+		}
+	}
+
+	@Subscribe
+	private void onWorldHopped(WorldHopped e)
+	{
+		if (config.lastWorld())
+		{
+			configManager.setConfiguration("hootautologin", "world", e.getWorldId());
 		}
 	}
 
