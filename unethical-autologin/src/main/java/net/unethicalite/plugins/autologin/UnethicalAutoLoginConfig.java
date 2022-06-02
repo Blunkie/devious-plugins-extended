@@ -43,10 +43,23 @@ public interface UnethicalAutoLoginConfig extends Config
 	}
 
 	@ConfigItem(
+			keyName = "useWorld",
+			name = "Select world",
+			description = "Select world to login to",
+			position = 3
+	)
+	default boolean useWorld()
+	{
+		return false;
+	}
+
+	@ConfigItem(
 			keyName = "world",
 			name = "World",
 			description = "World Selector",
-			position = 3
+			position = 4,
+			hidden = true,
+			unhide = "useWorld"
 	)
 	default int world()
 	{
@@ -57,9 +70,22 @@ public interface UnethicalAutoLoginConfig extends Config
 			keyName = "lastWorld",
 			name = "Save last world",
 			description = "Save last world",
-			position = 4
+			position = 5,
+			hidden = true,
+			unhide = "useWorld"
 	)
 	default boolean lastWorld()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+			keyName = "welcomeScreen",
+			name = "Complete Welcome screen",
+			description = "Automatically presses the 'Click here to Play' button after login",
+			position = 6
+	)
+	default boolean welcomeScreen()
 	{
 		return false;
 	}

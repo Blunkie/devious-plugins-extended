@@ -2,40 +2,40 @@ package net.unethicalite.plugins.autologin;
 
 import com.google.inject.Inject;
 import com.google.inject.Provides;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.World;
 import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.events.WidgetLoaded;
+import net.runelite.api.widgets.Widget;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.game.WorldService;
+import net.runelite.client.events.PluginChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.unethicalite.api.events.LobbyWorldSelectToggled;
 import net.unethicalite.api.events.LoginStateChanged;
 import net.unethicalite.api.events.WorldHopped;
+import net.unethicalite.api.game.Game;
 import net.unethicalite.api.game.Worlds;
 import net.unethicalite.api.input.Keyboard;
+import net.unethicalite.api.input.Mouse;
+import net.unethicalite.api.script.blocking_events.WelcomeScreenEvent;
+import net.unethicalite.api.widgets.Widgets;
 import org.jboss.aerogear.security.otp.Totp;
 import org.pf4j.Extension;
 
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 @PluginDescriptor(name = "Unethical Auto Login", enabledByDefault = false)
 @Extension
+@Slf4j
 public class UnethicalAutoLoginPlugin extends Plugin
 {
 	@Inject
 	private UnethicalAutoLoginConfig config;
 
 	@Inject
-	private ScheduledExecutorService executor;
-
-	@Inject
 	private Client client;
-
-	@Inject
-	private WorldService worldService;
 
 	@Inject
 	private ConfigManager configManager;
@@ -51,8 +51,7 @@ public class UnethicalAutoLoginPlugin extends Plugin
 	{
 		if (e.getGameState() == GameState.LOGIN_SCREEN && client.getLoginIndex() == 0)
 		{
-			executor.schedule(() -> client.setLoginIndex(2), 2000, TimeUnit.MILLISECONDS);
-			executor.schedule(this::login, 2000, TimeUnit.MILLISECONDS);
+			prepareLogin();
 		}
 	}
 
@@ -80,18 +79,78 @@ public class UnethicalAutoLoginPlugin extends Plugin
 		}
 	}
 
+	@Subscribe
+	private void onWidgetHiddenChanged(WidgetLoaded e)
+	{
+		if (!config.welcomeScreen())
+		{
+			return;
+		}
+
+		int group = e.getGroupId();
+		if (group == 378 || group == 413)
+		{
+			Widget playButton = WelcomeScreenEvent.getPlayButton();
+			if (Widgets.isVisible(playButton))
+			{
+				client.invokeWidgetAction(1, playButton.getId(), -1, -1, "");
+			}
+		}
+	}
+
+	@Subscribe
+	private void onLobbyWorldSelectToggled(LobbyWorldSelectToggled e)
+	{
+		if (e.isOpened())
+		{
+			client.setWorldSelectOpen(false);
+
+			if (config.useWorld())
+			{
+				World selectedWorld = Worlds.getFirst(config.world());
+				if (selectedWorld != null)
+				{
+					client.changeWorld(selectedWorld);
+				}
+			}
+		}
+
+		client.promptCredentials(false);
+	}
+
+	@Subscribe
+	private void onPluginChanged(PluginChanged e)
+	{
+		if (e.getPlugin() != this)
+		{
+			return;
+		}
+
+		if (e.isLoaded() && Game.getState() == GameState.LOGIN_SCREEN)
+		{
+			prepareLogin();
+			client.getCallbacks().post(new LoginStateChanged(2));
+		}
+	}
+
+	private void prepareLogin()
+	{
+		if (config.useWorld() && client.getWorld() != config.world())
+		{
+			client.loadWorlds();
+		}
+		else
+		{
+			client.promptCredentials(false);
+		}
+	}
+
 	private void login()
 	{
 		client.setUsername(config.username());
 		client.setPassword(config.password());
-		World selectedWorld = Worlds.getFirst(config.world());
-		if (selectedWorld != null)
-		{
-			client.changeWorld(selectedWorld);
-		}
 
-		Keyboard.sendEnter();
-		Keyboard.sendEnter();
+		Mouse.click(299, 322, true);
 	}
 
 	private void enterAuth()
