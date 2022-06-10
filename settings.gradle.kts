@@ -33,6 +33,7 @@ include("hoot-pickpocket")
 include("hoot-aerialfishing")
 include("hoot-chins")
 include("hoot-notifier")
+include("hoot-karambwanfisher")
 
 include("unethical-butler")
 include("unethical-kebab-buyer")
