@@ -40,6 +40,11 @@ public class HootKarambwanFisherPlugin extends LoopedPlugin
 		Player local = Players.getLocal();
 		int bait = Inventory.getCount(true, BAIT);
 
+		if (Movement.isWalking())
+		{
+			return -1;
+		}
+
 		if (needBait)
 		{
 			if (bait > 3_000)
@@ -87,10 +92,7 @@ public class HootKarambwanFisherPlugin extends LoopedPlugin
 				return 1000;
 			}
 
-			if (Movement.isWalking())
-			{
-				return -1;
-			}
+
 
 			log.debug("Moving to karambwanji area");
 			Movement.walkTo(2809, 3009, 0);
@@ -136,11 +138,6 @@ public class HootKarambwanFisherPlugin extends LoopedPlugin
 			return 1000;
 		}
 
-		if (Movement.isWalking())
-		{
-			return -1;
-		}
-
 		Movement.walkTo(KARAMBWAN_AREA);
 		return 1000;
 	}
@@ -166,11 +163,6 @@ public class HootKarambwanFisherPlugin extends LoopedPlugin
 			{
 				Movement.walkTo(ZANARIS_BANK.getCenter());
 				return 1500;
-			}
-
-			if (Movement.isWalking())
-			{
-				return -1;
 			}
 
 			banker.interact("Bank");

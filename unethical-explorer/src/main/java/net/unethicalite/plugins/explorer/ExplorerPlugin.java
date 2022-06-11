@@ -2,6 +2,7 @@ package net.unethicalite.plugins.explorer;
 
 import net.unethicalite.api.entities.Players;
 import net.unethicalite.api.movement.Movement;
+import net.unethicalite.api.movement.pathfinder.Walker;
 import net.unethicalite.api.utils.CoordUtils;
 import net.unethicalite.api.widgets.Widgets;
 import lombok.extern.slf4j.Slf4j;
@@ -97,7 +98,7 @@ public class ExplorerPlugin extends Plugin
 
 	private void setDestination(WorldPoint wp)
 	{
-		destination = Movement.nearestWalkableTile(wp);
+		destination = Walker.nearestWalkableTile(wp);
 		log.debug("Walking to {}", destination);
 	}
 }
