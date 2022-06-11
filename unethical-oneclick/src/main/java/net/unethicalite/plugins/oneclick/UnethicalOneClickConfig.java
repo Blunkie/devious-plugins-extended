@@ -41,7 +41,7 @@ public interface UnethicalOneClickConfig extends Config
 			name = "Config",
 			description = "Usage = ObjectName:ReplacedAction,Object2:Use ItemName",
 			section = npcs,
-			position = 1
+			position = 0
 	)
 	default String npcConfig()
 	{
@@ -61,7 +61,7 @@ public interface UnethicalOneClickConfig extends Config
 			name = "Config",
 			description = "Usage = ObjectName:ReplacedAction,Object2:Use ItemName",
 			section = groundItems,
-			position = 2
+			position = 0
 	)
 	default String groundItemConfig()
 	{
@@ -72,7 +72,7 @@ public interface UnethicalOneClickConfig extends Config
 			name = "Items",
 			description = "Replace Item interactions",
 			closedByDefault = true,
-			position = 4
+			position = 3
 	)
 	String items = "Items";
 
@@ -81,7 +81,7 @@ public interface UnethicalOneClickConfig extends Config
 			name = "Config",
 			description = "Usage = ObjectName:ReplacedAction,Object2:Use ItemName",
 			section = items,
-			position = 4
+			position = 0
 	)
 	default String itemConfig()
 	{
@@ -92,7 +92,7 @@ public interface UnethicalOneClickConfig extends Config
 			name = "Players",
 			description = "Replace Player interactions",
 			closedByDefault = true,
-			position = 5
+			position = 4
 	)
 	String players = "Players";
 
@@ -101,7 +101,7 @@ public interface UnethicalOneClickConfig extends Config
 			name = "Config",
 			description = "Usage = ObjectName:ReplacedAction,Object2:Use ItemName",
 			section = players,
-			position = 5
+			position = 0
 	)
 	default String playerConfig()
 	{
@@ -112,7 +112,7 @@ public interface UnethicalOneClickConfig extends Config
 			keyName = "exactEntityNames",
 			name = "Use exact entity names",
 			description = "Check for exact entity names",
-			position = 11
+			position = 5
 	)
 	default boolean exactEntityNames()
 	{
@@ -123,7 +123,7 @@ public interface UnethicalOneClickConfig extends Config
 			keyName = "exactItemNames",
 			name = "Use exact used item names",
 			description = "Check for exact item names for items to use",
-			position = 12
+			position = 6
 	)
 	default boolean exactItemNames()
 	{

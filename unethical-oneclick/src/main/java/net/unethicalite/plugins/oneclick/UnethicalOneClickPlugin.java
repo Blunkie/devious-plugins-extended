@@ -2,14 +2,6 @@ package net.unethicalite.plugins.oneclick;
 
 import com.google.inject.Inject;
 import com.google.inject.Provides;
-import net.unethicalite.api.EntityNameable;
-import net.unethicalite.api.Interactable;
-import net.unethicalite.api.entities.NPCs;
-import net.unethicalite.api.entities.Players;
-import net.unethicalite.api.entities.TileItems;
-import net.unethicalite.api.entities.TileObjects;
-import net.unethicalite.api.game.Game;
-import net.unethicalite.api.items.Inventory;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Actor;
 import net.runelite.api.Client;
@@ -27,6 +19,13 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.unethicalite.api.EntityNameable;
+import net.unethicalite.api.Interactable;
+import net.unethicalite.api.entities.NPCs;
+import net.unethicalite.api.entities.Players;
+import net.unethicalite.api.entities.TileItems;
+import net.unethicalite.api.entities.TileObjects;
+import net.unethicalite.api.items.Inventory;
 import org.pf4j.Extension;
 
 import java.util.HashMap;
@@ -97,7 +96,7 @@ public class UnethicalOneClickPlugin extends Plugin
 
 		if (!gameObjectConfigs.isEmpty() && GAME_OBJECT_OPCODES.contains(opcode))
 		{
-			Tile tile = Game.getClient().getScene().getTiles()[Game.getClient().getPlane()][e.getActionParam0()][e.getActionParam1()];
+			Tile tile = client.getScene().getTiles()[client.getPlane()][e.getActionParam0()][e.getActionParam1()];
 			TileObject obj = TileObjects.getFirstAt(tile, e.getIdentifier());
 			MenuEntry replaced = replace(gameObjectConfigs, obj);
 			if (replaced != null)
@@ -120,7 +119,7 @@ public class UnethicalOneClickPlugin extends Plugin
 
 		if (!groundItemConfigs.isEmpty() && GROUND_ITEM_OPCODES.contains(opcode))
 		{
-			Tile tile = Game.getClient().getScene().getTiles()[Game.getClient().getPlane()][e.getActionParam0()][e.getActionParam1()];
+			Tile tile = client.getScene().getTiles()[client.getPlane()][e.getActionParam0()][e.getActionParam1()];
 			TileItem item = TileItems.getFirstAt(tile, e.getIdentifier());
 			MenuEntry replaced = replace(groundItemConfigs, item);
 			if (replaced != null)

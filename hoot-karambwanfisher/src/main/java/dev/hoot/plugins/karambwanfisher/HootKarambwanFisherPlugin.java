@@ -15,68 +15,109 @@ import net.unethicalite.api.movement.Movement;
 import net.unethicalite.api.plugins.LoopedPlugin;
 import org.pf4j.Extension;
 
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+
 @Extension
 @PluginDescriptor(name = "Hoot Karambwan Fisher", enabledByDefault = false)
 @Slf4j
 public class HootKarambwanFisherPlugin extends LoopedPlugin
 {
-	private final WorldArea zanarisBank = new WorldArea(2381, 4455, 9, 7, 0);
-	private final WorldArea karambwanArea = new WorldArea(2894, 3108, 25, 16, 0);
+	private boolean needBait = false;
+	private static final WorldArea KARAMBWANJI_AREA = new WorldArea(2780, 3002, 36, 28, 0);
+	private static final WorldArea ZANARIS_BANK = new WorldArea(2381, 4455, 9, 7, 0);
+	private static final WorldArea KARAMBWAN_AREA = new WorldArea(2894, 3108, 25, 16, 0);
+	private static final String RAW_KARAMBWAN = "Raw karambwan";
+	private static final String BAIT = "Raw karambwanji";
+	private static final String NET = "Small fishing net";
+	private static final String VESSEL = "Karambwan vessel";
+	private static final String STAFF = "Dramen staff";
 
 	@Override
 	protected int loop()
 	{
-		int bait = Inventory.getCount(true, "Raw karambwanji");
 		Player local = Players.getLocal();
-		if (Inventory.isFull() || bait < 50 || !Inventory.contains("Karambwan vessel") || !haveDramenStaff())
+		int bait = Inventory.getCount(true, BAIT);
+
+		if (needBait)
 		{
-			if (Bank.isOpen())
+			if (bait > 3_000)
 			{
-				if (Inventory.isFull())
-				{
-					Bank.depositInventory();
-					return -3;
-				}
-
-				if (bait < 50)
-				{
-					log.debug("Looking for bait");
-					return withdrawItem("Raw karambwanji", Integer.MAX_VALUE);
-				}
-
-				if (!Inventory.contains("Karambwan vessel"))
-				{
-					log.debug("Looking for karambwan vessel");
-					return withdrawItem("Karambwan vessel", 1);
-				}
-
-				if (!haveDramenStaff())
-				{
-					log.debug("Looking for dramen staff");
-					return withdrawItem("Dramen staff", 1);
-				}
-
+				needBait = false;
 				return -1;
 			}
 
-			Item dramenStaff = Inventory.getFirst("Dramen staff");
-			if (dramenStaff != null)
+			if (!Inventory.contains(NET) || Inventory.isFull())
 			{
-				dramenStaff.interact("Wield");
+				return fetchFromBank(
+						getInvSetup(List.of(NET, BAIT, STAFF)),
+						List.of(),
+						Map.of(NET, 1, STAFF, 1)
+				);
+			}
+
+			if (KARAMBWANJI_AREA.contains(local))
+			{
+				if (local.isAnimating() || local.getInteracting() != null)
+				{
+					log.debug("We are fishing karambwanji");
+					return 1000;
+				}
+
+				NPC fishingSpot = NPCs.getNearest(f -> f.hasAction("Net") || KARAMBWANJI_AREA.contains(f));
+				if (fishingSpot != null)
+				{
+					if (fishingSpot.distanceTo(local) > 5)
+					{
+						Movement.walkTo(fishingSpot);
+						return -2;
+					}
+
+					log.debug("Netting fishing spot");
+					fishingSpot.interact("Net");
+					return -3;
+				}
+				else
+				{
+					log.debug("Cant find fishing spot, walking to area");
+					Movement.walkTo(2809, 3009, 0);
+				}
+
 				return 1000;
 			}
 
-			if (zanarisBank.contains(local))
+			if (Movement.isWalking())
 			{
-				NPCs.query().actions("Collect").results().nearest().interact("Bank");
-				return 1500;
+				return -1;
 			}
 
-			Movement.walkTo(zanarisBank);
+			log.debug("Moving to karambwanji area");
+			Movement.walkTo(2809, 3009, 0);
 			return 1000;
 		}
 
-		if (karambwanArea.contains(local))
+		if (Inventory.isFull() || bait < 50 || !Inventory.contains(VESSEL) || !haveDramenStaff())
+		{
+			if (Bank.isOpen() && bait < 50)
+			{
+				if (Bank.getCount(true, BAIT) < 50)
+				{
+					needBait = true;
+					return 1000;
+				}
+
+				return withdrawItem(BAIT, Integer.MAX_VALUE);
+			}
+
+			return fetchFromBank(
+					getInvSetup(List.of(BAIT, VESSEL, RAW_KARAMBWAN, STAFF)),
+					List.of(RAW_KARAMBWAN),
+					Map.of(VESSEL, 1, STAFF, 1, BAIT, Integer.MAX_VALUE)
+			);
+		}
+
+		if (KARAMBWAN_AREA.contains(local))
 		{
 			NPC fishingSpot = NPCs.query().actions("Fish").results().nearest();
 			if (fishingSpot == null)
@@ -95,20 +136,94 @@ public class HootKarambwanFisherPlugin extends LoopedPlugin
 			return 1000;
 		}
 
-		Movement.walkTo(karambwanArea);
+		if (Movement.isWalking())
+		{
+			return -1;
+		}
+
+		Movement.walkTo(KARAMBWAN_AREA);
 		return 1000;
 	}
 
-	private boolean haveDramenStaff()
+	private static int fetchFromBank(
+			Predicate<Item> invSetup,
+			List<String> depositItems,
+			Map<String, Integer> withdrawItems
+	)
 	{
-		return Inventory.contains("Dramen staff") || Equipment.contains("Dramen staff");
+		Player local = Players.getLocal();
+		if (!Bank.isOpen())
+		{
+			Item dramenStaff = Inventory.getFirst(STAFF);
+			if (dramenStaff != null)
+			{
+				dramenStaff.interact("Wield");
+				return 1000;
+			}
+
+			NPC banker = NPCs.query().actions("Collect").results().nearest();
+			if (banker == null || !ZANARIS_BANK.contains(local))
+			{
+				Movement.walkTo(ZANARIS_BANK.getCenter());
+				return 1500;
+			}
+
+			if (Movement.isWalking())
+			{
+				return -1;
+			}
+
+			banker.interact("Bank");
+			return -2;
+		}
+
+		if (Inventory.contains(invSetup.negate()))
+		{
+			Bank.depositInventory();
+			return -3;
+		}
+
+		for (String item : depositItems)
+		{
+			if (!Inventory.contains(item))
+			{
+				continue;
+			}
+
+			Bank.depositAll(item);
+			return -2;
+		}
+
+		for (var entry : withdrawItems.entrySet())
+		{
+			if (Equipment.contains(entry.getKey()) || Inventory.contains(entry.getKey()))
+			{
+				continue;
+			}
+
+			log.debug("Withdrawing {} {}", entry.getKey(), entry.getValue());
+
+			return withdrawItem(entry.getKey(), entry.getValue());
+		}
+
+		return 1337;
 	}
 
-	private int withdrawItem(String name, int amount)
+	private static Predicate<Item> getInvSetup(List<String> items)
+	{
+		return x -> items.contains(x.getName());
+	}
+
+	private static boolean haveDramenStaff()
+	{
+		return Inventory.contains(STAFF) || Equipment.contains(STAFF);
+	}
+
+	private static int withdrawItem(String name, int amount)
 	{
 		if (!Bank.contains(name))
 		{
-			System.out.println(name + " not found in bank");
+			log.error("{} not found in bank", name);
 			return 1000;
 		}
 
