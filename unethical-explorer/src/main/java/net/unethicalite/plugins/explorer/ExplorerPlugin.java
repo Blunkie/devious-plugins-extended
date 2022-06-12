@@ -82,7 +82,8 @@ public class ExplorerPlugin extends LoopedPlugin
 	}
 
 	@Override
-	protected int loop() {
+	protected int loop()
+	{
 		if (Movement.isWalking())
 		{
 			return -1;
