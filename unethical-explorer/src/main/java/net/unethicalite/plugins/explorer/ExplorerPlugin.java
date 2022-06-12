@@ -3,6 +3,7 @@ package net.unethicalite.plugins.explorer;
 import net.unethicalite.api.entities.Players;
 import net.unethicalite.api.movement.Movement;
 import net.unethicalite.api.movement.pathfinder.Walker;
+import net.unethicalite.api.plugins.LoopedPlugin;
 import net.unethicalite.api.utils.CoordUtils;
 import net.unethicalite.api.widgets.Widgets;
 import lombok.extern.slf4j.Slf4j;
@@ -10,12 +11,10 @@ import net.runelite.api.Client;
 import net.runelite.api.MenuAction;
 import net.runelite.api.Point;
 import net.runelite.api.coords.WorldPoint;
-import net.runelite.api.events.GameTick;
 import net.runelite.api.events.MenuOpened;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import org.pf4j.Extension;
 
@@ -31,7 +30,7 @@ import java.util.Objects;
 )
 @Singleton
 @Slf4j
-public class ExplorerPlugin extends Plugin
+public class ExplorerPlugin extends LoopedPlugin
 {
 	@Inject
 	private Client client;
@@ -42,26 +41,6 @@ public class ExplorerPlugin extends Plugin
 	public void shutDown()
 	{
 		destination = null;
-	}
-
-	@Subscribe
-	public void onGameTick(GameTick event)
-	{
-		if (Movement.isWalking())
-		{
-			return;
-		}
-
-		if (destination == null
-				|| destination.distanceTo(Players.getLocal().getWorldLocation()) <= 2
-				|| Objects.equals(Movement.getDestination(), destination)
-		)
-		{
-			destination = null;
-			return;
-		}
-
-		Movement.walkTo(destination);
 	}
 
 	@Subscribe
@@ -100,5 +79,26 @@ public class ExplorerPlugin extends Plugin
 	{
 		destination = Walker.nearestWalkableTile(wp);
 		log.debug("Walking to {}", destination);
+	}
+
+	@Override
+	protected int loop()
+	{
+		if (Movement.isWalking())
+		{
+			return -1;
+		}
+
+		if (destination == null
+				|| destination.distanceTo(Players.getLocal().getWorldLocation()) <= 2
+				|| Objects.equals(Movement.getDestination(), destination)
+		)
+		{
+			destination = null;
+			return -1;
+		}
+
+		Movement.walkTo(destination);
+		return -1;
 	}
 }
