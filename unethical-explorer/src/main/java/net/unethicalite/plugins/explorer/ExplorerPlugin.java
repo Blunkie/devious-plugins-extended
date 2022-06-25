@@ -111,6 +111,11 @@ public class ExplorerPlugin extends LoopedPlugin
 	@Override
 	protected int loop()
 	{
+		if (client.getLocalPlayer() == null)
+		{
+			return -1;
+		}
+
 		if (Movement.isWalking())
 		{
 			return -1;
