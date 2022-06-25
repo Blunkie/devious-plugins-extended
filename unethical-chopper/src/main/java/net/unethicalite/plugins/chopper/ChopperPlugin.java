@@ -23,7 +23,8 @@ import java.util.Locale;
 @Extension
 @PluginDescriptor(
 		name = "Unethical Chopper",
-		description = "Chops trees"
+		description = "Chops trees",
+		enabledByDefault = false
 )
 @Slf4j
 public class ChopperPlugin extends LoopedPlugin
