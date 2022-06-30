@@ -176,6 +176,7 @@ public enum Course
 
 		for (Course course : values())
 		{
+			if (course == NEAREST) continue;
 			Obstacle[] obstacles = course.getObstacles();
 			Area area = obstacles[0].getArea();
 			double dist2 = area.getCenter().toWorldPoint().distanceTo(local.getWorldLocation());

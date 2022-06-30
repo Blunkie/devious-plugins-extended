@@ -20,7 +20,7 @@ import net.unethicalite.api.widgets.Dialog;
 import org.pf4j.Extension;
 
 @PluginDescriptor(
-		name = "Hoot Agility",
+		name = "Unethical Agility",
 		enabledByDefault = false
 )
 @Slf4j
@@ -28,25 +28,10 @@ import org.pf4j.Extension;
 public class UnethicalAgilityPlugin extends LoopedPlugin
 {
 	@Inject
-	private UnethicalAgilityConfig unethicalAgilityConfig;
+	private UnethicalAgilityConfig config;
 
 	@Inject
 	private Client client;
-	private Course course;
-
-	@Override
-	public void startUp() throws Exception
-	{
-		super.startUp();
-		if (course == Course.NEAREST)
-		{
-			course = Course.getNearest();
-		}
-		else
-		{
-			course = unethicalAgilityConfig.course();
-		}
-	}
 
 	@Provides
 	public UnethicalAgilityConfig getConfig(ConfigManager configManager)
@@ -63,6 +48,7 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 			return -1;
 		}
 
+		Course course = config.course() == Course.NEAREST ? Course.getNearest() : config.course();
 		Player local = Players.getLocal();
 		Obstacle obstacle = course.getNext(local);
 		if (obstacle == null)
@@ -120,5 +106,4 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 					: TileObjects.getNearest(x -> x.hasAction(obstacle.getAction()) && x.getName().equals(obstacle.getName()));
 		}
 	}
-
 }
