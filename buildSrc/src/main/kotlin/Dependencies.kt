@@ -24,7 +24,7 @@
  */
 
 object ProjectVersions {
-    const val unethicaliteVersion = "1.0.0"
+    const val unethicaliteVersion = "1.0.1"
     const val apiVersion = "^1.0.0"
 }
 
