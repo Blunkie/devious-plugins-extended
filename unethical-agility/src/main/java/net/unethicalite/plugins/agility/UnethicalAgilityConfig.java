@@ -16,4 +16,15 @@ public interface UnethicalAgilityConfig extends Config
 	{
 		return Course.NEAREST;
 	}
+
+	@ConfigItem(
+			keyName = "eatHp",
+			name = "Eat at this HP",
+			description = "Eat food when at this HP or below. Will stop if runs out of food.",
+			position = 8
+	)
+	default int eatHp()
+	{
+		return 5;
+	}
 }

@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.ItemID;
 import net.runelite.api.Player;
+import net.runelite.api.Skill;
 import net.runelite.api.TileItem;
 import net.runelite.api.TileObject;
 import net.runelite.client.config.ConfigManager;
@@ -14,6 +15,7 @@ import net.unethicalite.api.commons.Rand;
 import net.unethicalite.api.entities.Players;
 import net.unethicalite.api.entities.TileItems;
 import net.unethicalite.api.entities.TileObjects;
+import net.unethicalite.api.items.Inventory;
 import net.unethicalite.api.movement.Movement;
 import net.unethicalite.api.plugins.LoopedPlugin;
 import net.unethicalite.api.widgets.Dialog;
@@ -45,6 +47,18 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 		if (Dialog.canContinue())
 		{
 			Dialog.continueSpace();
+			return -1;
+		}
+		if (client.getBoostedSkillLevel(Skill.HITPOINTS) <= config.eatHp())
+		{
+			var itemToEat = Inventory.query().actions("Eat").results().first();
+			if (itemToEat == null)
+			{
+				// stop running?
+				log.error("Ran out of food");
+				return -1;
+			}
+			itemToEat.interact("Eat");
 			return -1;
 		}
 

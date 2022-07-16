@@ -137,6 +137,21 @@ public class HootFighterPlugin extends LoopedPlugin
 			}
 		}
 
+		if (config.antipoison() && Combat.isPoisoned())
+		{
+			Item antipoison = Inventory.getFirst(
+					config.antipoisonType().getDose_1(),
+					config.antipoisonType().getDose_2(),
+					config.antipoisonType().getDose_3(),
+					config.antipoisonType().getDose_4()
+			);
+			if (antipoison != null)
+			{
+				antipoison.interact("Drink");
+				return -1;
+			}
+		}
+
 		if (config.buryBones())
 		{
 			Item bones = Inventory.getFirst(x -> x.hasAction("Bury") || x.hasAction("Scatter"));
@@ -228,4 +243,5 @@ public class HootFighterPlugin extends LoopedPlugin
 			notOurItems.addAll(notOurs);
 		}
 	}
+
 }

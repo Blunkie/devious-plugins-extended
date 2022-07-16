@@ -49,6 +49,14 @@ public interface HootFighterConfig extends Config
 	)
 	String alching = "Alching";
 
+	@ConfigSection(
+			name = "Antipoison",
+			description = "Antipoison settings",
+			position = 5,
+			closedByDefault = true
+	)
+	String antipoison = "Antipoison";
+
 	@ConfigItem(
 			keyName = "monster",
 			name = "Monster",
@@ -229,5 +237,29 @@ public interface HootFighterConfig extends Config
 	default String alchItems()
 	{
 		return "Weed";
+	}
+
+	@ConfigItem(
+			keyName = "antipoison",
+			name = "Use antipoison",
+			description = "Automatically cure antipoison",
+			position = 0,
+			section = antipoison
+	)
+	default boolean antipoison()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+			keyName = "antipoisonType",
+			name = "Antipoison type",
+			description = "",
+			position = 1,
+			section = antipoison
+	)
+	default AntipoisonType antipoisonType()
+	{
+		return AntipoisonType.ANTIPOISON;
 	}
 }
