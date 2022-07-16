@@ -199,7 +199,6 @@ public enum Course
 	{
 		for (Obstacle obstacle : obstacles)
 		{
-
 			if (obstacle.getArea().contains(player))
 				return obstacle;
 		}
