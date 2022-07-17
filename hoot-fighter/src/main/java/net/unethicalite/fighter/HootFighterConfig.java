@@ -57,6 +57,14 @@ public interface HootFighterConfig extends Config
 	)
 	String antipoison = "Antipoison";
 
+	@ConfigSection(
+			name = "Slayer",
+			description = "Slayer settings",
+			position = 6,
+			closedByDefault = true
+	)
+	String slayer = "Slayer";
+
 	@ConfigItem(
 			keyName = "monster",
 			name = "Monster",
@@ -254,12 +262,24 @@ public interface HootFighterConfig extends Config
 	@ConfigItem(
 			keyName = "antipoisonType",
 			name = "Antipoison type",
-			description = "",
+			description = "Type of antipoison potion to drink when poisoned",
 			position = 1,
 			section = antipoison
 	)
 	default AntipoisonType antipoisonType()
 	{
 		return AntipoisonType.ANTIPOISON;
+	}
+
+	@ConfigItem(
+			keyName = "disableOnTaskCompletion",
+			name = "Disable after task",
+			description = "Disables plugin once slayer task is finished, so you don't continue attacking monster",
+			position = 0,
+			section = slayer
+	)
+	default boolean disableAfterSlayerTask()
+	{
+		return false;
 	}
 }
