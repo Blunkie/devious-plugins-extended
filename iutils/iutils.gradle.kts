@@ -41,3 +41,9 @@ tasks {
         }
     }
 }
+
+dependencies {
+    compileOnly(Libraries.apacheCommonsText)
+    compileOnly(Libraries.gson)
+    compileOnly(Libraries.okhttp3)
+}
