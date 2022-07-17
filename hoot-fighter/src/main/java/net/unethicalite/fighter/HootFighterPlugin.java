@@ -10,6 +10,7 @@ import net.unethicalite.api.magic.Magic;
 import net.unethicalite.api.movement.Movement;
 import net.unethicalite.api.movement.Reachable;
 import net.unethicalite.api.plugins.LoopedPlugin;
+import net.unethicalite.api.plugins.Plugins;
 import net.unethicalite.api.widgets.Dialog;
 import net.unethicalite.api.widgets.Prayers;
 import lombok.extern.slf4j.Slf4j;
@@ -241,6 +242,10 @@ public class HootFighterPlugin extends LoopedPlugin
 			var notOurs = TileItems.getAt(Players.getLocal().getWorldLocation(), x -> true);
 			log.debug("{} are not our items", notOurs.stream().map(TileItem::getName).collect(Collectors.toList()));
 			notOurItems.addAll(notOurs);
+		}
+		else if (config.disableAfterSlayerTask() && message.contains("You have completed your task!"))
+		{
+			Plugins.stopPlugin(this);
 		}
 	}
 
