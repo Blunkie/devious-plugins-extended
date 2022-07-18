@@ -94,7 +94,7 @@ public class UnethicalButlerPlugin extends Plugin
 					DialogOption.NPC_CONTINUE,
 					DialogOption.CHAT_OPTION_ONE
 			);
-			DialogPackets.sendNumberInput(18, true);
+			DialogPackets.sendNumberInput(18);
 			log.debug("Sending logs to sawmill");
 			return;
 		}
@@ -105,7 +105,7 @@ public class UnethicalButlerPlugin extends Plugin
 					DialogOption.NPC_CONTINUE,
 					DialogOption.CHAT_OPTION_ONE
 			);
-			DialogPackets.sendNumberInput(18, true);
+			DialogPackets.sendNumberInput(18);
 			Dialog.invokeDialog(
 					DialogOption.NPC_CONTINUE,
 					DialogOption.CHAT_OPTION_ONE,
