@@ -13,6 +13,7 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.unethicalite.api.entities.Players;
+import net.unethicalite.api.game.Game;
 import net.unethicalite.api.movement.Movement;
 import net.unethicalite.api.movement.pathfinder.Walker;
 import net.unethicalite.api.plugins.LoopedPlugin;
@@ -111,7 +112,7 @@ public class ExplorerPlugin extends LoopedPlugin
 	@Override
 	protected int loop()
 	{
-		if (client.getLocalPlayer() == null)
+		if (!Game.isLoggedIn() || client.getLocalPlayer() == null)
 		{
 			return -1;
 		}
