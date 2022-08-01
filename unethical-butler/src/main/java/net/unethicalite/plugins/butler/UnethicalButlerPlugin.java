@@ -71,7 +71,7 @@ public class UnethicalButlerPlugin extends Plugin
 			return;
 		}
 
-		// The dialog needs to be order in order for the packets to work
+		// The dialog needs to be open in order for the packets to work
 		if (!Dialog.canContinue())
 		{
 			return;
