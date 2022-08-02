@@ -14,13 +14,13 @@ public interface UnethicalZulrahConfig extends Config
 	)
 	default String rangeGearNames()
 	{
-		return "Ahrim's robetop,Ahrim's robeskirt,Trident of the swamp,Book of darkness";
+		return "Ancient d'hide body,Ancient chaps,Infinity boots,Toxic blowpipe,Ava's assembler";
 	}
 
 	@ConfigItem(
 			keyName = "mageGear",
 			name = "Mage gear names",
-			description = "Ancient d'hide body,Ancient chaps,Infinity boots,Toxic blowpipe,Ava's assembler"
+			description = "Ahrim's robetop,Ahrim's robeskirt,Trident of the swamp,Book of darkness"
 	)
 	default String mageGearNames()
 	{
