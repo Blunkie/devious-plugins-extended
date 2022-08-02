@@ -1,12 +1,13 @@
-package net.unethicalite.plugins.zulrah.data;
+package net.unethicalite.plugins.zulrah.data.phases;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.runelite.api.coords.WorldPoint;
 
-@RequiredArgsConstructor
 @Getter
-public enum Rotation
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
+public enum ZulrahCycle
 {
 	INITIAL(ZulrahType.RANGE, SafeSpot.NORTH_EAST, ZulrahPosition.CENTER),
 
@@ -84,3 +85,5 @@ public enum Rotation
 		return zulrahPos == ZulrahPosition.CENTER;
 	}
 }
+
+

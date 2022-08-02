@@ -8,7 +8,7 @@ import net.unethicalite.api.entities.NPCs;
 import net.unethicalite.api.game.Skills;
 import net.unethicalite.api.widgets.Prayers;
 import net.unethicalite.plugins.zulrah.data.Constants;
-import net.unethicalite.plugins.zulrah.data.Rotation;
+import net.unethicalite.plugins.zulrah.data.phases.ZulrahCycle;
 import net.unethicalite.plugins.zulrah.framework.ZulrahTask;
 
 import static net.unethicalite.plugins.zulrah.UnethicalZulrahPlugin.atZulrah;
@@ -29,7 +29,7 @@ public class TogglePrayers extends ZulrahTask
 			}
 		}
 
-		if (getRotation() != null && !enable && !getRotation().equals(Rotation.INITIAL))
+		if (getZulrahCycle() != null && !enable && !getZulrahCycle().equals(ZulrahCycle.INITIAL))
 		{
 			enable = true;
 		}
@@ -45,8 +45,8 @@ public class TogglePrayers extends ZulrahTask
 	{
 		if (canToggleDefensive())
 		{
-			Prayer defensive = getRotation().getZulrahType().getDefensivePrayer();
-			if (getRotation() != null)
+			Prayer defensive = getZulrahCycle().getZulrahType().getDefensivePrayer();
+			if (getZulrahCycle() != null)
 			{
 				Prayers.toggle(defensive);
 				Time.sleepUntil(() -> Prayers.isEnabled(defensive), 1200);
@@ -56,8 +56,8 @@ public class TogglePrayers extends ZulrahTask
 
 		if (canToggleOffensive())
 		{
-			Prayer offensive = getRotation().getZulrahType().getOffensivePrayer();
-			if (getRotation() != null)
+			Prayer offensive = getZulrahCycle().getZulrahType().getOffensivePrayer();
+			if (getZulrahCycle() != null)
 			{
 				Prayers.toggle(offensive);
 				Time.sleepUntil(() -> Prayers.isEnabled(offensive), 1200);
@@ -70,22 +70,22 @@ public class TogglePrayers extends ZulrahTask
 
 	private boolean canToggleOffensive()
 	{
-		return getRotation() != null
+		return getZulrahCycle() != null
 				&& atZulrah()
 				&& Prayers.getPoints() > 0
 				&& Skills.getLevel(Skill.PRAYER) >= 45
-				&& !Prayers.isEnabled(getRotation().getZulrahType().getOffensivePrayer());
+				&& !Prayers.isEnabled(getZulrahCycle().getZulrahType().getOffensivePrayer());
 	}
 
 	private boolean canToggleDefensive()
 	{
-		return getRotation() != null
+		return getZulrahCycle() != null
 				&& enable
 				&& atZulrah()
-				&& !getRotation().isJad()
-				&& !getRotation().isMelee()
+				&& !getZulrahCycle().isJad()
+				&& !getZulrahCycle().isMelee()
 				&& Prayers.getPoints() > 0
-				&& !Prayers.isEnabled(getRotation().getZulrahType().getDefensivePrayer());
+				&& !Prayers.isEnabled(getZulrahCycle().getZulrahType().getDefensivePrayer());
 	}
 
 	@Override

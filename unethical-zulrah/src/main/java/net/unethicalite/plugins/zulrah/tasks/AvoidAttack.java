@@ -6,7 +6,7 @@ import net.unethicalite.api.entities.NPCs;
 import net.unethicalite.api.entities.Players;
 import net.unethicalite.api.movement.Movement;
 import net.unethicalite.plugins.zulrah.data.Constants;
-import net.unethicalite.plugins.zulrah.data.Rotation;
+import net.unethicalite.plugins.zulrah.data.phases.ZulrahCycle;
 import net.unethicalite.plugins.zulrah.framework.ZulrahTask;
 
 import java.util.List;
@@ -20,10 +20,10 @@ public class AvoidAttack extends ZulrahTask
 	@Override
 	public boolean validate()
 	{
-		return getRotation() != null
-				&& (getRotation() == Rotation.MAGMA_CENTER_NW || getRotation() == Rotation.MAGMA_CENTER_NE)
+		return getZulrahCycle() != null
+				&& (getZulrahCycle() == ZulrahCycle.MAGMA_CENTER_NW || getZulrahCycle() == ZulrahCycle.MAGMA_CENTER_NE)
 				&& (Players.getLocal().getInteracting() != null || inCloud()
-				|| getRotation().getSafeSpot(getOrigin()).distanceTo(Players.getLocal()) > 4)
+				|| getZulrahCycle().getSafeSpot(getOrigin()).distanceTo(Players.getLocal()) > 4)
 				&& !Movement.isWalking();
 	}
 
@@ -31,13 +31,13 @@ public class AvoidAttack extends ZulrahTask
 	public int execute()
 	{
 		NPC zulrah = NPCs.getNearest(Constants.ZULRAH_NAME);
-		initial = getRotation().getSafeSpot(getOrigin());
+		initial = getZulrahCycle().getSafeSpot(getOrigin());
 		WorldPoint myPos = Players.getLocal().getWorldLocation();
 
 		if (zulrah != null)
 		{
 			int sum = zulrah.getOrientation() + Players.getLocal().getOrientation();
-			if (getRotation() == Rotation.MAGMA_CENTER_NW)
+			if (getZulrahCycle() == ZulrahCycle.MAGMA_CENTER_NW)
 			{
 				avoid = initial.dx(-1).dy(-3);
 			}

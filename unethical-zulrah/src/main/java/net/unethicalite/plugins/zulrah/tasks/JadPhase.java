@@ -14,7 +14,7 @@ public class JadPhase extends ZulrahTask
 	@Override
 	public boolean validate()
 	{
-		if (getRotation() != null && getRotation().isJad())
+		if (getZulrahCycle() != null && getZulrahCycle().isJad())
 		{
 			if (Projectiles.getAll(e -> e.getId() == Constants.PROJECTILE_RANGED_ID).size() > 0 && !Prayers.isEnabled(Prayer.PROTECT_FROM_MAGIC))
 			{
@@ -39,13 +39,13 @@ public class JadPhase extends ZulrahTask
 	{
 		if (current == null)
 		{
-			current = getRotation().getZulrahType().getDefensivePrayer();
+			current = getZulrahCycle().getZulrahType().getDefensivePrayer();
 		}
 
-		if (!Prayers.isEnabled(getRotation().getZulrahType().getOffensivePrayer()))
+		if (!Prayers.isEnabled(getZulrahCycle().getZulrahType().getOffensivePrayer()))
 		{
-			Prayers.toggle(getRotation().getZulrahType().getOffensivePrayer());
-			Time.sleepUntil(() -> Prayers.isEnabled(getRotation().getZulrahType().getOffensivePrayer()), 500);
+			Prayers.toggle(getZulrahCycle().getZulrahType().getOffensivePrayer());
+			Time.sleepUntil(() -> Prayers.isEnabled(getZulrahCycle().getZulrahType().getOffensivePrayer()), 500);
 		}
 
 		if (Projectiles.getAll(e -> e.getId() == Constants.PROJECTILE_RANGED_ID).size() > 0)

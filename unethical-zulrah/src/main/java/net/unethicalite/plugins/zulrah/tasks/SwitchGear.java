@@ -7,13 +7,13 @@ public class SwitchGear extends ZulrahTask
 	@Override
 	public boolean validate()
 	{
-		return getRotation() != null && getRotation().getZulrahType().getSetup().anyUnequipped();
+		return getZulrahCycle() != null && getZulrahCycle().getZulrahType().getSetup().anyUnequipped();
 	}
 
 	@Override
 	public int execute()
 	{
-		getRotation().getZulrahType().getSetup().switchGear(50);
+		getZulrahCycle().getZulrahType().getSetup().switchGear(50);
 		return 100;
 	}
 

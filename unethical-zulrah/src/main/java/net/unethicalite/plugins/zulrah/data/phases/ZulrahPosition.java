@@ -1,9 +1,10 @@
-package net.unethicalite.plugins.zulrah.data;
+package net.unethicalite.plugins.zulrah.data.phases;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 @Getter
 public enum ZulrahPosition
 {

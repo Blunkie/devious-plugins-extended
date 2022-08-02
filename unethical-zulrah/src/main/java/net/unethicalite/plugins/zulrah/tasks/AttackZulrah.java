@@ -4,7 +4,7 @@ import net.runelite.api.NPC;
 import net.unethicalite.api.entities.NPCs;
 import net.unethicalite.api.entities.Players;
 import net.unethicalite.plugins.zulrah.data.Constants;
-import net.unethicalite.plugins.zulrah.data.Rotation;
+import net.unethicalite.plugins.zulrah.data.phases.ZulrahCycle;
 import net.unethicalite.plugins.zulrah.framework.ZulrahTask;
 
 public class AttackZulrah extends ZulrahTask
@@ -17,10 +17,10 @@ public class AttackZulrah extends ZulrahTask
 						&& NPCs.getNearest(Constants.ZULRAH_NAME).getAnimation() != Constants.DISAPPEAR_ANIMATION
 						&& NPCs.getNearest(Constants.ZULRAH_NAME).getAnimation() != Constants.APPEAR_ANIMATION;
 
-		return (getRotation() != null
+		return (getZulrahCycle() != null
 				&& Players.getLocal().getInteracting() == null
-				&& (getRotation().getSafeSpot(getOrigin()).distanceTo(Players.getLocal()) <= 8
-				|| getRotation().equals(Rotation.TANZ_SOUTH_CW))
+				&& (getZulrahCycle().getSafeSpot(getOrigin()).distanceTo(Players.getLocal()) <= 8
+				|| getZulrahCycle().equals(ZulrahCycle.TANZ_SOUTH_CW))
 				&& !inCloud()
 				&& canAttack)
 				&& attackCondition();
@@ -40,6 +40,6 @@ public class AttackZulrah extends ZulrahTask
 
 	private boolean attackCondition()
 	{
-		return getRotation() != Rotation.GREEN_SOUTH_E || !Players.getLocal().isMoving();
+		return getZulrahCycle() != ZulrahCycle.GREEN_SOUTH_E || !Players.getLocal().isMoving();
 	}
 }

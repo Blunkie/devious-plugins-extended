@@ -21,7 +21,6 @@ public class Constants
 	public static final String BANKER_NAME = "Banker";
 	public static final String GE_CLERK_NAME = "Grand Exchange Clerk";
 	public static final Predicate<TileItem> NON_DART_PICKABLE = x -> !x.getName().contains(Constants.DART_NAME);
-	public static final String[] CONFIG_DIRECTORIES = {"/bzulrah/config/", "/bzulrah/data/", "/bzulrah/images/icons/", "/bzulrah/images/paint/"};
 	public static final Integer[] REPAIR_VALUES = {25, 50, 75, 100};
 
 	public static final List<String> LOOT_TABLE = Arrays.asList("Zulrah's scales", "Tanzanite fang", "Magic fang", "Serpentine visage",

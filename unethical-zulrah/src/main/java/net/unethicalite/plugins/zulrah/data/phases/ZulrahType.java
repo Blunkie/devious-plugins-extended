@@ -1,10 +1,13 @@
-package net.unethicalite.plugins.zulrah.data;
+package net.unethicalite.plugins.zulrah.data.phases;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import net.runelite.api.Prayer;
+import net.unethicalite.plugins.zulrah.data.GearSetup;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 @Getter
 public enum ZulrahType
 {
@@ -14,23 +17,26 @@ public enum ZulrahType
 	JAD_MAGIC_FIRST(2042),
 	JAD_RANGE_FIRST(2042);
 
+	// This is very ugly, don't do this
 	public static Prayer rangePray;
 	public static Prayer magePray;
-	private final int id;
-	private Gear setup;
 
-	public static void setRangedMeleePhaseGear(Gear gear)
+	private final int id;
+	@Setter
+	private GearSetup setup;
+
+	public static void setRangedMeleePhaseGear(GearSetup gearSetup)
 	{
-		RANGE.setSetup(gear);
-		MELEE.setSetup(gear);
-		JAD_MAGIC_FIRST.setSetup(gear);
-		JAD_RANGE_FIRST.setSetup(gear);
+		RANGE.setSetup(gearSetup);
+		MELEE.setSetup(gearSetup);
+		JAD_MAGIC_FIRST.setSetup(gearSetup);
+		JAD_RANGE_FIRST.setSetup(gearSetup);
 		magePray = Prayer.MYSTIC_MIGHT;
 	}
 
-	public static void setMagePhaseGear(Gear gear)
+	public static void setMagePhaseGear(GearSetup gearSetup)
 	{
-		MAGIC.setSetup(gear);
+		MAGIC.setSetup(gearSetup);
 		rangePray = Prayer.EAGLE_EYE;
 	}
 
@@ -60,15 +66,5 @@ public enum ZulrahType
 			default:
 				return Prayer.PROTECT_FROM_MISSILES;
 		}
-	}
-
-	public Gear getSetup()
-	{
-		return setup;
-	}
-
-	public void setSetup(Gear setup)
-	{
-		this.setup = setup;
 	}
 }

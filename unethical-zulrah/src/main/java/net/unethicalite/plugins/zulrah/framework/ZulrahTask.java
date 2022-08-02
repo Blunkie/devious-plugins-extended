@@ -9,13 +9,13 @@ import net.runelite.api.coords.WorldPoint;
 import net.unethicalite.api.entities.Players;
 import net.unethicalite.api.entities.TileObjects;
 import net.unethicalite.api.plugins.Task;
-import net.unethicalite.plugins.zulrah.data.Rotation;
+import net.unethicalite.plugins.zulrah.data.phases.ZulrahCycle;
 
 @Getter
 @Setter
 public abstract class ZulrahTask implements Task
 {
-	private Rotation rotation;
+	private ZulrahCycle zulrahCycle;
 	private WorldPoint origin;
 
 	protected boolean isCloud(WorldPoint position)

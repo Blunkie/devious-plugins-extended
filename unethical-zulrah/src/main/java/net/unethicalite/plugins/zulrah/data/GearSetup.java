@@ -1,5 +1,7 @@
 package net.unethicalite.plugins.zulrah.data;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import net.runelite.api.Item;
 import net.unethicalite.api.commons.Time;
 import net.unethicalite.api.items.Equipment;
@@ -9,24 +11,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class Gear
+@Getter
+@RequiredArgsConstructor
+public final class GearSetup
 {
 	private final List<String> items;
-
-	private Gear(List<String> items)
-	{
-		this.items = items;
-	}
-
-	public static Gear generateSetup(List<String> items)
-	{
-		return new Gear(items);
-	}
-
-	public List<String> getItems()
-	{
-		return items;
-	}
 
 	public boolean anyUnequipped()
 	{

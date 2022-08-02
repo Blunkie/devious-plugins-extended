@@ -12,7 +12,7 @@ import net.unethicalite.api.game.Skills;
 import net.unethicalite.api.items.Inventory;
 import net.unethicalite.plugins.zulrah.UnethicalZulrahPlugin;
 import net.unethicalite.plugins.zulrah.data.Constants;
-import net.unethicalite.plugins.zulrah.data.ZulrahType;
+import net.unethicalite.plugins.zulrah.data.phases.ZulrahType;
 import net.unethicalite.plugins.zulrah.framework.ZulrahTask;
 
 public class Eating extends ZulrahTask
@@ -24,7 +24,7 @@ public class Eating extends ZulrahTask
 	@Override
 	public boolean validate()
 	{
-		food = Inventory.getFirst(x -> x.getName().equals("Shark") && x.hasAction(Constants.EAT_ACTION));
+		food = Inventory.getFirst(x -> !x.getName().equals(Constants.KARAMBWAN) && x.hasAction(Constants.EAT_ACTION));
 		karambwan = Inventory.getFirst(x -> x.hasAction(Constants.EAT_ACTION) && x.getName().equals(Constants.KARAMBWAN));
 		zulrah = NPCs.getNearest(x -> x.getName().equals(Constants.ZULRAH_NAME));
 
@@ -33,22 +33,23 @@ public class Eating extends ZulrahTask
 
 	private boolean canComboEat()
 	{
-		return getRotation() != null
+		return getZulrahCycle() != null
 				&& karambwan != null
-				&& ((getRotation().isMagic() || food == null)
+				&& ((getZulrahCycle().isMagic() || food == null)
 				&& Combat.getCurrentHealth() <= Skills.getLevel(Skill.HITPOINTS) - Constants.KARAMBWAN_HEAL);
 	}
 
 	private boolean canTickEat()
 	{
 		return (UnethicalZulrahPlugin.atZulrah()
-				&& getRotation() != null)
+				&& getZulrahCycle() != null)
 				&& (food != null
 				&& Combat.getCurrentHealth() > 0
 				&& Players.getLocal().getAnimation() != Constants.EAT_ANIMATION
 				&& Inventory.getFirst(e -> e.hasAction(Constants.EAT_ACTION)) != null
 				&& ((Combat.getCurrentHealth() <= 45)
-				|| (getRotation().getZulrahType() == ZulrahType.MAGIC && Projectiles.getNearest(1044) != null && Combat.getCurrentHealth() <= Constants.MAX_HIT)));
+				|| (getZulrahCycle().getZulrahType() == ZulrahType.MAGIC && Projectiles.getNearest(1044) != null
+				&& Combat.getCurrentHealth() <= Constants.MAX_HIT)));
 	}
 
 	private boolean canEatInBetweenSpawns()
