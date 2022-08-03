@@ -12,16 +12,22 @@ import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.ui.overlay.worldmap.WorldMapPoint;
+import net.runelite.client.ui.overlay.worldmap.WorldMapPointManager;
 import net.unethicalite.api.entities.Players;
 import net.unethicalite.api.game.Game;
 import net.unethicalite.api.movement.Movement;
 import net.unethicalite.api.movement.pathfinder.Walker;
 import net.unethicalite.api.plugins.LoopedPlugin;
+import net.unethicalite.api.utils.MessageUtils;
 import net.unethicalite.api.widgets.Widgets;
 import org.pf4j.Extension;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -42,6 +48,9 @@ public class ExplorerPlugin extends LoopedPlugin
 
 	@Inject
 	private ExplorerConfig config;
+
+	@Inject
+	private WorldMapPointManager worldMapPointManager;
 
 	private WorldPoint destination;
 
@@ -91,16 +100,45 @@ public class ExplorerPlugin extends LoopedPlugin
 			return;
 		}
 
-		String coords = config.coords();
-		if (!WORLD_POINT_PATTERN.matcher(coords).matches())
-		{
-			return;
-		}
+		WorldPoint location = null;
 
-		String[] split = coords.split(" ");
-		setDestination(Walker.nearestWalkableTile(
-				new WorldPoint(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]))
-		));
+		switch (config.category())
+		{
+			case QUEST:
+				WorldPoint questLocation = getWorldPointLocation("Quest Helper");
+				if (questLocation != null)
+				{
+					location = questLocation;
+				}
+				break;
+			case CLUE:
+				WorldPoint clueLocation = getWorldPointLocation("Clue Scroll");
+				if (clueLocation != null)
+				{
+					location = clueLocation;
+				}
+				break;
+			case BANKS:
+				location = config.bankLocation().getArea().getCenter();
+				break;
+			case CUSTOM:
+				String coords = config.coords();
+				if (!WORLD_POINT_PATTERN.matcher(coords).matches())
+				{
+					return;
+				}
+				String[] split = coords.split(" ");
+				location = new WorldPoint(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+				break;
+		}
+		if (location != null)
+		{
+			setDestination(Walker.nearestWalkableTile(location));
+		}
+		else
+		{
+			MessageUtils.addMessage("Invalid Selection");
+		}
 	}
 
 	private void setDestination(WorldPoint wp)
@@ -139,5 +177,29 @@ public class ExplorerPlugin extends LoopedPlugin
 	ExplorerConfig provideConfig(ConfigManager configManager)
 	{
 		return configManager.getConfig(ExplorerConfig.class);
+	}
+
+	private WorldPoint getWorldPointLocation(String name)
+	{
+		List<WorldMapPoint> mapPoints = new ArrayList<>();
+		try
+		{
+			Field privateField = worldMapPointManager.getClass().getDeclaredField("worldMapPoints");
+			privateField.setAccessible(true);
+			mapPoints = (List<WorldMapPoint>) privateField.get(worldMapPointManager);
+		}
+		catch (Exception e)
+		{
+			log.info("Error: ", e);
+		}
+
+		for (WorldMapPoint point : mapPoints)
+		{
+			if (point.getName() != null && point.getName().equals(name))
+			{
+				return point.getWorldPoint();
+			}
+		}
+		return null;
 	}
 }

@@ -4,15 +4,46 @@ import net.runelite.client.config.Button;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
+import net.unethicalite.api.movement.pathfinder.model.BankLocation;
+import net.unethicalite.plugins.explorer.util.Category;
 
 @ConfigGroup("unethicalexplorer")
 public interface ExplorerConfig extends Config
 {
+
 	@ConfigItem(
-			keyName = "coords",
+			keyName = "categories",
+			name = "Categories",
+			description = "Predefined location categories",
+			position = 10
+	)
+	default Category category()
+	{
+		return Category.QUEST;
+	}
+
+	@ConfigItem(
+			keyName = "bankLocations",
+			name = "Banks",
+			description = "Walk to the specified bank",
+			position = 11,
+			hidden = true,
+			unhide = "categories",
+			unhideValue = "BANKS"
+	)
+	default BankLocation bankLocation()
+	{
+		return BankLocation.AL_KHARID_BANK;
+	}
+
+	@ConfigItem(
+			keyName = "customcoords",
 			name = "Custom coords",
 			description = "Walk to the specified coordinates",
-			position = 0
+			position = 15,
+			hidden = true,
+			unhide = "categories",
+			unhideValue = "CUSTOM"
 	)
 	default String coords()
 	{
@@ -23,7 +54,7 @@ public interface ExplorerConfig extends Config
 			keyName = "walk",
 			name = "Walk to",
 			description = "Walk to set coordinates",
-			position = 1
+			position = 20
 	)
 	default Button walk()
 	{
