@@ -63,7 +63,6 @@ public class UnethicalAutoLoginPlugin extends Plugin
 			case 2:
 				login();
 				break;
-
 			case 4:
 				enterAuth();
 				break;
