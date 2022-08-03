@@ -181,24 +181,29 @@ public class ExplorerPlugin extends LoopedPlugin
 
 	private WorldPoint getWorldPointLocation(String name)
 	{
-		List<WorldMapPoint> mapPoints = new ArrayList<>();
+		List<?> mapPoints = new ArrayList<>();
 		try
 		{
 			Field privateField = worldMapPointManager.getClass().getDeclaredField("worldMapPoints");
 			privateField.setAccessible(true);
-			mapPoints = (List<WorldMapPoint>) privateField.get(worldMapPointManager);
+			mapPoints = (List<?>) privateField.get(worldMapPointManager);
 		}
 		catch (Exception e)
 		{
 			log.info("Error: ", e);
 		}
 
-		for (WorldMapPoint point : mapPoints)
+		for (Object mapPoint : mapPoints)
 		{
-			if (point.getName() != null && point.getName().equals(name))
+			if (mapPoint instanceof WorldMapPoint)
 			{
-				return point.getWorldPoint();
+				final WorldMapPoint point = (WorldMapPoint) mapPoint;
+				if (point.getName() != null && point.getName().equals(name))
+				{
+					return point.getWorldPoint();
+				}
 			}
+
 		}
 		return null;
 	}
