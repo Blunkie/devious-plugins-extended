@@ -24,6 +24,6 @@ public interface UnethicalZulrahConfig extends Config
 	)
 	default String mageGearNames()
 	{
-		return "";
+		return "Ahrim's robetop,Ahrim's robeskirt,Trident of the swamp,Book of darkness";
 	}
 }
