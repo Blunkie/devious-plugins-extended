@@ -207,6 +207,21 @@ public class HootFighterPlugin extends LoopedPlugin
 			return -1;
 		}
 
+		if (config.antifire() && !( Combat.isAntifired() ^ Combat.isSuperAntifired()) )
+		{
+			Item antifire = Inventory.getFirst(
+					config.antifireType().getDose_1(),
+					config.antifireType().getDose_2(),
+					config.antifireType().getDose_3(),
+					config.antifireType().getDose_4()
+			);
+			if (antifire != null)
+			{
+				antifire.interact("Drink");
+				return -1;
+			}
+		}
+
 		NPC mob = Combat.getAttackableNPC(x -> x.getName() != null
 				&& x.getName().toLowerCase().contains(config.monster().toLowerCase()) && !x.isDead()
 				&& x.getWorldLocation().distanceTo(local.getWorldLocation()) < config.attackRange()

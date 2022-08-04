@@ -65,6 +65,14 @@ public interface HootFighterConfig extends Config
 	)
 	String slayer = "Slayer";
 
+	@ConfigSection(
+			name = "Antifire",
+			description = "Automatically uses antifire",
+			position = 7,
+			closedByDefault = true
+	)
+	String antifire = "Antifire";
+
 	@ConfigItem(
 			keyName = "monster",
 			name = "Monster",
@@ -281,5 +289,29 @@ public interface HootFighterConfig extends Config
 	default boolean disableAfterSlayerTask()
 	{
 		return false;
+	}
+	
+	@ConfigItem(
+			keyName = "antifire",
+			name = "Use antifire",
+			description = "Automatically sips antifire",
+			position = 0,
+			section = antifire
+	)
+	default boolean antifire()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+			keyName = "antifireType",
+			name = "Antifire type",
+			description = "Type of antifire potion to drink",
+			position = 1,
+			section = antifire
+	)
+	default AntifireType antifireType()
+	{
+		return AntifireType.ANTIFIRE;
 	}
 }
