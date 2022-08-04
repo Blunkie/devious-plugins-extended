@@ -17,7 +17,7 @@ public interface ExplorerConfig extends Config
 	)
 	default Keybind stopKeyBind()
 	{
-		return Keybind.SHIFT;
+		return Keybind.NOT_SET;
 	}
 
 	@ConfigItem(
