@@ -5,15 +5,58 @@ import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.Keybind;
+import net.unethicalite.api.movement.pathfinder.model.BankLocation;
+import net.unethicalite.plugins.explorer.util.Category;
 
 @ConfigGroup("unethicalexplorer")
 public interface ExplorerConfig extends Config
 {
+
+	@ConfigItem(
+			keyName = "categories",
+			name = "Categories",
+			description = "Predefined location categories",
+			position = 0
+	)
+	default Category category()
+	{
+		return Category.QUEST;
+	}
+
+	@ConfigItem(
+			keyName = "bankLocations",
+			name = "Banks",
+			description = "Walk to the specified bank",
+			position = 5,
+			hidden = true,
+			unhide = "categories",
+			unhideValue = "BANKS"
+	)
+	default BankLocation bankLocation()
+	{
+		return BankLocation.AL_KHARID_BANK;
+	}
+
+	@ConfigItem(
+			keyName = "customcoords",
+			name = "Custom coords",
+			description = "Walk to the specified coordinates",
+			position = 10,
+			hidden = true,
+			unhide = "categories",
+			unhideValue = "CUSTOM"
+	)
+	default String coords()
+	{
+		return "3220 3220 0";
+	}
+
+
 	@ConfigItem(
 		keyName = "keyBind",
 		name = "Stop explorer hotkey",
 		description = "Hotkey to stop the explorer",
-		position = 0
+		position = 24
 	)
 	default Keybind stopKeyBind()
 	{
@@ -24,7 +67,7 @@ public interface ExplorerConfig extends Config
 		keyName = "closeMap",
 		name = "Close map on selection",
 		description = "Close the world map after selecting a destination",
-		position = 1
+		position = 25
 	)
 	default boolean closeMap()
 	{
@@ -32,21 +75,10 @@ public interface ExplorerConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "coords",
-			name = "Custom coords",
-			description = "Walk to the specified coordinates",
-			position = 2
-	)
-	default String coords()
-	{
-		return "3220 3220 0";
-	}
-
-	@ConfigItem(
 			keyName = "walk",
 			name = "Walk to",
 			description = "Walk to set coordinates",
-			position = 3
+			position = 26
 	)
 	default Button walk()
 	{
