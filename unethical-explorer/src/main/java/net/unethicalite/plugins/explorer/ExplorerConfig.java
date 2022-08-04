@@ -4,46 +4,38 @@ import net.runelite.client.config.Button;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
-import net.unethicalite.api.movement.pathfinder.model.BankLocation;
-import net.unethicalite.plugins.explorer.util.Category;
+import net.runelite.client.config.Keybind;
 
 @ConfigGroup("unethicalexplorer")
 public interface ExplorerConfig extends Config
 {
-
 	@ConfigItem(
-			keyName = "categories",
-			name = "Categories",
-			description = "Predefined location categories",
-			position = 10
+		keyName = "keyBind",
+		name = "Stop explorer hotkey",
+		description = "Hotkey to stop the explorer",
+		position = 0
 	)
-	default Category category()
+	default Keybind stopKeyBind()
 	{
-		return Category.QUEST;
+		return Keybind.NOT_SET;
 	}
 
 	@ConfigItem(
-			keyName = "bankLocations",
-			name = "Banks",
-			description = "Walk to the specified bank",
-			position = 11,
-			hidden = true,
-			unhide = "categories",
-			unhideValue = "BANKS"
+		keyName = "closeMap",
+		name = "Close map on selection",
+		description = "Close the world map after selecting a destination",
+		position = 1
 	)
-	default BankLocation bankLocation()
+	default boolean closeMap()
 	{
-		return BankLocation.AL_KHARID_BANK;
+		return true;
 	}
 
 	@ConfigItem(
-			keyName = "customcoords",
+			keyName = "coords",
 			name = "Custom coords",
 			description = "Walk to the specified coordinates",
-			position = 15,
-			hidden = true,
-			unhide = "categories",
-			unhideValue = "CUSTOM"
+			position = 2
 	)
 	default String coords()
 	{
@@ -54,7 +46,7 @@ public interface ExplorerConfig extends Config
 			keyName = "walk",
 			name = "Walk to",
 			description = "Walk to set coordinates",
-			position = 20
+			position = 3
 	)
 	default Button walk()
 	{
