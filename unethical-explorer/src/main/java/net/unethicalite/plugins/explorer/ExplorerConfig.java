@@ -4,6 +4,7 @@ import net.runelite.client.config.Button;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
+import net.runelite.client.config.Keybind;
 
 @ConfigGroup("unethicalexplorer")
 public interface ExplorerConfig extends Config
@@ -28,5 +29,16 @@ public interface ExplorerConfig extends Config
 	default Button walk()
 	{
 		return new Button();
+	}
+
+	@ConfigItem(
+		keyName = "keyBind",
+		name = "Stop explorer hotkey",
+		description = "Hotkey to stop the explorer",
+		position = 2
+	)
+	default Keybind stopKeyBind()
+	{
+		return Keybind.SHIFT;
 	}
 }
