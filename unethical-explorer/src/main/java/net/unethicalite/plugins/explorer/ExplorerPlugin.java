@@ -12,6 +12,7 @@ import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ConfigButtonClicked;
 import net.runelite.api.events.MenuOpened;
 import net.runelite.api.widgets.Widget;
+import net.runelite.api.widgets.WidgetID;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -105,7 +106,10 @@ public class ExplorerPlugin extends LoopedPlugin
 			.setOption("<col=00ff00>Explorer:</col>")
 			.setTarget("Walk here")
 			.setType(MenuAction.RUNELITE)
-			.onClick(e -> setDestination(mouse));
+			.onClick(e -> {
+				setDestination(mouse);
+				closeWorldMap();
+			});
 	}
 
 	@Subscribe
@@ -132,6 +136,15 @@ public class ExplorerPlugin extends LoopedPlugin
 	{
 		destination = Walker.nearestWalkableTile(wp);
 		log.debug("Walking to {}", destination);
+	}
+
+	private void closeWorldMap()
+	{
+		Widget closeWorldMap = Widgets.get(WidgetID.WORLD_MAP_GROUP_ID, closeButton -> closeButton.hasAction("Close"));
+		if (closeWorldMap != null && closeWorldMap.isVisible())
+		{
+			closeWorldMap.interact("Close");
+		}
 	}
 
 	@Override
