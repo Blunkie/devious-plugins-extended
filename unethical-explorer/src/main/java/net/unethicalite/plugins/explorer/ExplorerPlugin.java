@@ -108,7 +108,9 @@ public class ExplorerPlugin extends LoopedPlugin
 			.setType(MenuAction.RUNELITE)
 			.onClick(e -> {
 				setDestination(mouse);
-				closeWorldMap();
+
+				if (config.closeMap())
+					closeWorldMap();
 			});
 	}
 
