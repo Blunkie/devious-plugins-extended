@@ -141,10 +141,10 @@ public class HootFighterPlugin extends LoopedPlugin
 		if (config.antipoison() && Combat.isPoisoned())
 		{
 			Item antipoison = Inventory.getFirst(
-					config.antipoisonType().getDose_1(),
-					config.antipoisonType().getDose_2(),
-					config.antipoisonType().getDose_3(),
-					config.antipoisonType().getDose_4()
+					config.antipoisonType().getDose1(),
+					config.antipoisonType().getDose2(),
+					config.antipoisonType().getDose3(),
+					config.antipoisonType().getDose4()
 			);
 			if (antipoison != null)
 			{
