@@ -207,13 +207,13 @@ public class HootFighterPlugin extends LoopedPlugin
 			return -1;
 		}
 
-		if (config.antifire() && !( Combat.isAntifired() ^ Combat.isSuperAntifired()) )
+		if (config.antifire() && (!Combat.isAntifired() && !Combat.isSuperAntifired()) )
 		{
 			Item antifire = Inventory.getFirst(
-					config.antifireType().getDose_1(),
-					config.antifireType().getDose_2(),
-					config.antifireType().getDose_3(),
-					config.antifireType().getDose_4()
+					config.antifireType().getDose1(),
+					config.antifireType().getDose2(),
+					config.antifireType().getDose3(),
+					config.antifireType().getDose4()
 			);
 			if (antifire != null)
 			{

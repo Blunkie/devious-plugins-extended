@@ -12,8 +12,8 @@ public enum AntifireType
     SUPER_ANTIFIRE(21987, 21984, 21981, 21987),
     EXTENDED_SUPER_ANTIFIRE(22218, 22215, 22212, 22209);
 
-    private final int dose_1;
-    private final int dose_2;
-    private final int dose_3;
-    private final int dose_4;
+    private final int dose1;
+    private final int dose2;
+    private final int dose3;
+    private final int dose4;
 }
