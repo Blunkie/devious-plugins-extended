@@ -3,24 +3,28 @@ package net.unethicalite.plugins.agility;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.Client;
-import net.runelite.api.ItemID;
-import net.runelite.api.Player;
-import net.runelite.api.TileItem;
-import net.runelite.api.TileObject;
+import net.runelite.api.*;
 import net.runelite.client.config.ConfigManager;
+import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.unethicalite.api.commons.Rand;
 import net.unethicalite.api.entities.Players;
 import net.unethicalite.api.entities.TileItems;
 import net.unethicalite.api.entities.TileObjects;
 import net.unethicalite.api.game.Combat;
+import net.unethicalite.api.game.Skills;
 import net.unethicalite.api.items.Inventory;
 import net.unethicalite.api.movement.Movement;
 import net.unethicalite.api.plugins.LoopedPlugin;
 import net.unethicalite.api.plugins.Plugins;
+import net.unethicalite.api.utils.MessageUtils;
 import net.unethicalite.api.widgets.Dialog;
+import net.unethicalite.client.Static;
 import org.pf4j.Extension;
+
+import javax.swing.*;
+
+import static net.runelite.api.ItemID.*;
 
 @PluginDescriptor(
 		name = "Unethical Agility",
@@ -36,10 +40,18 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 	@Inject
 	private Client client;
 
+	private int energyAmount;
+
 	@Provides
 	public UnethicalAgilityConfig getConfig(ConfigManager configManager)
 	{
 		return configManager.getConfig(UnethicalAgilityConfig.class);
+	}
+
+	@Override
+	protected void startUp() throws Exception
+	{
+		energyAmount = Rand.nextInt(config.minEnergyAmount(), config.maxEnergyAmount());
 	}
 
 	@Override
@@ -51,13 +63,44 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 			return -1;
 		}
 
+		if (!Movement.isRunEnabled() && Static.getClient().getEnergy() > 5)
+		{
+			Movement.toggleRun();
+			return -1;
+		}
+
+		if (config.useSummerPies() && config.stopWhenOutOfSummerPies()
+				&& !Inventory.contains(SUMMER_PIE, HALF_A_SUMMER_PIE))
+		{
+			MessageUtils.addMessage("Ran out of Summer Pies, stopping plugin");
+			SwingUtilities.invokeLater(() -> Plugins.stopPlugin(this));
+			return -1;
+		}
+
+		if (config.useSummerPies() && Inventory.contains(SUMMER_PIE, ItemID.HALF_A_SUMMER_PIE)
+				&& Skills.getBoostedLevel(Skill.AGILITY) - Skills.getLevel(Skill.AGILITY) < config.minBoostAmount())
+		{
+			var summerPie = Inventory.getFirst(SUMMER_PIE, ItemID.HALF_A_SUMMER_PIE);
+
+			summerPie.interact("Eat");
+			return -1;
+		}
+
+		if (config.useStaminas() && client.getEnergy() < energyAmount && Vars.getBit(Varbits.RUN_SLOWED_DEPLETION_ACTIVE) == 0
+				&& Inventory.contains(item -> item.getName().contains("Stamina")))
+		{
+			Inventory.getFirst(item -> item.getName().contains("Stamina")).interact("Drink");
+			energyAmount = Rand.nextInt(config.minEnergyAmount(), config.maxEnergyAmount());
+			return -1;
+		}
+
 		if (Combat.getHealthPercent() <= config.eatHp())
 		{
 			var itemToEat = Inventory.query().actions("Eat").results().first();
 			if (itemToEat == null)
 			{
-				log.error("Ran out of food");
-				Plugins.stopPlugin(this);
+				MessageUtils.addMessage("Ran out of food, stopping plugin");
+				SwingUtilities.invokeLater(() -> Plugins.stopPlugin(this));
 				return -1;
 			}
 
