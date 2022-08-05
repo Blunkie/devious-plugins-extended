@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
-import net.runelite.api.events.GameTick;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -42,7 +41,6 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 	private Client client;
 
 	private int energyAmount;
-	private int energyVarbitValue;
 
 	@Provides
 	public UnethicalAgilityConfig getConfig(ConfigManager configManager)
@@ -54,12 +52,6 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 	protected void startUp() throws Exception
 	{
 		energyAmount = Rand.nextInt(config.minEnergyAmount(), config.maxEnergyAmount());
-	}
-
-	@Subscribe
-	public void onGameTick(GameTick e)
-	{
-		energyVarbitValue =  Static.getClient().getVarbitValue(Varbits.RUN_SLOWED_DEPLETION_ACTIVE);
 	}
 
 	@Override
@@ -94,7 +86,7 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 			return -1;
 		}
 
-		if (config.useStaminas() && client.getEnergy() < energyAmount && energyVarbitValue == 0
+		if (config.useStaminas() && client.getEnergy() < energyAmount && Vars.getBit(Varbits.RUN_SLOWED_DEPLETION_ACTIVE) == 0
 				&& Inventory.contains(item -> item.getName().contains("Stamina")))
 		{
 			Inventory.getFirst(item -> item.getName().contains("Stamina")).interact("Drink");
