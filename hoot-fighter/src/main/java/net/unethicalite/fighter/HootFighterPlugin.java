@@ -141,10 +141,10 @@ public class HootFighterPlugin extends LoopedPlugin
 		if (config.antipoison() && Combat.isPoisoned())
 		{
 			Item antipoison = Inventory.getFirst(
-					config.antipoisonType().getDose_1(),
-					config.antipoisonType().getDose_2(),
-					config.antipoisonType().getDose_3(),
-					config.antipoisonType().getDose_4()
+					config.antipoisonType().getDose1(),
+					config.antipoisonType().getDose2(),
+					config.antipoisonType().getDose3(),
+					config.antipoisonType().getDose4()
 			);
 			if (antipoison != null)
 			{
@@ -205,6 +205,21 @@ public class HootFighterPlugin extends LoopedPlugin
 		if (local.getInteracting() != null && !Dialog.canContinue())
 		{
 			return -1;
+		}
+
+		if (config.antifire() && (!Combat.isAntifired() && !Combat.isSuperAntifired()) )
+		{
+			Item antifire = Inventory.getFirst(
+					config.antifireType().getDose1(),
+					config.antifireType().getDose2(),
+					config.antifireType().getDose3(),
+					config.antifireType().getDose4()
+			);
+			if (antifire != null)
+			{
+				antifire.interact("Drink");
+				return -1;
+			}
 		}
 
 		NPC mob = Combat.getAttackableNPC(x -> x.getName() != null

@@ -15,8 +15,8 @@ public enum AntipoisonType
 	ANTI_VENOM_PLUS(12919, 12917, 12915, 12913),
 	SANFEW_SERUM(10931, 10929, 10927, 10925);
 
-	private final int dose_1;
-	private final int dose_2;
-	private final int dose_3;
-	private final int dose_4;
+	private final int dose1;
+	private final int dose2;
+	private final int dose3;
+	private final int dose4;
 }
