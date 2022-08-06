@@ -26,4 +26,14 @@ public interface UnethicalPrayerConfig extends Config
 	{
 		return false;
 	}
+
+	@ConfigItem(
+			keyName = "turnOnIfTargeted",
+			name = "Toggle on if new target",
+			description = "Turns the prayer on if a new NPC attacks you"
+	)
+	default boolean turnOnIfTargeted()
+	{
+		return false;
+	}
 }

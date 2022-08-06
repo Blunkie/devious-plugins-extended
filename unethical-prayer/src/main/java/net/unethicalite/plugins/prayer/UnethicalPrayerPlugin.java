@@ -8,6 +8,7 @@ import net.runelite.api.Client;
 import net.runelite.api.Prayer;
 import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.GameTick;
+import net.runelite.api.events.InteractingChanged;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
@@ -38,6 +39,24 @@ public class UnethicalPrayerPlugin extends Plugin
 	protected void startUp()
 	{
 		updateConfig();
+	}
+
+	@Subscribe
+	private void onInteractingChanged(InteractingChanged event)
+	{
+		if (!config.turnOnIfTargeted() || !event.getTarget().equals(Players.getLocal()))
+		{
+			return;
+		}
+
+		for (PrayerConfig prayerConfig : configs)
+		{
+			if (!Prayers.isEnabled(prayerConfig.getProtectionPrayer()))
+			{
+				Prayers.toggle(prayerConfig.getProtectionPrayer());
+				return;
+			}
+		}
 	}
 
 	@Subscribe
