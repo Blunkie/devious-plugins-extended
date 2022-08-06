@@ -74,7 +74,7 @@ public class ExplorerPlugin extends LoopedPlugin
 
 	}
 
-	private final HotkeyListener hotkeyListener = new HotkeyListener(() -> config.stopKeyBind())
+	private final HotkeyListener hotkeyListener = new HotkeyListener(() -> config.toggleKeyBind())
 	{
 		@Override
 		public void hotkeyPressed()
@@ -83,6 +83,48 @@ public class ExplorerPlugin extends LoopedPlugin
 			if (destination != null)
 			{
 				destination = null;
+			}
+			else
+			{
+				WorldPoint location = null;
+
+				switch (config.category())
+				{
+					case QUEST:
+						WorldPoint questLocation = getWorldPointLocation("Quest Helper");
+						if (questLocation != null)
+						{
+							location = questLocation;
+						}
+						break;
+					case CLUE:
+						WorldPoint clueLocation = getWorldPointLocation("Clue Scroll");
+						if (clueLocation != null)
+						{
+							location = clueLocation;
+						}
+						break;
+					case BANKS:
+						location = config.bankLocation().getArea().getCenter();
+						break;
+					case CUSTOM:
+						String coords = config.coords();
+						if (!WORLD_POINT_PATTERN.matcher(coords).matches())
+						{
+							return;
+						}
+						String[] split = coords.split(" ");
+						location = new WorldPoint(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+						break;
+				}
+				if (location != null)
+				{
+					setDestination(Walker.nearestWalkableTile(location));
+				}
+				else
+				{
+					MessageUtils.addMessage("Invalid Selection");
+				}
 			}
 		}
 	};
