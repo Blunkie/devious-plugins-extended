@@ -53,12 +53,12 @@ public interface ExplorerConfig extends Config
 
 
 	@ConfigItem(
-		keyName = "keyBind",
-		name = "Stop explorer hotkey",
-		description = "Hotkey to stop the explorer",
+		keyName = "toggleKeyBind",
+		name = "Start/Stop hotkey",
+		description = "Hotkey to start/stop the explorer",
 		position = 24
 	)
-	default Keybind stopKeyBind()
+	default Keybind toggleKeyBind()
 	{
 		return Keybind.NOT_SET;
 	}
