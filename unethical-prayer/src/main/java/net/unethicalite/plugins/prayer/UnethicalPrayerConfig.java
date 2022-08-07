@@ -14,7 +14,7 @@ public interface UnethicalPrayerConfig extends Config
 	)
 	default String configs()
 	{
-		return "TzTok-Jad:PROTECT_FROM_MAGIC:7592:8,TzTok-Jad:PROTECT_FROM_MISSILES:7593:8";
+		return "TzTok-Jad:PROTECT_FROM_MAGIC:7592:8\nTzTok-Jad:PROTECT_FROM_MISSILES:7593:8";
 	}
 
 	@ConfigItem(
