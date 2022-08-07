@@ -1,18 +1,21 @@
 package net.unethicalite.plugins.prayer;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import net.runelite.api.Prayer;
 
-@Data
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
+import java.util.List;
+
+@Value
 public class PrayerConfig
 {
-	private final String npcName;
-	private final Prayer protectionPrayer;
-	private final int animationId;
-	private final int attackSpeed;
-	private int attackDelay = 1;
-	private int nextAttackTick = -1;
+	private static final List<Integer> JAD_ATTACKS = List.of(7592, 7593, 2656, 2652);
+	String npcName;
+	Prayer protectionPrayer;
+	int animationId;
+	int attackSpeed;
+
+	public boolean isJad()
+	{
+		return JAD_ATTACKS.contains(animationId);
+	}
 }
