@@ -12,6 +12,7 @@ public class PrayerConfig
 	private final String npcName;
 	private final Prayer protectionPrayer;
 	private final int animationId;
-	private final int attackDelay;
+	private final int attackSpeed;
+	private int attackDelay = 1;
 	private int nextAttackTick = -1;
 }

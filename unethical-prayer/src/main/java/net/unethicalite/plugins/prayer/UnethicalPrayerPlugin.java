@@ -78,7 +78,7 @@ public class UnethicalPrayerPlugin extends Plugin
 		{
 			if (prayerConfig.getAnimationId() == animation && prayerConfig.getNpcName().equals(actor.getName()))
 			{
-				prayerConfig.setNextAttackTick(client.getTickCount() + prayerConfig.getAttackDelay());
+				prayerConfig.setNextAttackTick(client.getTickCount() + prayerConfig.getAttackSpeed());
 
 				if (config.turnOffAfterAttack() && Prayers.isEnabled(prayerConfig.getProtectionPrayer()))
 				{
@@ -100,7 +100,7 @@ public class UnethicalPrayerPlugin extends Plugin
 				continue;
 			}
 
-			if (currentTick + 1 == prayerConfig.getNextAttackTick())
+			if (currentTick + prayerConfig.getAttackDelay() == prayerConfig.getNextAttackTick())
 			{
 				if (Prayers.isEnabled(prayerConfig.getProtectionPrayer()))
 				{
@@ -132,12 +132,18 @@ public class UnethicalPrayerPlugin extends Plugin
 		for (String s : split)
 		{
 			String[] cfgItem = s.split(":");
-			prayerConfigs.add(new PrayerConfig(
+			PrayerConfig prayerConfig = new PrayerConfig(
 					cfgItem[0],
 					Prayer.valueOf(cfgItem[1]),
 					Integer.parseInt(cfgItem[2]),
-					Integer.parseInt(cfgItem[3]))
-			);
+					Integer.parseInt(cfgItem[3]));
+
+			if (cfgItem.length > 4)
+			{
+				prayerConfig.setAttackDelay(Integer.parseInt(cfgItem[4]));
+			}
+
+			prayerConfigs.add(prayerConfig);
 		}
 
 		configs.clear();
