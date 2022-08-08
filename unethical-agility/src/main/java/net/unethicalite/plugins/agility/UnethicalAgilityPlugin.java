@@ -4,20 +4,26 @@ import com.google.inject.Inject;
 import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.Item;
 import net.runelite.api.ItemID;
 import net.runelite.api.Player;
-import net.runelite.api.Skill;
 import net.runelite.api.TileItem;
 import net.runelite.api.TileObject;
+import net.runelite.api.events.GameTick;
 import net.runelite.client.config.ConfigManager;
+import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.unethicalite.api.commons.Rand;
 import net.unethicalite.api.entities.Players;
 import net.unethicalite.api.entities.TileItems;
 import net.unethicalite.api.entities.TileObjects;
+import net.unethicalite.api.game.Combat;
 import net.unethicalite.api.items.Inventory;
+import net.unethicalite.api.magic.Magic;
+import net.unethicalite.api.magic.SpellBook;
 import net.unethicalite.api.movement.Movement;
 import net.unethicalite.api.plugins.LoopedPlugin;
+import net.unethicalite.api.plugins.Plugins;
 import net.unethicalite.api.widgets.Dialog;
 import org.pf4j.Extension;
 
@@ -35,10 +41,23 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 	@Inject
 	private Client client;
 
+	private int alchCooldown = 0;
+
+	private boolean justAlched = false;
+
 	@Provides
 	public UnethicalAgilityConfig getConfig(ConfigManager configManager)
 	{
 		return configManager.getConfig(UnethicalAgilityConfig.class);
+	}
+
+	@Subscribe
+	private void onGameTick(GameTick event)
+	{
+		if (alchCooldown > 0)
+		{
+			alchCooldown--;
+		}
 	}
 
 	@Override
@@ -49,15 +68,17 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 			Dialog.continueSpace();
 			return -1;
 		}
-		if (client.getBoostedSkillLevel(Skill.HITPOINTS) <= config.eatHp())
+
+		if (Combat.getHealthPercent() <= config.eatHp())
 		{
 			var itemToEat = Inventory.query().actions("Eat").results().first();
 			if (itemToEat == null)
 			{
-				// stop running?
 				log.error("Ran out of food");
+				Plugins.stopPlugin(this);
 				return -1;
 			}
+
 			itemToEat.interact("Eat");
 			return -1;
 		}
@@ -71,9 +92,20 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 			return -1;
 		}
 
+		if (config.shouldAlch() && alchCooldown == 0 && SpellBook.Standard.HIGH_LEVEL_ALCHEMY.haveRunesAvailable()) {
+			// if its been 5 ticks since last alch
+			// if we have item and nature runes
+			Item alchItem = Inventory.query().ids(config.itemToAlch()).results().first();
+			if (alchItem != null) {
+				Magic.cast(SpellBook.Standard.HIGH_LEVEL_ALCHEMY, alchItem);
+				alchCooldown = 5;
+				justAlched = true;
+				return -1;
+			}
+		}
 		TileObject obs = findProperObstacle(obstacle);
 
-		if (client.getEnergy() > Rand.nextInt(5, 55) && !Movement.isRunEnabled())
+		if (Movement.getRunEnergy() > Rand.nextInt(5, 55) && !Movement.isRunEnabled())
 		{
 			Movement.toggleRun();
 			return -1;
@@ -95,6 +127,12 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 
 		if (obs != null)
 		{
+			if (justAlched) {
+				obs.interact(obstacle.getAction());
+				justAlched = false;
+				return -1;
+			}
+
 			if (local.getAnimation() != -1 || local.isMoving())
 			{
 				return -1;
