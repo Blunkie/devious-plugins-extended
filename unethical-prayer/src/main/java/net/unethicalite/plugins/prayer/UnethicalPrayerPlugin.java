@@ -91,12 +91,32 @@ public class UnethicalPrayerPlugin extends Plugin
 		}
 
 		int animation = actor.getAnimation();
-		PrayerSchedule schedule = schedules.get(actor);
+		PrayerSchedule schedule = schedules.computeIfPresent(actor, (a, s) ->
+		{
+			if (s.getPrayerConfig().getNpcName().equals(a.getName())
+					&& animation != -1
+					&& s.getPrayerConfig().getAnimationId() != animation)
+			{
+				log.debug("Scheduled animation was diff: {} -> {}", s.getPrayerConfig().getAnimationId(), animation);
+				return null;
+			}
+
+			return s;
+		});
+
 		if (schedule != null)
 		{
 			PrayerConfig prayerConfig = schedule.getPrayerConfig();
+
 			if (prayerConfig.getAnimationId() != animation)
 			{
+				return;
+			}
+
+			// Don't toggle off if it's jad
+			if (prayerConfig.isJad())
+			{
+				schedule.setNextAttackTick(client.getTickCount() + 3);
 				return;
 			}
 
@@ -107,9 +127,7 @@ public class UnethicalPrayerPlugin extends Plugin
 			log.debug("Scheduling {}'s next attack at {}", prayerConfig.getNpcName(), nextAttack);
 
 			// Turn off
-			if (config.turnOffAfterAttack()
-					&& !prayerConfig.isJad()
-					&& Prayers.isEnabled(protectionPrayer))
+			if (config.turnOffAfterAttack() && Prayers.isEnabled(protectionPrayer))
 			{
 				log.debug("Turning off {} after attack", protectionPrayer);
 				Prayers.toggle(protectionPrayer);
@@ -125,20 +143,20 @@ public class UnethicalPrayerPlugin extends Plugin
 
 				if (animationId == animation && prayerConfig.getNpcName().equals(actor.getName()))
 				{
-					// We don't want to schedule jad's attacks because they're random
 					if (prayerConfig.isJad())
 					{
-						if (!Prayers.isEnabled(protectionPrayer))
-						{
-							Prayers.toggle(protectionPrayer);
-						}
-
-						return;
+						nextAttack = client.getTickCount() + 3;
 					}
 
 					// Schedule next attack
 					schedules.put(actor, new PrayerSchedule(prayerConfig, nextAttack));
 					log.debug("Adding schedule with {}'s next attack at {}", prayerConfig.getNpcName(), nextAttack);
+
+					// Don't toggle on if it's jad because its attacks are delayed
+					if (prayerConfig.isJad())
+					{
+						return;
+					}
 
 					if (config.turnOnIfTargeted() && !Prayers.isEnabled(protectionPrayer))
 					{
@@ -157,7 +175,7 @@ public class UnethicalPrayerPlugin extends Plugin
 	private void onGameTick(GameTick e)
 	{
 		int currentTick = client.getTickCount();
-		log.debug("Current tick: {}", currentTick);
+		log.trace("Current tick: {}", currentTick);
 
 		for (PrayerSchedule schedule : schedules.values())
 		{
@@ -177,12 +195,14 @@ public class UnethicalPrayerPlugin extends Plugin
 
 				if (Prayers.isEnabled(prayerConfig.getProtectionPrayer()))
 				{
-					log.debug("{}'s attack scheduled, but {} is already on",
-							prayerConfig.getNpcName(), prayerConfig.getProtectionPrayer());
+					log.debug("{}'s attack scheduled at {}, but {} is already on",
+							prayerConfig.getNpcName(), attackTick,
+							prayerConfig.getProtectionPrayer());
 					continue;
 				}
 
-				log.debug("{} is about to attack, turning on {}", prayerConfig.getNpcName(), prayerConfig.getProtectionPrayer());
+				log.debug("{} is about to attack, turning on {}",
+						prayerConfig.getNpcName(), prayerConfig.getProtectionPrayer());
 				Prayers.toggle(prayerConfig.getProtectionPrayer());
 				return;
 			}
