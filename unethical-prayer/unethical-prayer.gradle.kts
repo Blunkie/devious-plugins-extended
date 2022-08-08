@@ -1,4 +1,4 @@
-version = "0.0.1"
+version = "0.0.5"
 
 project.extra["PluginName"] = "Unethical Prayer"
 project.extra["PluginDescription"] = "Toggles protection prayers on certain events"

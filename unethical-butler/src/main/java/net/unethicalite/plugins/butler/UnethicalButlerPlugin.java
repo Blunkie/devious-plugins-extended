@@ -71,7 +71,7 @@ public class UnethicalButlerPlugin extends Plugin
 			return;
 		}
 
-		// The dialog needs to be order in order for the packets to work
+		// The dialog needs to be open in order for the packets to work
 		if (!Dialog.canContinue())
 		{
 			return;
@@ -94,7 +94,7 @@ public class UnethicalButlerPlugin extends Plugin
 					DialogOption.NPC_CONTINUE,
 					DialogOption.CHAT_OPTION_ONE
 			);
-			DialogPackets.sendNumberInput(18, true);
+			DialogPackets.sendNumberInput(18);
 			log.debug("Sending logs to sawmill");
 			return;
 		}
@@ -105,7 +105,7 @@ public class UnethicalButlerPlugin extends Plugin
 					DialogOption.NPC_CONTINUE,
 					DialogOption.CHAT_OPTION_ONE
 			);
-			DialogPackets.sendNumberInput(18, true);
+			DialogPackets.sendNumberInput(18);
 			Dialog.invokeDialog(
 					DialogOption.NPC_CONTINUE,
 					DialogOption.CHAT_OPTION_ONE,

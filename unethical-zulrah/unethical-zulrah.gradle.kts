@@ -1,11 +1,7 @@
-version = "0.0.2"
+version = "0.0.1"
 
-project.extra["PluginName"] = "Unethical Auto Login"
-project.extra["PluginDescription"] = "Automatically logs in specified account in config"
-
-dependencies {
-    implementation("org.jboss.aerogear:aerogear-otp-java:1.0.0")
-}
+project.extra["PluginName"] = "Unethical Zulrah"
+project.extra["PluginDescription"] = "Kills Zulrah for you"
 
 tasks {
     jar {

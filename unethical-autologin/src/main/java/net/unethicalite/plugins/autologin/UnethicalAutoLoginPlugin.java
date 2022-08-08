@@ -63,9 +63,12 @@ public class UnethicalAutoLoginPlugin extends Plugin
 			case 2:
 				login();
 				break;
-
 			case 4:
 				enterAuth();
+				break;
+			case 24:
+				prepareLogin();
+				client.getCallbacks().post(new LoginStateChanged(2));
 				break;
 		}
 	}
