@@ -91,13 +91,19 @@ public class UnethicalPrayerPlugin extends Plugin
 		}
 
 		int animation = actor.getAnimation();
+		if (!isAnimationConfigured(animation))
+		{
+			return;
+		}
+
 		PrayerSchedule schedule = schedules.computeIfPresent(actor, (a, s) ->
 		{
 			if (s.getPrayerConfig().getNpcName().equals(a.getName())
+					&& s.getPrayerConfig().isJad()
 					&& animation != -1
 					&& s.getPrayerConfig().getAnimationId() != animation)
 			{
-				log.debug("Scheduled animation was diff: {} -> {}", s.getPrayerConfig().getAnimationId(), animation);
+				log.debug("Jad attack was diff: {} -> {}", s.getPrayerConfig().getAnimationId(), animation);
 				return null;
 			}
 
@@ -113,10 +119,10 @@ public class UnethicalPrayerPlugin extends Plugin
 				return;
 			}
 
-			// Don't toggle off if it's jad
+			// Don't toggle off if it's jad, schedule upcoming attack instead
 			if (prayerConfig.isJad())
 			{
-				schedule.setNextAttackTick(client.getTickCount() + 3);
+				schedule.setNextAttackTick(client.getTickCount() + 2);
 				return;
 			}
 
@@ -145,7 +151,7 @@ public class UnethicalPrayerPlugin extends Plugin
 				{
 					if (prayerConfig.isJad())
 					{
-						nextAttack = client.getTickCount() + 3;
+						nextAttack = client.getTickCount() + 2;
 					}
 
 					// Schedule next attack
@@ -212,13 +218,13 @@ public class UnethicalPrayerPlugin extends Plugin
 	@Subscribe
 	private void onActorDeath(ActorDeath e)
 	{
-		schedules.remove(e.getActor());
+		removeSchedule(e.getActor());
 	}
 
 	@Subscribe
 	private void onNPCDespawn(NpcDespawned e)
 	{
-		schedules.remove(e.getActor());
+		removeSchedule(e.getActor());
 	}
 
 	@Subscribe
@@ -230,6 +236,20 @@ public class UnethicalPrayerPlugin extends Plugin
 		}
 
 		updateConfig();
+	}
+
+	private void removeSchedule(Actor a)
+	{
+		PrayerSchedule schedule = schedules.get(a);
+		if (schedule != null)
+		{
+			if (Prayers.isEnabled(schedule.getPrayerConfig().getProtectionPrayer()))
+			{
+				Prayers.toggle(schedule.getPrayerConfig().getProtectionPrayer());
+			}
+
+			schedules.remove(a);
+		}
 	}
 
 	private void updateConfig()
@@ -251,6 +271,11 @@ public class UnethicalPrayerPlugin extends Plugin
 		configs.addAll(prayerConfigs);
 
 		log.info("Loaded {} configs", configs.size());
+	}
+
+	private boolean isAnimationConfigured(int animation)
+	{
+		return configs.stream().anyMatch(prayerConfig -> prayerConfig.getAnimationId() == animation);
 	}
 
 	@Provides
