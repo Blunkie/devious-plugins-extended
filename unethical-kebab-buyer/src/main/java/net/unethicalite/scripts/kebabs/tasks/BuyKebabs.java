@@ -20,6 +20,12 @@ public class BuyKebabs implements ScriptTask
 	@Override
 	public int execute()
 	{
+		if (!Movement.isRunEnabled())
+		{
+			Movement.toggleRun();
+			return 1000;
+		}
+
 		if (Movement.isWalking())
 		{
 			return 1000;

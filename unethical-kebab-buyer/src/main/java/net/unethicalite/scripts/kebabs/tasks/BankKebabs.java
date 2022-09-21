@@ -28,6 +28,12 @@ public class BankKebabs implements ScriptTask
 		Player local = Players.getLocal();
 		if (!Bank.isOpen())
 		{
+			if (!Movement.isRunEnabled())
+			{
+				Movement.toggleRun();
+				return 1000;
+			}
+
 			if (Movement.isWalking())
 			{
 				return 1000;
