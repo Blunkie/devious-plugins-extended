@@ -4,6 +4,7 @@ import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.Keybind;
+import net.runelite.client.config.Range;
 
 @ConfigGroup("hootbutler")
 public interface UnethicalButlerConfig extends Config
@@ -30,11 +31,23 @@ public interface UnethicalButlerConfig extends Config
 		return "Demon butler";
 	}
 
+	@Range(max = 28)
+	@ConfigItem(
+			keyName = "amount",
+			name = "Plank amount",
+			description = "Amount of planks/logs to give",
+			position = 2
+	)
+	default int amount()
+	{
+		return 18;
+	}
+
 	@ConfigItem(
 			keyName = "keyBind",
 			name = "OneClick hotkey",
 			description = "Hotkey for item -> butler oneclicks",
-			position = 2
+			position = 3
 	)
 	default Keybind keyBind()
 	{

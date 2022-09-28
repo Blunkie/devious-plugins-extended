@@ -77,7 +77,7 @@ public class UnethicalButlerPlugin extends Plugin
 			return;
 		}
 
-		int selectedItem = client.getSelectedItemID();
+		int selectedItem = client.getSelectedSpellItemId();
 		log.debug("Selected item id: {}", selectedItem);
 
 		LogType logType = config.logType();
@@ -94,8 +94,13 @@ public class UnethicalButlerPlugin extends Plugin
 					DialogOption.NPC_CONTINUE,
 					DialogOption.CHAT_OPTION_ONE
 			);
-			DialogPackets.sendNumberInput(18);
+			DialogPackets.sendNumberInput(config.amount());
 			log.debug("Sending logs to sawmill");
+			Dialog.invokeDialog(
+					DialogOption.NPC_CONTINUE,
+					DialogOption.CHAT_OPTION_ONE,
+					DialogOption.NPC_CONTINUE
+			);
 			return;
 		}
 
@@ -105,7 +110,7 @@ public class UnethicalButlerPlugin extends Plugin
 					DialogOption.NPC_CONTINUE,
 					DialogOption.CHAT_OPTION_ONE
 			);
-			DialogPackets.sendNumberInput(18);
+			DialogPackets.sendNumberInput(config.amount());
 			Dialog.invokeDialog(
 					DialogOption.NPC_CONTINUE,
 					DialogOption.CHAT_OPTION_ONE,
@@ -118,17 +123,17 @@ public class UnethicalButlerPlugin extends Plugin
 	private int getHotkey(Keybind keybind)
 	{
 		// For some dumb reason, RL decided to give these Keybinds undefined keycodes
-		if (keybind == Keybind.SHIFT)
+		if (keybind.equals(Keybind.SHIFT))
 		{
 			return KeyCode.KC_SHIFT;
 		}
 
-		if (keybind == Keybind.CTRL)
+		if (keybind.equals(Keybind.CTRL))
 		{
 			return KeyCode.KC_CONTROL;
 		}
 
-		if (keybind == Keybind.ALT)
+		if (keybind.equals(Keybind.ALT))
 		{
 			return KeyCode.KC_ALT;
 		}

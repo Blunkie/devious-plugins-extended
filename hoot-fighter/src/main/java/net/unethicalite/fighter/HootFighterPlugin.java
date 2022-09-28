@@ -11,6 +11,7 @@ import net.unethicalite.api.movement.Movement;
 import net.unethicalite.api.movement.Reachable;
 import net.unethicalite.api.plugins.LoopedPlugin;
 import net.unethicalite.api.plugins.Plugins;
+import net.unethicalite.api.utils.MessageUtils;
 import net.unethicalite.api.widgets.Dialog;
 import net.unethicalite.api.widgets.Prayers;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,7 @@ import net.runelite.client.plugins.PluginDescriptor;
 import org.pf4j.Extension;
 
 import javax.inject.Inject;
+import javax.swing.SwingUtilities;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -230,7 +232,7 @@ public class HootFighterPlugin extends LoopedPlugin
 		{
 			if (startPoint == null)
 			{
-				log.info("No attackable monsters in area");
+				MessageUtils.addMessage("No attackable monsters in area");
 				return -1;
 			}
 
@@ -260,7 +262,7 @@ public class HootFighterPlugin extends LoopedPlugin
 		}
 		else if (config.disableAfterSlayerTask() && message.contains("You have completed your task!"))
 		{
-			Plugins.stopPlugin(this);
+			SwingUtilities.invokeLater(() -> Plugins.stopPlugin(this));
 		}
 	}
 
