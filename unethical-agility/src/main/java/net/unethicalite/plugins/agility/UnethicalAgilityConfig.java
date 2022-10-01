@@ -104,4 +104,24 @@ public interface UnethicalAgilityConfig extends Config
 	{
 		return 40;
 	}
+
+	@ConfigItem(
+			keyName = "alchItem",
+			name = "Item to Alch",
+			description = "Item to alch."
+	)
+	default int itemToAlch()
+	{
+		return 851;
+	} // maple long bow
+
+	@ConfigItem(
+			keyName = "shouldAlch",
+			name = "Should Alch",
+			description = "If selected, plugin will alch the item set in Item to Alch"
+	)
+	default boolean shouldAlch()
+	{
+		return false;
+	}
 }

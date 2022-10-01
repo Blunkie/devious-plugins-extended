@@ -4,7 +4,9 @@ import com.google.inject.Inject;
 import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
+import net.runelite.api.events.GameTick;
 import net.runelite.client.config.ConfigManager;
+import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.unethicalite.api.commons.Rand;
 import net.unethicalite.api.entities.Players;
@@ -14,6 +16,8 @@ import net.unethicalite.api.game.Combat;
 import net.unethicalite.api.game.Skills;
 import net.unethicalite.api.game.Vars;
 import net.unethicalite.api.items.Inventory;
+import net.unethicalite.api.magic.Magic;
+import net.unethicalite.api.magic.SpellBook;
 import net.unethicalite.api.movement.Movement;
 import net.unethicalite.api.plugins.LoopedPlugin;
 import net.unethicalite.api.plugins.Plugins;
@@ -42,6 +46,10 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 
 	private int energyAmount;
 
+	private int alchCooldown = 0;
+
+	private boolean justAlched = false;
+
 	@Provides
 	public UnethicalAgilityConfig getConfig(ConfigManager configManager)
 	{
@@ -52,6 +60,15 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 	protected void startUp() throws Exception
 	{
 		energyAmount = Rand.nextInt(config.minEnergyAmount(), config.maxEnergyAmount());
+	}
+
+	@Subscribe
+	private void onGameTick(GameTick event)
+	{
+		if (alchCooldown > 0)
+		{
+			alchCooldown--;
+		}
 	}
 
 	@Override
@@ -117,6 +134,17 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 			return -1;
 		}
 
+		if (config.shouldAlch() && alchCooldown == 0 && SpellBook.Standard.HIGH_LEVEL_ALCHEMY.haveRunesAvailable()) {
+			// if its been 5 ticks since last alch
+			// if we have item and nature runes
+			Item alchItem = Inventory.query().ids(config.itemToAlch()).results().first();
+			if (alchItem != null) {
+				Magic.cast(SpellBook.Standard.HIGH_LEVEL_ALCHEMY, alchItem);
+				alchCooldown = 5;
+				justAlched = true;
+				return -1;
+			}
+		}
 		TileObject obs = findProperObstacle(obstacle);
 
 		if (Movement.getRunEnergy() > Rand.nextInt(5, 55) && !Movement.isRunEnabled())
@@ -141,6 +169,12 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 
 		if (obs != null)
 		{
+			if (justAlched) {
+				obs.interact(obstacle.getAction());
+				justAlched = false;
+				return -1;
+			}
+
 			if (local.getAnimation() != -1 || local.isMoving())
 			{
 				return -1;
