@@ -3,7 +3,14 @@ package net.unethicalite.plugins.agility;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.*;
+import net.runelite.api.Client;
+import net.runelite.api.Item;
+import net.runelite.api.ItemID;
+import net.runelite.api.Player;
+import net.runelite.api.Skill;
+import net.runelite.api.TileItem;
+import net.runelite.api.TileObject;
+import net.runelite.api.Varbits;
 import net.runelite.api.events.GameTick;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -26,9 +33,10 @@ import net.unethicalite.api.widgets.Dialog;
 import net.unethicalite.client.Static;
 import org.pf4j.Extension;
 
-import javax.swing.*;
+import javax.swing.SwingUtilities;
 
-import static net.runelite.api.ItemID.*;
+import static net.runelite.api.ItemID.HALF_A_SUMMER_PIE;
+import static net.runelite.api.ItemID.SUMMER_PIE;
 
 @PluginDescriptor(
 		name = "Unethical Agility",
@@ -134,11 +142,13 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 			return -1;
 		}
 
-		if (config.shouldAlch() && alchCooldown == 0 && SpellBook.Standard.HIGH_LEVEL_ALCHEMY.haveRunesAvailable()) {
+		if (config.shouldAlch() && alchCooldown == 0 && SpellBook.Standard.HIGH_LEVEL_ALCHEMY.haveRunesAvailable())
+		{
 			// if its been 5 ticks since last alch
 			// if we have item and nature runes
 			Item alchItem = Inventory.query().ids(config.itemToAlch()).results().first();
-			if (alchItem != null) {
+			if (alchItem != null)
+			{
 				Magic.cast(SpellBook.Standard.HIGH_LEVEL_ALCHEMY, alchItem);
 				alchCooldown = 5;
 				justAlched = true;
@@ -169,7 +179,8 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 
 		if (obs != null)
 		{
-			if (justAlched) {
+			if (justAlched)
+			{
 				obs.interact(obstacle.getAction());
 				justAlched = false;
 				return -1;
