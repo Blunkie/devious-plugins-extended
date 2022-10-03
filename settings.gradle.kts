@@ -45,6 +45,7 @@ include("unethical-explorer")
 include("unethical-chopper")
 include("unethical-zulrah")
 include("unethical-cooker")
+include("unethical-bankpin")
 //include("example-kotlin")
 
 for (project in rootProject.children) {
