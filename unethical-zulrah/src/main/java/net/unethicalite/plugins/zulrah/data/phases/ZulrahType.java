@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.runelite.api.Prayer;
+import net.unethicalite.plugins.zulrah.UnethicalZulrahConfig;
 import net.unethicalite.plugins.zulrah.data.GearSetup;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
@@ -17,10 +18,6 @@ public enum ZulrahType
 	JAD_MAGIC_FIRST(2042),
 	JAD_RANGE_FIRST(2042);
 
-	// This is very ugly, don't do this
-	public static Prayer rangePray;
-	public static Prayer magePray;
-
 	private final int id;
 	@Setter
 	private GearSetup setup;
@@ -31,13 +28,11 @@ public enum ZulrahType
 		MELEE.setSetup(gearSetup);
 		JAD_MAGIC_FIRST.setSetup(gearSetup);
 		JAD_RANGE_FIRST.setSetup(gearSetup);
-		magePray = Prayer.MYSTIC_MIGHT;
 	}
 
 	public static void setMagePhaseGear(GearSetup gearSetup)
 	{
 		MAGIC.setSetup(gearSetup);
-		rangePray = Prayer.EAGLE_EYE;
 	}
 
 	public int id()
@@ -45,14 +40,14 @@ public enum ZulrahType
 		return id;
 	}
 
-	public Prayer getOffensivePrayer()
+	public Prayer getOffensivePrayer(UnethicalZulrahConfig config)
 	{
 		if (this == ZulrahType.MAGIC)
 		{
-			return rangePray;
+			return config.rangePrayer().getPrayer();
 		}
 
-		return magePray;
+		return config.magePrayer().getPrayer();
 	}
 
 	public Prayer getDefensivePrayer()

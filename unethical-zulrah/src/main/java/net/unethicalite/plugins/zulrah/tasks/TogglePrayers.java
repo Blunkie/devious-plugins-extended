@@ -3,10 +3,12 @@ package net.unethicalite.plugins.zulrah.tasks;
 import net.runelite.api.NPC;
 import net.runelite.api.Prayer;
 import net.runelite.api.Skill;
+import net.runelite.api.mixins.Inject;
 import net.unethicalite.api.commons.Time;
 import net.unethicalite.api.entities.NPCs;
 import net.unethicalite.api.game.Skills;
 import net.unethicalite.api.widgets.Prayers;
+import net.unethicalite.plugins.zulrah.UnethicalZulrahConfig;
 import net.unethicalite.plugins.zulrah.data.Constants;
 import net.unethicalite.plugins.zulrah.data.phases.ZulrahCycle;
 import net.unethicalite.plugins.zulrah.framework.ZulrahTask;
@@ -16,6 +18,9 @@ import static net.unethicalite.plugins.zulrah.UnethicalZulrahPlugin.atZulrah;
 public class TogglePrayers extends ZulrahTask
 {
 	private boolean enable = false;
+
+	@Inject
+	private UnethicalZulrahConfig config;
 
 	@Override
 	public boolean validate()
@@ -56,7 +61,7 @@ public class TogglePrayers extends ZulrahTask
 
 		if (canToggleOffensive())
 		{
-			Prayer offensive = getZulrahCycle().getZulrahType().getOffensivePrayer();
+			Prayer offensive = getZulrahCycle().getZulrahType().getOffensivePrayer(config);
 			if (getZulrahCycle() != null)
 			{
 				Prayers.toggle(offensive);
@@ -74,7 +79,7 @@ public class TogglePrayers extends ZulrahTask
 				&& atZulrah()
 				&& Prayers.getPoints() > 0
 				&& Skills.getLevel(Skill.PRAYER) >= 45
-				&& !Prayers.isEnabled(getZulrahCycle().getZulrahType().getOffensivePrayer());
+				&& !Prayers.isEnabled(getZulrahCycle().getZulrahType().getOffensivePrayer(config));
 	}
 
 	private boolean canToggleDefensive()
@@ -92,5 +97,11 @@ public class TogglePrayers extends ZulrahTask
 	public boolean isBlocking()
 	{
 		return false;
+	}
+
+	@Override
+	public boolean inject()
+	{
+		return true;
 	}
 }

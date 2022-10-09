@@ -1,15 +1,20 @@
 package net.unethicalite.plugins.zulrah.tasks;
 
 import net.runelite.api.Prayer;
+import net.runelite.api.mixins.Inject;
 import net.unethicalite.api.commons.Time;
 import net.unethicalite.api.entities.Projectiles;
 import net.unethicalite.api.widgets.Prayers;
+import net.unethicalite.plugins.zulrah.UnethicalZulrahConfig;
 import net.unethicalite.plugins.zulrah.data.Constants;
 import net.unethicalite.plugins.zulrah.framework.ZulrahTask;
 
 public class JadPhase extends ZulrahTask
 {
 	private Prayer current;
+
+	@Inject
+	private UnethicalZulrahConfig config;
 
 	@Override
 	public boolean validate()
@@ -42,10 +47,10 @@ public class JadPhase extends ZulrahTask
 			current = getZulrahCycle().getZulrahType().getDefensivePrayer();
 		}
 
-		if (!Prayers.isEnabled(getZulrahCycle().getZulrahType().getOffensivePrayer()))
+		if (!Prayers.isEnabled(getZulrahCycle().getZulrahType().getOffensivePrayer(config)))
 		{
-			Prayers.toggle(getZulrahCycle().getZulrahType().getOffensivePrayer());
-			Time.sleepUntil(() -> Prayers.isEnabled(getZulrahCycle().getZulrahType().getOffensivePrayer()), 500);
+			Prayers.toggle(getZulrahCycle().getZulrahType().getOffensivePrayer(config));
+			Time.sleepUntil(() -> Prayers.isEnabled(getZulrahCycle().getZulrahType().getOffensivePrayer(config)), 500);
 		}
 
 		if (Projectiles.getAll(e -> e.getId() == Constants.PROJECTILE_RANGED_ID).size() > 0)
@@ -65,5 +70,11 @@ public class JadPhase extends ZulrahTask
 		}
 
 		return 1000;
+	}
+
+	@Override
+	public boolean inject()
+	{
+		return true;
 	}
 }
