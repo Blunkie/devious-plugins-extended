@@ -1,13 +1,14 @@
 package net.unethicalite.plugins.zulrah.tasks;
 
 import net.runelite.api.Prayer;
-import net.runelite.api.mixins.Inject;
 import net.unethicalite.api.commons.Time;
 import net.unethicalite.api.entities.Projectiles;
 import net.unethicalite.api.widgets.Prayers;
 import net.unethicalite.plugins.zulrah.UnethicalZulrahConfig;
 import net.unethicalite.plugins.zulrah.data.Constants;
 import net.unethicalite.plugins.zulrah.framework.ZulrahTask;
+
+import javax.inject.Inject;
 
 public class JadPhase extends ZulrahTask
 {
