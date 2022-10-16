@@ -12,7 +12,8 @@ public interface UnethicalZulrahConfig extends Config
 	@ConfigItem(
 			keyName = "rangeGear",
 			name = "Ranged gear names",
-			description = ""
+			description = "",
+			position = 0
 	)
 	default String rangeGearNames()
 	{
@@ -22,7 +23,8 @@ public interface UnethicalZulrahConfig extends Config
 	@ConfigItem(
 			keyName = "mageGear",
 			name = "Mage gear names",
-			description = "Ahrim's robetop,Ahrim's robeskirt,Trident of the swamp,Book of darkness"
+			description = "",
+			position = 1
 	)
 	default String mageGearNames()
 	{
@@ -32,7 +34,8 @@ public interface UnethicalZulrahConfig extends Config
 	@ConfigItem(
 			keyName = "magePrayer",
 			name = "Magic prayer",
-			description = "Mage prayer setting"
+			description = "Mage prayer setting",
+			position = 2
 	)
 	default MagePrayer magePrayer()
 	{
@@ -42,7 +45,8 @@ public interface UnethicalZulrahConfig extends Config
 	@ConfigItem(
 			keyName = "rangePrayer",
 			name = "Range prayer",
-			description = "Range prayer setting"
+			description = "Range prayer setting",
+			position = 3
 	)
 	default RangePrayer rangePrayer()
 	{
