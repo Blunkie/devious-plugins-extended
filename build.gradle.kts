@@ -55,7 +55,6 @@ allprojects {
         compileOnly("net.unethicalite:http-api:$unethicaliteVersion+")
         compileOnly("net.unethicalite:runelite-api:$unethicaliteVersion+")
         compileOnly("net.unethicalite:runelite-client:$unethicaliteVersion+")
-        compileOnly("net.unethicalite.rs:runescape-api:$unethicaliteVersion+")
 
         compileOnly(Libraries.guice)
         compileOnly(Libraries.javax)
