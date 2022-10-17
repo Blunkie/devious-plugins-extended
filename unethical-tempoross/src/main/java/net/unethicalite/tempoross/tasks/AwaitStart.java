@@ -39,6 +39,7 @@ public class AwaitStart extends TemporossTask
 		Widget intensityWidget = Widgets.get(437, 55);
 		if (!Widgets.isVisible(energyWidget) || !Widgets.isVisible(essenceWidget) || !Widgets.isVisible(intensityWidget))
 		{
+			started = false;
 			return;
 		}
 
@@ -46,6 +47,7 @@ public class AwaitStart extends TemporossTask
 		Matcher intensityMatcher = DIGIT_PATTERN.matcher(intensityWidget.getText());
 		if (!energyMatcher.find() || !intensityMatcher.find())
 		{
+			started = false;
 			return;
 		}
 
