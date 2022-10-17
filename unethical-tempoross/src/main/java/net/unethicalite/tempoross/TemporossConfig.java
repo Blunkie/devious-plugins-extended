@@ -4,8 +4,8 @@ import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 
-@ConfigGroup("hoottempoross")
-public interface HootTemporossConfig extends Config
+@ConfigGroup("unethicaltempoross")
+public interface TemporossConfig extends Config
 {
 	@ConfigItem(
 			keyName = "cook",

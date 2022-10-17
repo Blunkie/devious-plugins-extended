@@ -26,7 +26,6 @@
 rootProject.name = "unethicalite-plugins"
 
 include("hoot-fighter")
-//include("hoot-tempoross")
 //include("hoot-blackjack")
 //include("hoot-trawler")
 //include("hoot-pickpocket")
@@ -46,6 +45,7 @@ include("unethical-chopper")
 include("unethical-zulrah")
 include("unethical-cooker")
 include("unethical-bankpin")
+include("unethical-tempoross")
 //include("example-kotlin")
 
 for (project in rootProject.children) {

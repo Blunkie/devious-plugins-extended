@@ -1,15 +1,6 @@
 package net.unethicalite.tempoross;
 
 import com.google.inject.Provides;
-import net.unethicalite.api.entities.NPCs;
-import net.unethicalite.api.entities.Players;
-import net.unethicalite.api.entities.TileObjects;
-import net.unethicalite.api.items.Inventory;
-import net.unethicalite.api.movement.Movement;
-import net.unethicalite.api.plugins.LoopedPlugin;
-import net.unethicalite.api.scene.Tiles;
-import net.unethicalite.api.widgets.Dialog;
-import net.unethicalite.api.widgets.Widgets;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
@@ -21,16 +12,35 @@ import net.runelite.api.Player;
 import net.runelite.api.TileObject;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.ClientTick;
+import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.widgets.Widget;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.unethicalite.api.entities.NPCs;
+import net.unethicalite.api.entities.Players;
+import net.unethicalite.api.entities.TileObjects;
+import net.unethicalite.api.items.Inventory;
+import net.unethicalite.api.movement.Movement;
+import net.unethicalite.api.movement.pathfinder.LocalCollisionMap;
+import net.unethicalite.api.movement.pathfinder.model.TilePath;
+import net.unethicalite.api.plugins.LoopedPlugin;
+import net.unethicalite.api.scene.Tiles;
+import net.unethicalite.api.widgets.Dialog;
+import net.unethicalite.api.widgets.Widgets;
 import org.pf4j.Extension;
 
 import javax.inject.Inject;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -62,18 +72,27 @@ import static net.unethicalite.tempoross.TemporossID.OBJECT_LOBBY_PUMP;
 
 @Extension
 @PluginDescriptor(
-		name = "Hoot Tempoross",
+		name = "Unethical Tempoross",
 		enabledByDefault = false
 )
 @Slf4j
-public class HootTemporossPlugin extends LoopedPlugin
+public class TemporossPlugin extends LoopedPlugin
 {
 
 	@Inject
 	private Client client;
 
+	@Inject
+	private TemporossConfig config;
+
+	private final TemporossCollisionMap collisionMap = new TemporossCollisionMap(true);
+
 	private int waves = 0;
 	private TemporossWorkArea workArea = null;
+
+	private NPC fireToClear = null;
+	private WorldPoint lastDestination = null;
+	private TilePath lastPath = null;
 
 	private static final Pattern DIGIT_PATTERN = Pattern.compile("(\\d+)");
 
@@ -85,6 +104,7 @@ public class HootTemporossPlugin extends LoopedPlugin
 		{
 			return 1000;
 		}
+
 		int animation = player.getAnimation();
 		if (!client.isInInstancedRegion())
 		{
@@ -148,6 +168,24 @@ public class HootTemporossPlugin extends LoopedPlugin
 
 		if (getPhase() >= 2 && needToClearFire(workArea.getClosestTether()))
 		{
+			return -2;
+		}
+
+		if (fireToClear != null && Inventory.contains(ITEM_WATER_BUCKET))
+		{
+			log.info("Clearing fire at {}", fireToClear.getWorldLocation());
+			fireToClear.interact("Douse");
+			return -2;
+		}
+
+		if (inCloud(Players.getLocal().getWorldLocation()))
+		{
+			if (Movement.isWalking())
+			{
+				return -1;
+			}
+
+			walkToSafePoint();
 			return -2;
 		}
 
@@ -325,13 +363,15 @@ public class HootTemporossPlugin extends LoopedPlugin
 			scriptState = State.THIRD_CATCH;
 		}
 
-		if (scriptState.isComplete.getAsBoolean())
+		if (scriptState.isComplete(config))
 		{
 			scriptState = scriptState.next;
 			if (scriptState == null)
 			{
 				scriptState = State.THIRD_CATCH;
 			}
+
+			return 10;
 		}
 
 		NPC temporossPool = NPCs.getNearest(NPC_VULN_WHIRLPOOL);
@@ -341,7 +381,7 @@ public class HootTemporossPlugin extends LoopedPlugin
 		}
 
 		int rawFishCount = Inventory.getCount(ITEM_RAW_FISH);
-		List<WorldPoint> dangerousTiles = TileObjects.getSurrounding(Players.getLocal().getWorldLocation(), 20, OBJECT_CLOUD_SHADOW, OBJECT_FIRE)
+		List<WorldPoint> dangerousTiles = TileObjects.getSurrounding(Players.getLocal().getWorldLocation(), 10, OBJECT_CLOUD_SHADOW, OBJECT_FIRE)
 				.stream()
 				.filter(g -> g instanceof GameObject)
 				.flatMap(g -> ((GameObject) g).getWorldArea().toWorldPointList().stream())
@@ -359,6 +399,7 @@ public class HootTemporossPlugin extends LoopedPlugin
 			case THIRD_CATCH:
 				NPC fishSpot = NPCs.getNearest(it ->
 						NPC_DOUBLE_FISH_SPOT == it.getId()
+								&& !inCloud(Movement.getNearestWalkableTile(it.getWorldLocation()))
 								&& it.getWorldLocation().distanceTo(workArea.getRangePoint()) <= 20
 								&& filterDangerousNPCs.test(it));
 
@@ -366,6 +407,7 @@ public class HootTemporossPlugin extends LoopedPlugin
 				{
 					fishSpot = NPCs.getNearest(it ->
 							Set.of(NPC_SINGLE_FISH_SPOT, NPC_SINGLE_FISH_SPOT_SECOND).contains(it.getId())
+									&& !inCloud(Movement.getNearestWalkableTile(it.getWorldLocation()))
 									&& it.getWorldLocation().distanceTo(workArea.getRangePoint()) <= 20
 									&& filterDangerousNPCs.test(it));
 				}
@@ -383,14 +425,17 @@ public class HootTemporossPlugin extends LoopedPlugin
 					}
 
 					fishSpot.interact("Harpoon");
-					return 1000;
 				}
 				else
 				{
 					// if fish are null walk to the totem pole since it's in the center of the fish spots.
-					Movement.walkTo(workArea.getTotemPoint());
-					return 1000;
+					if (!Movement.walkTo(workArea.getTotemPoint(), collisionMap))
+					{
+						log.debug("Path was blocked");
+					}
 				}
+
+				return 1000;
 
 			case INITIAL_COOK:
 			case SECOND_COOK:
@@ -413,7 +458,10 @@ public class HootTemporossPlugin extends LoopedPlugin
 				}
 				else if (range == null)
 				{
-					Movement.walkTo(workArea.getRangePoint());
+					if (!Movement.walkTo(workArea.getRangePoint(), collisionMap))
+					{
+						log.debug("Path was incomplete");
+					}
 					return 1000;
 				}
 
@@ -492,25 +540,33 @@ public class HootTemporossPlugin extends LoopedPlugin
 		INITIAL_COOK(() -> getRawFish() == 0, SECOND_CATCH),
 		INITIAL_CATCH(() -> getRawFish() >= 8 || getAllFish() >= 17, INITIAL_COOK);
 
-		@Getter
-		private final BooleanSupplier isComplete;
+		final BooleanSupplier isComplete;
 
 		@Getter
-		private final State next;
+		final State next;
 
 		State(BooleanSupplier isComplete, State next)
 		{
 			this.isComplete = isComplete;
 			this.next = next;
 		}
+
+		boolean isCook()
+		{
+			return this == INITIAL_COOK || this == SECOND_COOK || this == THIRD_COOK;
+		}
+
+		boolean isComplete(TemporossConfig config)
+		{
+			return isComplete.getAsBoolean() || (isCook() && !config.cook());
+		}
 	}
 
 	private State scriptState = State.INITIAL_CATCH;
 
 	@Override
-	protected void startUp() throws Exception
+	protected void startUp()
 	{
-		super.startUp();
 		scriptState = State.INITIAL_CATCH;
 	}
 
@@ -544,6 +600,61 @@ public class HootTemporossPlugin extends LoopedPlugin
 		}
 	}
 
+	private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
+
+	@Subscribe
+	private void onClientTick(ClientTick e)
+	{
+		if (Objects.equals(lastDestination, Players.getLocal().getWorldLocation()))
+		{
+			lastDestination = null;
+			lastPath = null;
+			return;
+		}
+
+		WorldPoint destination = Movement.getDestination();
+		if (destination != null && (lastDestination == null || !lastDestination.equals(destination)))
+		{
+			lastDestination = destination;
+
+			try
+			{
+				lastPath = EXECUTOR.submit(() -> Movement.getPath(lastDestination, new LocalCollisionMap(true))).get(100, TimeUnit.MILLISECONDS);
+			}
+			catch (InterruptedException | ExecutionException | TimeoutException ex)
+			{
+				throw new RuntimeException(ex);
+			}
+		}
+
+		if (lastPath != null)
+		{
+			NPC fire = NPCs.query()
+					.ids(NPC_FIRE)
+					.filter(npc -> npc.getWorldArea().toWorldPointList().stream().anyMatch(fireTile -> lastPath.contains(fireTile)))
+					.results()
+					.nearest();
+			if (fire != null)
+			{
+				fireToClear = fire;
+			}
+
+			if (fireToClear != null && client.getCachedNPCs()[fireToClear.getIndex()] == null)
+			{
+				fireToClear = null;
+			}
+		}
+	}
+
+	@Subscribe
+	private void onNPCDespawned(NpcDespawned e)
+	{
+		if (e.getNpc() == fireToClear)
+		{
+			fireToClear = null;
+		}
+	}
+
 	@Subscribe
 	public void onChatMessage(ChatMessage event)
 	{
@@ -563,6 +674,12 @@ public class HootTemporossPlugin extends LoopedPlugin
 				incomingWave = false;
 			}
 		}
+	}
+
+	private static boolean inCloud(WorldPoint point)
+	{
+		TileObject cloud = TileObjects.getFirstSurrounding(point, 3, OBJECT_CLOUD_SHADOW);
+		return cloud != null && ((GameObject) cloud).getWorldArea().contains(point);
 	}
 
 	private boolean needToClearFire(Locatable locatable)
@@ -637,8 +754,8 @@ public class HootTemporossPlugin extends LoopedPlugin
 	}
 
 	@Provides
-	HootTemporossConfig getConfig(ConfigManager configManager)
+	TemporossConfig getConfig(ConfigManager configManager)
 	{
-		return configManager.getConfig(HootTemporossConfig.class);
+		return configManager.getConfig(TemporossConfig.class);
 	}
 }

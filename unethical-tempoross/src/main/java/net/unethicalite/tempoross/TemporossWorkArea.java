@@ -1,10 +1,9 @@
 package net.unethicalite.tempoross;
 
-import net.unethicalite.api.entities.Players;
-import net.unethicalite.api.entities.TileObjects;
 import lombok.Getter;
 import net.runelite.api.TileObject;
 import net.runelite.api.coords.WorldPoint;
+import net.unethicalite.api.entities.Players;
 
 @Getter
 public class TemporossWorkArea
@@ -52,42 +51,42 @@ public class TemporossWorkArea
 
 	public TileObject getBucketCrate()
 	{
-		return TileObjects.getFirstAt(bucketPoint, x -> x.hasAction("Take"));
+		return EntityUtils.getSafeObject(bucketPoint, x -> x.hasAction("Take"));
 	}
 
 	public TileObject getPump()
 	{
-		return TileObjects.getFirstAt(pumpPoint, x -> x.hasAction("Use"));
+		return EntityUtils.getSafeObject(pumpPoint, x -> x.hasAction("Use"));
 	}
 
 	public TileObject getRopeCrate()
 	{
-		return TileObjects.getFirstAt(ropePoint, x -> x.hasAction("Take"));
+		return EntityUtils.getSafeObject(ropePoint, x -> x.hasAction("Take"));
 	}
 
 	public TileObject getHammerCrate()
 	{
-		return TileObjects.getFirstAt(hammerPoint, x -> x.hasAction("Take"));
+		return EntityUtils.getSafeObject(hammerPoint, x -> x.hasAction("Take"));
 	}
 
 	public TileObject getHarpoonCrate()
 	{
-		return TileObjects.getFirstAt(harpoonPoint, x -> x.hasAction("Take"));
+		return EntityUtils.getSafeObject(harpoonPoint, x -> x.hasAction("Take"));
 	}
 
 	public TileObject getMast()
 	{
-		return TileObjects.getFirstAt(mastPoint, x -> x.hasAction("Tether", "Untether"));
+		return EntityUtils.getSafeObject(mastPoint, x -> x.hasAction("Tether", "Untether"));
 	}
 
 	public TileObject getTotem()
 	{
-		return TileObjects.getFirstAt(totemPoint, x -> x.hasAction("Tether", "Untether"));
+		return EntityUtils.getSafeObject(totemPoint, x -> x.hasAction("Tether", "Untether"));
 	}
 
 	public TileObject getRange()
 	{
-		return TileObjects.getFirstAt(rangePoint, x -> x.hasAction("Cook-at"));
+		return EntityUtils.getSafeObject(rangePoint, x -> x.hasAction("Cook-at"));
 	}
 
 	public TileObject getClosestTether()
