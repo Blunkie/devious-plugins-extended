@@ -3,11 +3,9 @@ package net.unethicalite.tempoross.tasks;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;
 import net.runelite.api.Client;
-import net.runelite.api.GameObject;
 import net.runelite.api.Locatable;
 import net.runelite.api.NPC;
 import net.runelite.api.Player;
-import net.runelite.api.TileObject;
 import net.runelite.api.coords.WorldPoint;
 import net.unethicalite.api.entities.NPCs;
 import net.unethicalite.api.entities.Players;
@@ -49,8 +47,7 @@ public abstract class TemporossTask implements Task
 
 	protected boolean inCloud(WorldPoint point)
 	{
-		TileObject cloud = TileObjects.getFirstSurrounding(point, 3, OBJECT_CLOUD_SHADOW);
-		return cloud != null && ((GameObject) cloud).getWorldArea().contains(point);
+		return TileObjects.getFirstSurrounding(point, 3, OBJECT_CLOUD_SHADOW) != null;
 	}
 
 	protected boolean needToClearFire(Client client, Locatable locatable)

@@ -35,6 +35,7 @@ include("hoot-fighter")
 //include("hoot-karambwanfisher")
 
 include("unethical-butler")
+include("unethical-birdhouses")
 include("unethical-kebab-buyer")
 include("unethical-autologin")
 include("unethical-oneclick")
