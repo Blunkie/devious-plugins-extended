@@ -16,11 +16,13 @@ import net.unethicalite.plugins.birdhouses.model.BirdHouse;
 import net.unethicalite.plugins.birdhouses.model.BirdHouseLocation;
 import net.unethicalite.plugins.birdhouses.model.BirdHouseState;
 import net.unethicalite.plugins.birdhouses.tasks.GatherTools;
+import net.unethicalite.plugins.birdhouses.tasks.SetupBirdHouse;
+import net.unethicalite.plugins.birdhouses.tasks.WalkToBirdHouse;
 import org.pf4j.Extension;
 
-import javax.inject.Inject;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Extension
 @PluginDescriptor(name = "Unethical Birdhouses", enabledByDefault = false)
@@ -39,15 +41,11 @@ public class BirdHousesPlugin extends TaskPlugin
 			new BirdHouse(BirdHouseLocation.VALLEY_SOUTH, BirdHouseState.UNKNOWN)
 	);
 
-	@Inject
-	private BirdHousesConfig config;
-
-	@Inject
-	private ConfigManager configManager;
-
 	private final Task[] tasks =
 			{
-					new GatherTools(this)
+					new GatherTools(this),
+					new WalkToBirdHouse(this),
+					new SetupBirdHouse(this)
 			};
 
 	@Override
@@ -68,14 +66,19 @@ public class BirdHousesPlugin extends TaskPlugin
 		}
 	}
 
-	protected Optional<BirdHouse> getNextBirdhouse()
+	public List<BirdHouse> getAvailableBirdHouses()
 	{
 		return BIRD_HOUSES.stream()
-				.filter(b -> b.getState() != BirdHouseState.SEEDED && !b.isComplete())
-				.findFirst();
+				.filter(b -> b.getState() != BirdHouseState.SEEDED || b.isComplete())
+				.collect(Collectors.toList());
 	}
 
-	protected List<Integer> getInventorySetup()
+	public Optional<BirdHouse> getNextBirdHouse()
+	{
+		return getAvailableBirdHouses().stream().findFirst();
+	}
+
+	public List<Integer> getTools()
 	{
 		return INV_SETUP_ITEMS;
 	}
