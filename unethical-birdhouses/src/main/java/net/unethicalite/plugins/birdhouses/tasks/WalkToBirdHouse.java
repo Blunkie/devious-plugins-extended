@@ -7,28 +7,28 @@ import net.unethicalite.plugins.birdhouses.model.BirdHouse;
 
 public class WalkToBirdHouse extends BirdHouseTask
 {
-    public WalkToBirdHouse(BirdHousesPlugin context)
-    {
-        super(context);
-    }
+	public WalkToBirdHouse(BirdHousesPlugin context)
+	{
+		super(context);
+	}
 
-    @Override
-    public boolean validate()
-    {
-        return getNextBirdHouse()
-                .map(BirdHouse::getWorldPoint)
-                .map(point -> Players.getLocal().distanceTo(point) > 10)
-                .orElse(false);
-    }
+	@Override
+	public boolean validate()
+	{
+		return getNextBirdHouse()
+				.map(BirdHouse::getWorldPoint)
+				.map(point -> Players.getLocal().distanceTo(point) > 10)
+				.orElse(false);
+	}
 
-    @Override
-    public int execute()
-    {
-        if (!Movement.isWalking())
-        {
-            getNextBirdHouse().ifPresent(house -> Movement.walkTo(house.getWorldPoint()));
-        }
+	@Override
+	public int execute()
+	{
+		if (!Movement.isWalking())
+		{
+			getNextBirdHouse().ifPresent(house -> Movement.walkTo(house.getWorldPoint()));
+		}
 
-        return -1;
-    }
+		return -1;
+	}
 }

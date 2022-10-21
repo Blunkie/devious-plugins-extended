@@ -7,6 +7,7 @@ import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import net.unethicalite.client.Static;
 
+import java.time.Duration;
 import java.time.Instant;
 
 @AllArgsConstructor
@@ -24,7 +25,7 @@ public class BirdHouse
 
 	public boolean isComplete()
 	{
-		return getBuildTimestamp().plusSeconds(BIRD_HOUSE_DURATION).isBefore(Instant.now());
+		return getCompletionTimestamp().isBefore(Instant.now());
 	}
 
 	public Instant getBuildTimestamp()
@@ -48,9 +49,19 @@ public class BirdHouse
 		return Instant.ofEpochSecond(Long.parseLong(split[1]));
 	}
 
+	public Instant getCompletionTimestamp()
+	{
+		return getBuildTimestamp().plusSeconds(BIRD_HOUSE_DURATION);
+	}
+
+	public Duration getTimeLeft()
+	{
+		return Duration.between(getBuildTimestamp(), getCompletionTimestamp());
+	}
+
 	@Override
 	public String toString()
 	{
-		return String.format("%s at %s | %s %s %s", location.toString(), getWorldPoint(), state, isComplete() ? "COMPLETED" : "IN_PROGRESS", getBuildTimestamp());
+		return String.format("%s, State: %s, %s | Time: %s", location.toString(), state, isComplete() ? "COMPLETED" : "IN_PROGRESS", getTimeLeft());
 	}
 }

@@ -1,6 +1,6 @@
 version = "0.0.1"
 
-project.extra["PluginName"] = "Unethical Birdhouses"
+project.extra["PluginName"] = "Unethical Bird Houses"
 project.extra["PluginDescription"] = "Does birdhouse runs"
 
 tasks {
