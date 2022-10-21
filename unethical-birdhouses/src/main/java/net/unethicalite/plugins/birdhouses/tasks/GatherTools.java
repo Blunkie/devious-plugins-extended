@@ -23,12 +23,15 @@ import java.util.Map;
 @Slf4j
 public class GatherTools extends BirdHouseTask
 {
+	private static final int MAX_BANK_ATTEMPTS = 5;
+	private int attempts = 0;
+
 	@Inject
 	private BirdHousesConfig config;
 
 	public GatherTools(BirdHousesPlugin context)
 	{
-		super(context);
+		super(context, true);
 	}
 
 	@Override
@@ -76,8 +79,13 @@ public class GatherTools extends BirdHouseTask
 		TileObject chest = TileObjects.getFirstAt(FOSSIL_ISLAND_CHEST_POINT, obj -> obj.hasAction("Collect"));
 		if (chest == null)
 		{
-			log.error("Bank chest not found, is it unlocked?");
-			throw new PluginStoppedException();
+			if (attempts++ > MAX_BANK_ATTEMPTS)
+			{
+				printMessage("Bank chest not found, is it unlocked?");
+				throw new PluginStoppedException();
+			}
+
+			return -3;
 		}
 
 		if (!Reachable.isInteractable(chest))

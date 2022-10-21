@@ -8,13 +8,13 @@ public class WaitAtBank extends BirdHouseTask
 {
 	public WaitAtBank(BirdHousesPlugin context)
 	{
-		super(context);
+		super(context, true);
 	}
 
 	@Override
 	public boolean validate()
 	{
-		return true;
+		return !FOSSIL_ISLAND_CHEST_POINT.dx(-1).equals(Players.getLocal().getWorldLocation());
 	}
 
 	@Override
@@ -25,12 +25,7 @@ public class WaitAtBank extends BirdHouseTask
 			return -1;
 		}
 
-		if (!FOSSIL_ISLAND_CHEST_POINT.dx(-1).equals(Players.getLocal().getWorldLocation()))
-		{
-			Movement.walkTo(FOSSIL_ISLAND_CHEST_POINT.dx(-1));
-			return -3;
-		}
-
-		return -1;
+		Movement.walkTo(FOSSIL_ISLAND_CHEST_POINT.dx(-1));
+		return -3;
 	}
 }

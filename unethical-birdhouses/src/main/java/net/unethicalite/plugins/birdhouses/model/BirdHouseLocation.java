@@ -16,4 +16,11 @@ public enum BirdHouseLocation
 
 	private final WorldPoint worldPoint;
 	private final VarPlayer varp;
+
+
+	@Override
+	public String toString()
+	{
+		return name().substring(0, 1).toUpperCase() + name().toLowerCase().substring(1).replace("_", " ");
+	}
 }

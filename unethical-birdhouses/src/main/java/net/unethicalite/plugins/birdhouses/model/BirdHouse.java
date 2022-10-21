@@ -14,9 +14,10 @@ import java.time.Instant;
 @Slf4j
 public class BirdHouse
 {
-	private static final int BIRD_HOUSE_DURATION = 55 * 60; // Add 5 extra minutes in case of inaccuracy
+	private static final int BIRD_HOUSE_DURATION = (int) Duration.ofMinutes(52).toSeconds(); // Add 2 extra minutes in case of inaccuracy
 
 	@Delegate
+	@Getter
 	private BirdHouseLocation location;
 
 	@Getter
@@ -62,6 +63,11 @@ public class BirdHouse
 	@Override
 	public String toString()
 	{
-		return String.format("%s, State: %s, %s | Time: %s", location.toString(), state, isComplete() ? "COMPLETED" : "IN_PROGRESS", getTimeLeft());
+		return String.format(
+				"%s, State: %s, %s | Time: %s",
+				location.toString(),
+				state, isComplete() ? "COMPLETED" : "IN_PROGRESS",
+				getTimeLeft().toMinutesPart() + "m " + getTimeLeft().toSecondsPart() + "s"
+		);
 	}
 }

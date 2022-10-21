@@ -28,4 +28,14 @@ public interface BirdHousesConfig extends Config
 	{
 		return SeedType.BARLEY_SEED;
 	}
+
+	@ConfigItem(
+			keyName = "logout",
+			name = "Log out when idle",
+			description = ""
+	)
+	default boolean logout()
+	{
+		return true;
+	}
 }

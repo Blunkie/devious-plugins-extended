@@ -18,13 +18,13 @@ public class SetupBirdHouse extends BirdHouseTask
 
 	public SetupBirdHouse(BirdHousesPlugin context)
 	{
-		super(context);
+		super(context, true);
 	}
 
 	@Override
 	public boolean validate()
 	{
-		return !getAvailableBirdHouses().isEmpty();
+		return getNextBirdHouse().isPresent();
 	}
 
 	@Override

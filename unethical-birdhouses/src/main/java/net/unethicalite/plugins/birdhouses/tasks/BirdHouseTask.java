@@ -1,5 +1,6 @@
 package net.unethicalite.plugins.birdhouses.tasks;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;
 import net.runelite.api.coords.WorldPoint;
@@ -13,4 +14,6 @@ public abstract class BirdHouseTask implements Task
 
 	@Delegate
 	protected final BirdHousesPlugin context;
+	@Getter
+	protected final boolean interruptBreak;
 }

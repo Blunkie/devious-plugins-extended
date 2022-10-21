@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.ItemID;
+import net.runelite.api.Skill;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.client.chat.ChatColorType;
@@ -15,14 +16,18 @@ import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.unethicalite.api.account.GameAccount;
 import net.unethicalite.api.commons.SpriteUtil;
 import net.unethicalite.api.game.Game;
 import net.unethicalite.api.game.Vars;
 import net.unethicalite.api.plugins.Task;
-import net.unethicalite.api.plugins.TaskPlugin;
+import net.unethicalite.api.plugins.TaskScript;
+import net.unethicalite.api.script.blocking_events.LoginEvent;
 import net.unethicalite.plugins.birdhouses.model.BirdHouse;
 import net.unethicalite.plugins.birdhouses.model.BirdHouseLocation;
 import net.unethicalite.plugins.birdhouses.model.BirdHouseState;
+import net.unethicalite.plugins.birdhouses.tasks.BirdHouseTask;
+import net.unethicalite.plugins.birdhouses.tasks.Break;
 import net.unethicalite.plugins.birdhouses.tasks.GatherTools;
 import net.unethicalite.plugins.birdhouses.tasks.SetupBirdHouse;
 import net.unethicalite.plugins.birdhouses.tasks.WaitAtBank;
@@ -37,7 +42,7 @@ import java.util.stream.Collectors;
 @Extension
 @PluginDescriptor(name = "Unethical Bird Houses", enabledByDefault = false)
 @Slf4j
-public class BirdHousesPlugin extends TaskPlugin
+public class BirdHousesPlugin extends TaskScript
 {
 	private static final int FIVE_MINUTES_IN_TICKS = 500;
 
@@ -58,10 +63,13 @@ public class BirdHousesPlugin extends TaskPlugin
 					new GatherTools(this),
 					new WalkToBirdHouse(this),
 					new SetupBirdHouse(this),
-					new WaitAtBank(this)
+					new WaitAtBank(this),
+					new Break(this)
 			};
 
-	private String previousTask = null;
+	private final LoginEvent loginEvent = new LoginEvent(getBlockingEventManager());
+
+	private Class<?> previousTask = null;
 
 	@Inject
 	private Client client;
@@ -76,8 +84,27 @@ public class BirdHousesPlugin extends TaskPlugin
 	}
 
 	@Override
-	protected void startUp()
+	public void onStart(String... args)
 	{
+		if (client.getUsername() != null && !client.getUsername().isBlank())
+		{
+			Game.setGameAccount(new GameAccount(client.getUsername(), client.getPassword()));
+		}
+
+		getPaint().setEnabled(true);
+		getPaint().getTracker().setHeader("Unethical Bird Houses");
+		getPaint().getTracker().submit("Current task", () -> previousTask == null ? "Idle" : previousTask.getSimpleName());
+		getPaint().getTracker().addSeparator();
+		for (BirdHouse birdHouse : BIRD_HOUSES)
+		{
+			getPaint().getTracker().submit(birdHouse.getLocation().toString(), () -> birdHouse.isComplete()
+					? "Complete"
+					: birdHouse.getTimeLeft().toMinutesPart() + "m " + birdHouse.getTimeLeft().toSecondsPart() + "s"
+			);
+		}
+		getPaint().getTracker().addSeparator();
+		getPaint().getTracker().trackSkill(Skill.HUNTER, false);
+
 		if (Game.isLoggedIn())
 		{
 			for (BirdHouse birdHouse : getAvailableBirdHouses())
@@ -87,6 +114,26 @@ public class BirdHousesPlugin extends TaskPlugin
 
 			printState();
 		}
+	}
+
+	@Override
+	protected int loop()
+	{
+		if (!Game.isLoggedIn() && getBlockingEventManager().getLoginEvent() == null)
+		{
+			for (Task task : tasks)
+			{
+				if (task.getClass().equals(getCurrentTask()) && ((BirdHouseTask) task).isInterruptBreak())
+				{
+					getBlockingEventManager().add(loginEvent);
+					break;
+				}
+			}
+		}
+
+		log.debug("Next birdhouse {}", getNextBirdHouse());
+
+		return super.loop();
 	}
 
 	public List<BirdHouse> getAvailableBirdHouses()
@@ -111,7 +158,7 @@ public class BirdHousesPlugin extends TaskPlugin
 		return INV_SETUP_ITEMS;
 	}
 
-	private void printMessage(String message)
+	public void printMessage(String message)
 	{
 		chatMessageManager.queue(QueuedMessage.builder()
 				.runeLiteFormattedMessage(
@@ -147,7 +194,7 @@ public class BirdHousesPlugin extends TaskPlugin
 		if (!Objects.equals(previousTask, getCurrentTask()))
 		{
 			previousTask = getCurrentTask();
-			printMessage("Task changed: " + previousTask);
+			printMessage("Task changed: " + (previousTask == null ? "Idle" : previousTask.getSimpleName()));
 		}
 
 		int ticks = client.getTickCount();
