@@ -5,7 +5,6 @@ import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
-import net.runelite.api.IndexedSprite;
 import net.runelite.api.ItemID;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.VarbitChanged;
@@ -63,7 +62,6 @@ public class BirdHousesPlugin extends TaskPlugin
 			};
 
 	private String previousTask = null;
-	private IndexedSprite unethicaliteLogo = null;
 
 	@Inject
 	private Client client;

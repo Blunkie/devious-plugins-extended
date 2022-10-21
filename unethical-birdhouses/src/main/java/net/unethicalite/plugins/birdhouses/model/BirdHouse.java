@@ -14,7 +14,7 @@ import java.time.Instant;
 @Slf4j
 public class BirdHouse
 {
-	private static final int BIRD_HOUSE_DURATION = 51 * 60; // Add an extra minute in case of inaccuracy
+	private static final int BIRD_HOUSE_DURATION = 55 * 60; // Add 5 extra minutes in case of inaccuracy
 
 	@Delegate
 	private BirdHouseLocation location;
@@ -56,7 +56,7 @@ public class BirdHouse
 
 	public Duration getTimeLeft()
 	{
-		return Duration.between(getBuildTimestamp(), getCompletionTimestamp());
+		return Duration.between(Instant.now(), getCompletionTimestamp());
 	}
 
 	@Override
