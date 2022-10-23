@@ -2,6 +2,7 @@ package net.unethicalite.plugins.birdhouses;
 
 import com.google.inject.Inject;
 import com.google.inject.Provides;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
@@ -28,6 +29,7 @@ import net.unethicalite.plugins.birdhouses.model.BirdHouseLocation;
 import net.unethicalite.plugins.birdhouses.model.BirdHouseState;
 import net.unethicalite.plugins.birdhouses.tasks.Break;
 import net.unethicalite.plugins.birdhouses.tasks.GatherTools;
+import net.unethicalite.plugins.birdhouses.tasks.AwaitAndLogin;
 import net.unethicalite.plugins.birdhouses.tasks.SetupBirdHouse;
 import net.unethicalite.plugins.birdhouses.tasks.WaitAtBank;
 import net.unethicalite.plugins.birdhouses.tasks.WalkToBirdHouse;
@@ -59,13 +61,15 @@ public class BirdHousesPlugin extends TaskScript
 
 	private final Task[] tasks =
 			{
+					new AwaitAndLogin(this),
 					new GatherTools(this),
 					new WalkToBirdHouse(this),
 					new SetupBirdHouse(this),
 					new WaitAtBank(this),
-					new Break(this)
+					new Break(this),
 			};
 
+	@Getter
 	private final LoginEvent loginEvent = new LoginEvent(getBlockingEventManager());
 
 	private Class<?> previousTask = null;
@@ -85,6 +89,8 @@ public class BirdHousesPlugin extends TaskScript
 	@Override
 	public void onStart(String... args)
 	{
+		getBlockingEventManager().remove(LoginEvent.class);
+
 		if (client.getUsername() != null && !client.getUsername().isBlank())
 		{
 			Game.setGameAccount(new GameAccount(client.getUsername(), client.getPassword()));
@@ -113,17 +119,6 @@ public class BirdHousesPlugin extends TaskScript
 
 			printState();
 		}
-	}
-
-	@Override
-	protected int loop()
-	{
-		if (!Game.isLoggedIn() && getBlockingEventManager().getLoginEvent() == null && getNextBirdHouse().isPresent())
-		{
-			getBlockingEventManager().add(loginEvent);
-		}
-
-		return super.loop();
 	}
 
 	public List<BirdHouse> getAvailableBirdHouses()

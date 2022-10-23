@@ -18,7 +18,7 @@ public class SetupBirdHouse extends BirdHouseTask
 
 	public SetupBirdHouse(BirdHousesPlugin context)
 	{
-		super(context, true);
+		super(context);
 	}
 
 	@Override

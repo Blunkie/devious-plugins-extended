@@ -14,7 +14,7 @@ import java.time.Instant;
 @Slf4j
 public class BirdHouse
 {
-	private static final int BIRD_HOUSE_DURATION = (int) Duration.ofMinutes(52).toSeconds(); // Add 2 extra minutes in case of inaccuracy
+	private static final int BIRD_HOUSE_DURATION = (int) Duration.ofMinutes(55).toSeconds(); // Add 5 extra minutes in case of inaccuracy
 
 	@Delegate
 	@Getter

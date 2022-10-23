@@ -8,7 +8,7 @@ public class WaitAtBank extends BirdHouseTask
 {
 	public WaitAtBank(BirdHousesPlugin context)
 	{
-		super(context, true);
+		super(context);
 	}
 
 	@Override

@@ -27,7 +27,7 @@ public class GatherTools extends BirdHouseTask
 
 	public GatherTools(BirdHousesPlugin context)
 	{
-		super(context, true);
+		super(context);
 	}
 
 	@Override

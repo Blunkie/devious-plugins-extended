@@ -9,7 +9,7 @@ public class WalkToBirdHouse extends BirdHouseTask
 {
 	public WalkToBirdHouse(BirdHousesPlugin context)
 	{
-		super(context, true);
+		super(context);
 	}
 
 	@Override

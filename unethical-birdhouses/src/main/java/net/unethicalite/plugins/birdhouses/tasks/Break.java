@@ -1,7 +1,6 @@
 package net.unethicalite.plugins.birdhouses.tasks;
 
 import net.unethicalite.api.game.Game;
-import net.unethicalite.api.script.blocking_events.LoginEvent;
 import net.unethicalite.plugins.birdhouses.BirdHousesConfig;
 import net.unethicalite.plugins.birdhouses.BirdHousesPlugin;
 
@@ -14,7 +13,7 @@ public class Break extends BirdHouseTask
 
 	public Break(BirdHousesPlugin context)
 	{
-		super(context, false);
+		super(context);
 	}
 
 	@Override
@@ -26,12 +25,6 @@ public class Break extends BirdHouseTask
 	@Override
 	public int execute()
 	{
-		if (context.getBlockingEventManager().getLoginEvent() != null)
-		{
-			context.getBlockingEventManager().remove(LoginEvent.class);
-			return -1;
-		}
-
 		if (Game.isLoggedIn())
 		{
 			Game.logout();
