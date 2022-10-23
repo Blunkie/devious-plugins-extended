@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.ItemID;
-import net.runelite.api.Skill;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.client.chat.ChatColorType;
@@ -17,6 +16,8 @@ import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.ui.NavigationButton;
+import net.runelite.client.util.ImageUtil;
 import net.unethicalite.api.account.GameAccount;
 import net.unethicalite.api.commons.SpriteUtil;
 import net.unethicalite.api.game.Game;
@@ -24,12 +25,13 @@ import net.unethicalite.api.game.Vars;
 import net.unethicalite.api.plugins.Task;
 import net.unethicalite.api.plugins.TaskScript;
 import net.unethicalite.api.script.blocking_events.LoginEvent;
+import net.unethicalite.client.managers.UnethicalPluginManager;
 import net.unethicalite.plugins.birdhouses.model.BirdHouse;
 import net.unethicalite.plugins.birdhouses.model.BirdHouseLocation;
 import net.unethicalite.plugins.birdhouses.model.BirdHouseState;
+import net.unethicalite.plugins.birdhouses.tasks.AwaitAndLogin;
 import net.unethicalite.plugins.birdhouses.tasks.Break;
 import net.unethicalite.plugins.birdhouses.tasks.GatherTools;
-import net.unethicalite.plugins.birdhouses.tasks.AwaitAndLogin;
 import net.unethicalite.plugins.birdhouses.tasks.SetupBirdHouse;
 import net.unethicalite.plugins.birdhouses.tasks.WaitAtBank;
 import net.unethicalite.plugins.birdhouses.tasks.WalkToBirdHouse;
@@ -80,6 +82,9 @@ public class BirdHousesPlugin extends TaskScript
 	@Inject
 	private ChatMessageManager chatMessageManager;
 
+	@Inject
+	private UnethicalPluginManager unethicalPluginManager;
+
 	@Override
 	public Task[] getTasks()
 	{
@@ -89,26 +94,19 @@ public class BirdHousesPlugin extends TaskScript
 	@Override
 	public void onStart(String... args)
 	{
+		unethicalPluginManager.registerButton(this, NavigationButton.builder()
+				.tooltip("Unethical Bird Houses")
+				.icon(ImageUtil.loadImageResource(getClass(), "birdhouses.png"))
+				.priority(0)
+				.panel(new BirdHousesPanel(this))
+				.build());
+
 		getBlockingEventManager().remove(LoginEvent.class);
 
 		if (client.getUsername() != null && !client.getUsername().isBlank())
 		{
 			Game.setGameAccount(new GameAccount(client.getUsername(), client.getPassword()));
 		}
-
-		getPaint().setEnabled(true);
-		getPaint().getTracker().setHeader("Unethical Bird Houses");
-		getPaint().getTracker().submit("Current task", () -> previousTask == null ? "Idle" : previousTask.getSimpleName());
-		getPaint().getTracker().addSeparator();
-		for (BirdHouse birdHouse : BIRD_HOUSES)
-		{
-			getPaint().getTracker().submit(birdHouse.getLocation().toString(), () -> birdHouse.isComplete()
-					? "Complete"
-					: birdHouse.getTimeLeft().toMinutesPart() + "m " + birdHouse.getTimeLeft().toSecondsPart() + "s"
-			);
-		}
-		getPaint().getTracker().addSeparator();
-		getPaint().getTracker().trackSkill(Skill.HUNTER, false);
 
 		if (Game.isLoggedIn())
 		{
