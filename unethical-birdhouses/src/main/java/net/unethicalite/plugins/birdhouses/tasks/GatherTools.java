@@ -11,7 +11,6 @@ import net.unethicalite.api.items.Bank;
 import net.unethicalite.api.items.Inventory;
 import net.unethicalite.api.movement.Movement;
 import net.unethicalite.api.movement.Reachable;
-import net.unethicalite.api.plugins.PluginStoppedException;
 import net.unethicalite.plugins.birdhouses.BirdHousesConfig;
 import net.unethicalite.plugins.birdhouses.BirdHousesPlugin;
 import net.unethicalite.plugins.birdhouses.model.BirdHouseState;
@@ -23,9 +22,6 @@ import java.util.Map;
 @Slf4j
 public class GatherTools extends BirdHouseTask
 {
-	private static final int MAX_BANK_ATTEMPTS = 5;
-	private int attempts = 0;
-
 	@Inject
 	private BirdHousesConfig config;
 
@@ -79,13 +75,8 @@ public class GatherTools extends BirdHouseTask
 		TileObject chest = TileObjects.getFirstAt(FOSSIL_ISLAND_CHEST_POINT, obj -> obj.hasAction("Collect"));
 		if (chest == null)
 		{
-			if (attempts++ > MAX_BANK_ATTEMPTS)
-			{
-				printMessage("Bank chest not found, is it unlocked?");
-				throw new PluginStoppedException();
-			}
-
-			return -3;
+			printMessage("Bank chest not found, is it unlocked?");
+			return -10;
 		}
 
 		if (!Reachable.isInteractable(chest))
@@ -95,7 +86,7 @@ public class GatherTools extends BirdHouseTask
 		}
 
 		chest.interact("Use");
-		return -1;
+		return -3;
 	}
 
 	private Map<Integer, Integer> getAllowedItems()
@@ -150,7 +141,7 @@ public class GatherTools extends BirdHouseTask
 	{
 		return (int) (getBirdHouses().stream()
 				.filter(birdHouse -> birdHouse.getState() != BirdHouseState.SEEDED || birdHouse.isComplete())
-				.count()  * config.seedType().getQuantity())
+				.count() * config.seedType().getQuantity())
 				- Inventory.getCount(true, config.seedType().getItemId());
 	}
 

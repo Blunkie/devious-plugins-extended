@@ -26,7 +26,6 @@ import net.unethicalite.api.script.blocking_events.LoginEvent;
 import net.unethicalite.plugins.birdhouses.model.BirdHouse;
 import net.unethicalite.plugins.birdhouses.model.BirdHouseLocation;
 import net.unethicalite.plugins.birdhouses.model.BirdHouseState;
-import net.unethicalite.plugins.birdhouses.tasks.BirdHouseTask;
 import net.unethicalite.plugins.birdhouses.tasks.Break;
 import net.unethicalite.plugins.birdhouses.tasks.GatherTools;
 import net.unethicalite.plugins.birdhouses.tasks.SetupBirdHouse;
@@ -119,19 +118,10 @@ public class BirdHousesPlugin extends TaskScript
 	@Override
 	protected int loop()
 	{
-		if (!Game.isLoggedIn() && getBlockingEventManager().getLoginEvent() == null)
+		if (!Game.isLoggedIn() && getBlockingEventManager().getLoginEvent() == null && getNextBirdHouse().isPresent())
 		{
-			for (Task task : tasks)
-			{
-				if (task.getClass().equals(getCurrentTask()) && ((BirdHouseTask) task).isInterruptBreak())
-				{
-					getBlockingEventManager().add(loginEvent);
-					break;
-				}
-			}
+			getBlockingEventManager().add(loginEvent);
 		}
-
-		log.debug("Next birdhouse {}", getNextBirdHouse());
 
 		return super.loop();
 	}
