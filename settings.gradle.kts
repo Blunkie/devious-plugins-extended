@@ -25,7 +25,6 @@
 
 rootProject.name = "unethicalite-plugins"
 
-include("hoot-fighter")
 //include("hoot-blackjack")
 //include("hoot-trawler")
 //include("hoot-pickpocket")
@@ -34,6 +33,7 @@ include("hoot-fighter")
 //include("hoot-notifier")
 //include("hoot-karambwanfisher")
 
+include("unethical-fighter")
 include("unethical-butler")
 include("unethical-birdhouses")
 include("unethical-kebab-buyer")

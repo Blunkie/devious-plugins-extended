@@ -1,6 +1,6 @@
-version = "0.0.7"
+version = "0.0.1"
 
-project.extra["PluginName"] = "Hoot Fighter"
+project.extra["PluginName"] = "Unethical Fighter"
 project.extra["PluginDescription"] = "Simple fighter, supports eating, looting, alching, prayer potions, prayer flicking"
 
 tasks {

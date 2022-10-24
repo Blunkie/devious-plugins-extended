@@ -37,17 +37,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @PluginDescriptor(
-		name = "Hoot Fighter",
+		name = "Unethical Fighter",
 		description = "A simple auto fighter",
 		enabledByDefault = false
 )
 @Slf4j
 @Extension
-public class HootFighterPlugin extends LoopedPlugin
+public class FighterPlugin extends LoopedPlugin
 {
 	private ScheduledExecutorService executor;
 	@Inject
-	private HootFighterConfig config;
+	private FighterConfig config;
 
 	@Inject
 	private ItemManager itemManager;
@@ -88,9 +88,9 @@ public class HootFighterPlugin extends LoopedPlugin
 	}
 
 	@Provides
-	public HootFighterConfig getConfig(ConfigManager configManager)
+	public FighterConfig getConfig(ConfigManager configManager)
 	{
-		return configManager.getConfig(HootFighterConfig.class);
+		return configManager.getConfig(FighterConfig.class);
 	}
 
 	@Override

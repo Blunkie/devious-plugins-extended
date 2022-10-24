@@ -7,7 +7,7 @@ import net.runelite.client.config.ConfigSection;
 import net.runelite.client.config.Range;
 
 @ConfigGroup("hootfighter")
-public interface HootFighterConfig extends Config
+public interface FighterConfig extends Config
 {
 	@ConfigSection(
 			name = "General",
