@@ -94,9 +94,8 @@ public class FighterPlugin extends LoopedPlugin
 	}
 
 	@Override
-	public void shutDown() throws Exception
+	public void shutDown()
 	{
-		super.shutDown();
 		if (executor != null)
 		{
 			executor.shutdown();
@@ -265,5 +264,4 @@ public class FighterPlugin extends LoopedPlugin
 			SwingUtilities.invokeLater(() -> Plugins.stopPlugin(this));
 		}
 	}
-
 }
