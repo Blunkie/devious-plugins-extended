@@ -1,21 +1,66 @@
 package net.unethicalite.plugins.prayer;
 
-import lombok.Value;
+import lombok.Getter;
+import net.runelite.api.NpcID;
 import net.runelite.api.Prayer;
 
+import java.util.Arrays;
 import java.util.List;
 
-@Value
-public class PrayerConfig
+@Getter
+public enum PrayerConfig
 {
+	FIRE_GIANT(
+			new Attack(Prayer.PROTECT_FROM_MELEE, 4667, -1, 5, NpcID.FIRE_GIANT_2081, NpcID.FIRE_GIANT_2082),
+			new Attack(Prayer.PROTECT_FROM_MELEE, 4666, -1, 5, NpcID.FIRE_GIANT_2083)
+	),
+	HELLHOUND(new Attack(Prayer.PROTECT_FROM_MELEE, 6562, -1, 4, NpcID.HELLHOUND, NpcID.HELLHOUND_105)),
+	ABERRANT_SPECTRE(new Attack(Prayer.PROTECT_FROM_MAGIC, 1507, -1, 4, NpcID.ABERRANT_SPECTRE)),
+	TZTOK_JAD(
+			new Attack(Prayer.PROTECT_FROM_MAGIC, 7592, -1, 8, NpcID.TZTOKJAD),
+			new Attack(Prayer.PROTECT_FROM_MISSILES, 7593, -1, 8, NpcID.TZTOKJAD)
+	),
+	SUQAH(
+			new Attack(Prayer.PROTECT_FROM_MELEE, 4388, 4385, 6, NpcID.SUQAH_791),
+			new Attack(Prayer.PROTECT_FROM_MELEE, 4387, 4384, 6, NpcID.SUQAH_792)
+	)
+	;
+
 	private static final List<Integer> JAD_ATTACKS = List.of(7592, 7593, 2656, 2652);
-	String npcName;
-	Prayer protectionPrayer;
-	int animationId;
-	int attackSpeed;
+
+	private final Attack[] attacks;
+
+	PrayerConfig(Attack... attacks)
+	{
+		this.attacks = attacks;
+	}
 
 	public boolean isJad()
 	{
-		return JAD_ATTACKS.contains(animationId);
+		return Arrays.stream(attacks).anyMatch(Attack::isJad);
+	}
+
+	@Getter
+	public static final class Attack
+	{
+		private final Prayer protectionPrayer;
+		private final int animationId;
+		private final int defenceAnimationId;
+		private final int speed;
+		private final int[] npcIds;
+
+		public Attack(Prayer protectionPrayer, int animationId, int defenceAnimationId, int speed, int... npcIds)
+		{
+			this.protectionPrayer = protectionPrayer;
+			this.animationId = animationId;
+			this.defenceAnimationId = defenceAnimationId;
+			this.speed = speed;
+			this.npcIds = npcIds;
+		}
+
+		public boolean isJad()
+		{
+			return JAD_ATTACKS.contains(animationId);
+		}
 	}
 }

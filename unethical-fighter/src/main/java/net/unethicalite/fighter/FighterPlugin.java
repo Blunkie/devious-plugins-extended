@@ -54,7 +54,7 @@ public class FighterPlugin extends LoopedPlugin
 
 	private WorldPoint startPoint;
 
-	private List<TileItem> notOurItems = new ArrayList<>();
+	private final List<TileItem> notOurItems = new ArrayList<>();
 
 	@Override
 	public void startUp() throws Exception

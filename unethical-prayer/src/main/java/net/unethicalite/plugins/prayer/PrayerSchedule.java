@@ -7,6 +7,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class PrayerSchedule
 {
-	private PrayerConfig prayerConfig;
+	private PrayerConfig.Attack attack;
+	private int npcId;
 	private int nextAttackTick;
 }

@@ -5,6 +5,7 @@ import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Actor;
 import net.runelite.api.Client;
+import net.runelite.api.Player;
 import net.runelite.api.Prayer;
 import net.runelite.api.events.ActorDeath;
 import net.runelite.api.events.AnimationChanged;
@@ -13,26 +14,26 @@ import net.runelite.api.events.InteractingChanged;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.unethicalite.api.entities.Players;
 import net.unethicalite.api.widgets.Prayers;
 import org.pf4j.Extension;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @Extension
 @PluginDescriptor(name = "Unethical Prayer", enabledByDefault = false)
 @Slf4j
 public class UnethicalPrayerPlugin extends Plugin
 {
-	private final List<PrayerConfig> configs = new CopyOnWriteArrayList<>();
-	private final Map<Actor, PrayerSchedule> schedules = new HashMap<>();
+	private static final Map<Integer, Weapon> ATTACK_ANIMATIONS = Map.of(
+			390, Weapon.DRAGON_SCIMITAR,
+			1892, Weapon.DRAGON_SCIMITAR
+	);
+
+	private final Map<Actor, PrayerSchedule> schedules = new LinkedHashMap<>();
 
 	@Inject
 	private UnethicalPrayerConfig config;
@@ -40,23 +41,24 @@ public class UnethicalPrayerPlugin extends Plugin
 	@Inject
 	private Client client;
 
-	@Override
-	protected void startUp()
-	{
-		updateConfig();
-	}
+	private int ourLastAttack = -1;
 
 	@Subscribe
 	private void onInteractingChanged(InteractingChanged event)
 	{
 		if (!config.turnOnIfTargeted()
-				|| event.getTarget() == null
-				|| !event.getTarget().equals(Players.getLocal()))
+				|| event.getTarget() == null)
 		{
 			return;
 		}
 
-		for (PrayerConfig prayerConfig : configs)
+		Player local = Players.getLocal();
+		if (!event.getTarget().equals(local) && !event.getSource().equals(local))
+		{
+			return;
+		}
+
+		for (PrayerConfig prayerConfig : config.npcs())
 		{
 			// Jad's ranged attacks are delayed so check for the animation instead
 			if (prayerConfig.isJad())
@@ -69,10 +71,16 @@ public class UnethicalPrayerPlugin extends Plugin
 				continue;
 			}
 
-			if (prayerConfig.getNpcName().equals(event.getSource().getName()))
+			for (PrayerConfig.Attack attack : prayerConfig.getAttacks())
 			{
-				schedules.put(event.getSource(), new PrayerSchedule(prayerConfig, client.getTickCount() + 1));
-				return;
+				for (int npcId : attack.getNpcIds())
+				{
+					if (npcId == event.getSource().getId() || npcId == event.getTarget().getId())
+					{
+						schedules.put(event.getSource(), new PrayerSchedule(attack, npcId, client.getTickCount() + 1));
+						return;
+					}
+				}
 			}
 		}
 	}
@@ -83,27 +91,42 @@ public class UnethicalPrayerPlugin extends Plugin
 		Actor actor = event.getActor();
 		if (actor == null
 				|| actor.getInteracting() == null
-				|| !actor.getInteracting().equals(Players.getLocal())
-				|| configs.isEmpty()
+				|| config.npcs().isEmpty()
 		)
 		{
 			return;
 		}
 
 		int animation = actor.getAnimation();
-		if (!isAnimationConfigured(animation))
+		if (animation == -1)
+		{
+			return;
+		}
+
+		Player local = Players.getLocal();
+		int currentTick = client.getTickCount();
+		if (actor == local)
+		{
+			Weapon weapon = ATTACK_ANIMATIONS.get(animation);
+			if (weapon != null)
+			{
+				ourLastAttack = currentTick;
+				return;
+			}
+		}
+
+		if (!actor.getInteracting().equals(local))
 		{
 			return;
 		}
 
 		PrayerSchedule schedule = schedules.computeIfPresent(actor, (a, s) ->
 		{
-			if (s.getPrayerConfig().getNpcName().equals(a.getName())
-					&& s.getPrayerConfig().isJad()
-					&& animation != -1
-					&& s.getPrayerConfig().getAnimationId() != animation)
+			if (s.getNpcId() == a.getId()
+					&& s.getAttack().isJad()
+					&& s.getAttack().getAnimationId() != animation)
 			{
-				log.debug("Jad attack was diff: {} -> {}", s.getPrayerConfig().getAnimationId(), animation);
+				log.info("Jad attack was diff: {} -> {}", s.getAttack().getAnimationId(), animation);
 				return null;
 			}
 
@@ -112,64 +135,69 @@ public class UnethicalPrayerPlugin extends Plugin
 
 		if (schedule != null)
 		{
-			PrayerConfig prayerConfig = schedule.getPrayerConfig();
+			PrayerConfig.Attack attack = schedule.getAttack();
 
-			if (prayerConfig.getAnimationId() != animation)
+			if (animation == attack.getAnimationId() || (ourLastAttack == currentTick && schedule.getNextAttackTick() == currentTick))
 			{
-				return;
-			}
+				// Don't toggle off if it's jad, schedule upcoming attack instead
+				if (attack.isJad())
+				{
+					schedule.setNextAttackTick(currentTick + 2);
+					return;
+				}
 
-			// Don't toggle off if it's jad, schedule upcoming attack instead
-			if (prayerConfig.isJad())
-			{
-				schedule.setNextAttackTick(client.getTickCount() + 2);
-				return;
-			}
+				Prayer protectionPrayer = attack.getProtectionPrayer();
+				int nextAttack = currentTick + attack.getSpeed();
 
-			Prayer protectionPrayer = prayerConfig.getProtectionPrayer();
-			int nextAttack = client.getTickCount() + prayerConfig.getAttackSpeed();
+				schedule.setNextAttackTick(nextAttack);
+				log.info("[{}] Scheduling {}'s next attack {} at {}", currentTick, actor.getId(), attack.getAnimationId(),
+						nextAttack);
 
-			schedule.setNextAttackTick(nextAttack);
-			log.debug("Scheduling {}'s next attack at {}", prayerConfig.getNpcName(), nextAttack);
-
-			// Turn off
-			if (config.turnOffAfterAttack() && Prayers.isEnabled(protectionPrayer))
-			{
-				log.debug("Turning off {} after attack", protectionPrayer);
-				Prayers.toggle(protectionPrayer);
+				// Turn off
+				if (config.turnOffAfterAttack() && Prayers.isEnabled(protectionPrayer) && !isAttackScheduledNextTick())
+				{
+					log.info("Turning off {} after attack", protectionPrayer);
+					Prayers.toggle(protectionPrayer);
+				}
 			}
 		}
 		else
 		{
-			for (PrayerConfig prayerConfig : configs)
+			for (PrayerConfig prayerConfig : config.npcs())
 			{
-				int animationId = prayerConfig.getAnimationId();
-				int nextAttack = client.getTickCount() + prayerConfig.getAttackSpeed();
-				Prayer protectionPrayer = prayerConfig.getProtectionPrayer();
-
-				if (animationId == animation && prayerConfig.getNpcName().equals(actor.getName()))
+				for (PrayerConfig.Attack attack : prayerConfig.getAttacks())
 				{
-					if (prayerConfig.isJad())
+					for (int npcId : attack.getNpcIds())
 					{
-						nextAttack = client.getTickCount() + 2;
-					}
+						int animationId = attack.getAnimationId();
+						int nextAttack = currentTick + attack.getSpeed();
+						Prayer protectionPrayer = attack.getProtectionPrayer();
 
-					// Schedule next attack
-					schedules.put(actor, new PrayerSchedule(prayerConfig, nextAttack));
-					log.debug("Adding schedule with {}'s next attack at {}", prayerConfig.getNpcName(), nextAttack);
+						if (animationId == animation && npcId == actor.getId())
+						{
+							if (prayerConfig.isJad())
+							{
+								nextAttack = currentTick + 2;
+							}
 
-					// Don't toggle on if it's jad because its attacks are delayed
-					if (prayerConfig.isJad())
-					{
-						return;
-					}
+							// Schedule next attack
+							schedules.put(actor, new PrayerSchedule(attack, npcId, nextAttack));
+							log.info("Adding schedule with {}'s next attack at {}", npcId, nextAttack);
 
-					if (config.turnOnIfTargeted() && !Prayers.isEnabled(protectionPrayer))
-					{
-						log.debug("{} has animation ID {}, so we are enabling {}", prayerConfig.getNpcName(),
-								animationId, protectionPrayer);
-						Prayers.toggle(protectionPrayer);
-						return;
+							// Don't toggle on if it's jad because its attacks are delayed
+							if (prayerConfig.isJad())
+							{
+								return;
+							}
+
+							if (config.turnOnIfTargeted() && !Prayers.isEnabled(protectionPrayer))
+							{
+								log.info("{} has animation ID {}, so we are enabling {}", npcId,
+										animationId, protectionPrayer);
+								Prayers.toggle(protectionPrayer);
+								return;
+							}
+						}
 					}
 				}
 			}
@@ -185,34 +213,31 @@ public class UnethicalPrayerPlugin extends Plugin
 
 		for (PrayerSchedule schedule : schedules.values())
 		{
-			PrayerConfig prayerConfig = schedule.getPrayerConfig();
+			PrayerConfig.Attack attack = schedule.getAttack();
 			int attackTick = schedule.getNextAttackTick();
-			// Skip nonscheduled configs
-			if (attackTick == -1)
-			{
-				continue;
-			}
 
 			// Toggle prayer on if next tick will be the attack tick
 			if (currentTick + 1 == attackTick)
 			{
-				// Reset the config
-				schedule.setNextAttackTick(-1);
-
-				if (Prayers.isEnabled(prayerConfig.getProtectionPrayer()))
+				if (Prayers.isEnabled(attack.getProtectionPrayer()))
 				{
-					log.debug("{}'s attack scheduled at {}, but {} is already on",
-							prayerConfig.getNpcName(), attackTick,
-							prayerConfig.getProtectionPrayer());
+					log.info("{}'s attack scheduled at {}, but {} is already on",
+							schedule.getNpcId(), attackTick,
+							attack.getProtectionPrayer());
 					continue;
 				}
 
-				log.debug("{} is about to attack, turning on {}",
-						prayerConfig.getNpcName(), prayerConfig.getProtectionPrayer());
-				Prayers.toggle(prayerConfig.getProtectionPrayer());
+				log.info("{} is about to attack, turning on {}",
+						schedule.getNpcId(), attack.getProtectionPrayer());
+				Prayers.toggle(attack.getProtectionPrayer());
 				return;
 			}
 		}
+	}
+
+	private boolean isAttackScheduledNextTick()
+	{
+		return schedules.values().stream().anyMatch(s -> s.getNextAttackTick() == client.getTickCount() + 1);
 	}
 
 	@Subscribe
@@ -227,55 +252,18 @@ public class UnethicalPrayerPlugin extends Plugin
 		removeSchedule(e.getActor());
 	}
 
-	@Subscribe
-	private void onConfigChanged(ConfigChanged e)
-	{
-		if (!"unethicalprayer".equals(e.getGroup()))
-		{
-			return;
-		}
-
-		updateConfig();
-	}
-
 	private void removeSchedule(Actor a)
 	{
 		PrayerSchedule schedule = schedules.get(a);
 		if (schedule != null)
 		{
-			if (Prayers.isEnabled(schedule.getPrayerConfig().getProtectionPrayer()))
+			if (Prayers.isEnabled(schedule.getAttack().getProtectionPrayer()))
 			{
-				Prayers.toggle(schedule.getPrayerConfig().getProtectionPrayer());
+				Prayers.toggle(schedule.getAttack().getProtectionPrayer());
 			}
 
 			schedules.remove(a);
 		}
-	}
-
-	private void updateConfig()
-	{
-		List<PrayerConfig> prayerConfigs = new ArrayList<>();
-		String[] split = config.configs().split("\n");
-		for (String s : split)
-		{
-			String[] cfgItem = s.split(":");
-			PrayerConfig prayerConfig = new PrayerConfig(
-					cfgItem[0],
-					Prayer.valueOf(cfgItem[1]),
-					Integer.parseInt(cfgItem[2]),
-					Integer.parseInt(cfgItem[3]));
-			prayerConfigs.add(prayerConfig);
-		}
-
-		configs.clear();
-		configs.addAll(prayerConfigs);
-
-		log.info("Loaded {} configs", configs.size());
-	}
-
-	private boolean isAnimationConfigured(int animation)
-	{
-		return configs.stream().anyMatch(prayerConfig -> prayerConfig.getAnimationId() == animation);
 	}
 
 	@Provides

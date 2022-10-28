@@ -4,17 +4,19 @@ import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 
+import java.util.Set;
+
 @ConfigGroup("unethicalprayer")
 public interface UnethicalPrayerConfig extends Config
 {
 	@ConfigItem(
-			keyName = "configs",
-			name = "Configuration",
-			description = "Usage: NPCName:Prayer:AnimationID:AttackSpeedTicks, ex. TzTok-Jad:PROTECT_FROM_MAGIC:7592:8"
+			keyName = "npcs",
+			name = "NPCs to pray against",
+			description = ""
 	)
-	default String configs()
+	default Set<PrayerConfig> npcs()
 	{
-		return "TzTok-Jad:PROTECT_FROM_MAGIC:7592:8\nTzTok-Jad:PROTECT_FROM_MISSILES:7593:8";
+		return Set.of();
 	}
 
 	@ConfigItem(
