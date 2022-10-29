@@ -116,7 +116,7 @@ public enum Course
 	),
 
 	SEERS_COURSE(ObstacleFactory.newInstance(true)
-			.append(new Area(new Location(2682, 3511, 0), new Location(2728, 3451, 0), 0), "Wall", "Climb-up", 14927)
+			.append(new Area(new Location(2682, 3511, 0), new Location(2735, 3451, 0), 0), "Wall", "Climb-up", 14927)
 			.append(new Area(new Location(2721, 3497, 3), new Location(2730, 3490, 3), 3), "Gap", "Jump", 14928)
 			.append(new Area(new Location(2705, 3495, 2), new Location(2713, 3488, 2), 2), "Tightrope", "Cross", 14932)
 			.append(new Area(new Location(2710, 3481, 2), new Location(2715, 3477, 2), 2), "Gap", "Jump", 14929)
@@ -200,7 +200,9 @@ public enum Course
 		for (Obstacle obstacle : obstacles)
 		{
 			if (obstacle.getArea().contains(player))
+			{
 				return obstacle;
+			}
 		}
 		return null;
 	}

@@ -203,7 +203,8 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 	{
 		try
 		{
-			return TileObjects.getFirstAt(obstacle.getLocation().getX(), obstacle.getLocation().getY(), obstacle.getLocation().getZ(), obstacle.getName());
+			return TileObjects.getFirstSurrounding(obstacle.getLocation().getX(), obstacle.getLocation().getY(),
+					obstacle.getLocation().getZ(), 3, obstacle.getName());
 		}
 		catch (Exception exception)
 		{
