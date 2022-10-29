@@ -12,12 +12,15 @@ import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.InteractingChanged;
 import net.runelite.api.events.NpcDespawned;
+import net.runelite.api.widgets.Widget;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.unethicalite.api.entities.Players;
+import net.unethicalite.api.interaction.InteractMethod;
 import net.unethicalite.api.widgets.Prayers;
+import net.unethicalite.api.widgets.Widgets;
 import org.pf4j.Extension;
 
 import java.util.LinkedHashMap;
@@ -157,7 +160,7 @@ public class UnethicalPrayerPlugin extends Plugin
 				if (config.turnOffAfterAttack() && Prayers.isEnabled(protectionPrayer) && !isAttackScheduledNextTick())
 				{
 					log.info("Turning off {} after attack", protectionPrayer);
-					Prayers.toggle(protectionPrayer);
+					togglePrayer(protectionPrayer);
 				}
 			}
 		}
@@ -194,7 +197,7 @@ public class UnethicalPrayerPlugin extends Plugin
 							{
 								log.info("{} has animation ID {}, so we are enabling {}", npcId,
 										animationId, protectionPrayer);
-								Prayers.toggle(protectionPrayer);
+								togglePrayer(protectionPrayer);
 								return;
 							}
 						}
@@ -229,7 +232,7 @@ public class UnethicalPrayerPlugin extends Plugin
 
 				log.info("{} is about to attack, turning on {}",
 						schedule.getNpcId(), attack.getProtectionPrayer());
-				Prayers.toggle(attack.getProtectionPrayer());
+				togglePrayer(attack.getProtectionPrayer());
 				return;
 			}
 		}
@@ -259,7 +262,7 @@ public class UnethicalPrayerPlugin extends Plugin
 		{
 			if (Prayers.isEnabled(schedule.getAttack().getProtectionPrayer()))
 			{
-				Prayers.toggle(schedule.getAttack().getProtectionPrayer());
+				togglePrayer(schedule.getAttack().getProtectionPrayer());
 			}
 
 			schedules.remove(a);
@@ -270,5 +273,14 @@ public class UnethicalPrayerPlugin extends Plugin
 	UnethicalPrayerConfig provideConfig(ConfigManager configManager)
 	{
 		return configManager.getConfig(UnethicalPrayerConfig.class);
+	}
+
+	private static void togglePrayer(Prayer prayer)
+	{
+		Widget widget = Widgets.get(prayer.getWidgetInfo());
+		if (widget != null)
+		{
+			widget.interact(InteractMethod.PACKETS, 0);
+		}
 	}
 }
