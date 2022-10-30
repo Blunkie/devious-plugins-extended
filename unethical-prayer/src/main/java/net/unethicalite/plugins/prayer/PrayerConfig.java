@@ -1,67 +1,51 @@
 package net.unethicalite.plugins.prayer;
 
-import lombok.Getter;
-import net.runelite.api.NpcID;
-import net.runelite.api.Prayer;
+import net.runelite.client.config.Config;
+import net.runelite.client.config.ConfigGroup;
+import net.runelite.client.config.ConfigItem;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Set;
 
-@Getter
-public enum PrayerConfig
+@ConfigGroup("unethicalprayer")
+public interface PrayerConfig extends Config
 {
-	FIRE_GIANT(
-			new Attack(Prayer.PROTECT_FROM_MELEE, 4667, 5, NpcID.FIRE_GIANT_2081, NpcID.FIRE_GIANT_2082),
-			new Attack(Prayer.PROTECT_FROM_MELEE, 4666, 5, NpcID.FIRE_GIANT_2083)
-	),
-	HELLHOUND(new Attack(Prayer.PROTECT_FROM_MELEE, 6562, 4, NpcID.HELLHOUND, NpcID.HELLHOUND_105)),
-	ABERRANT_SPECTRE(new Attack(Prayer.PROTECT_FROM_MAGIC, 1507, 4, NpcID.ABERRANT_SPECTRE)),
-	TZTOK_JAD(
-			new Attack(Prayer.PROTECT_FROM_MAGIC, 7592, -1, 8, NpcID.TZTOKJAD),
-			new Attack(Prayer.PROTECT_FROM_MISSILES, 7593, 8, NpcID.TZTOKJAD)
-	),
-	SUQAH(
-			new Attack(Prayer.PROTECT_FROM_MELEE, 4388, 6, NpcID.SUQAH_791),
-			new Attack(Prayer.PROTECT_FROM_MELEE, 4387, 6, NpcID.SUQAH_792)
-	),
-	MUT_BLOODVELD(new Attack(Prayer.PROTECT_FROM_MELEE, 1552, 4, NpcID.MUTATED_BLOODVELD)),
-	BLACK_DEMON(new Attack(Prayer.PROTECT_FROM_MELEE, 64, 4, NpcID.BLACK_DEMON_2049,
-			NpcID.BLACK_DEMON_2048, NpcID.BLACK_DEMON_2050, NpcID.BLACK_DEMON_2051, NpcID.BLACK_DEMON_2052)),
-	ANKOU(new Attack(Prayer.PROTECT_FROM_MELEE, 422, 4, NpcID.ANKOU_2517, NpcID.ANKOU_2518, NpcID.ANKOU_2519));
-
-	private static final List<Integer> JAD_ATTACKS = List.of(7592, 7593, 2656, 2652);
-
-	private final Attack[] attacks;
-
-	PrayerConfig(Attack... attacks)
+	@ConfigItem(
+			keyName = "npcs",
+			name = "NPCs to pray against",
+			description = ""
+	)
+	default Set<PrayerNpc> npcs()
 	{
-		this.attacks = attacks;
+		return Set.of();
 	}
 
-	public boolean isJad()
+	@ConfigItem(
+			keyName = "turnOffAfterAttack",
+			name = "Toggle off after attack",
+			description = "Turns the prayer off after NPC has attacked"
+	)
+	default boolean turnOffAfterAttack()
 	{
-		return Arrays.stream(attacks).anyMatch(Attack::isJad);
+		return false;
 	}
 
-	@Getter
-	public static final class Attack
+	@ConfigItem(
+			keyName = "turnOnIfTargeted",
+			name = "Toggle on if targeted",
+			description = "Turns the prayer on if a new NPC attacks you"
+	)
+	default boolean turnOnIfTargeted()
 	{
-		private final Prayer protectionPrayer;
-		private final int animationId;
-		private final int speed;
-		private final int[] npcIds;
+		return false;
+	}
 
-		public Attack(Prayer protectionPrayer, int animationId, int speed, int... npcIds)
-		{
-			this.protectionPrayer = protectionPrayer;
-			this.animationId = animationId;
-			this.speed = speed;
-			this.npcIds = npcIds;
-		}
-
-		public boolean isJad()
-		{
-			return JAD_ATTACKS.contains(animationId);
-		}
+	@ConfigItem(
+			keyName = "turnOnIfTargeting",
+			name = "Toggle on if new target",
+			description = "Turns the prayer on when you attack"
+	)
+	default boolean turnOnIfTargeting()
+	{
+		return false;
 	}
 }

@@ -8,7 +8,11 @@ import net.runelite.api.ItemID;
 @Getter
 public enum Weapon
 {
-	DRAGON_SCIMITAR(ItemID.DRAGON_SCIMITAR, 390, 1892, 4)
+	DRAGON_SCIMITAR(ItemID.DRAGON_SCIMITAR, 390, 1892, 4),
+
+	BONE_CROSSBOW(ItemID.DORGESHUUN_CROSSBOW, 7552, 7552, 4),
+
+	MAGIC_SHORTBOW(ItemID.MAGIC_SHORTBOW, 426, 1074, 3),
 	;
 
 	private final int id;

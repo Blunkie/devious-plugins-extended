@@ -29,17 +29,19 @@ import java.util.Map;
 @Extension
 @PluginDescriptor(name = "Unethical Prayer", enabledByDefault = false)
 @Slf4j
-public class UnethicalPrayerPlugin extends Plugin
+public class PrayerPlugin extends Plugin
 {
 	private static final Map<Integer, Weapon> ATTACK_ANIMATIONS = Map.of(
 			390, Weapon.DRAGON_SCIMITAR,
-			1892, Weapon.DRAGON_SCIMITAR
+			1892, Weapon.DRAGON_SCIMITAR,
+			7552, Weapon.BONE_CROSSBOW,
+			426, Weapon.MAGIC_SHORTBOW
 	);
 
 	private final Map<Actor, PrayerSchedule> schedules = new LinkedHashMap<>();
 
 	@Inject
-	private UnethicalPrayerConfig config;
+	private PrayerConfig config;
 
 	@Inject
 	private Client client;
@@ -49,8 +51,7 @@ public class UnethicalPrayerPlugin extends Plugin
 	@Subscribe
 	private void onInteractingChanged(InteractingChanged event)
 	{
-		if (!config.turnOnIfTargeted()
-				|| event.getTarget() == null)
+		if (event.getTarget() == null)
 		{
 			return;
 		}
@@ -61,10 +62,10 @@ public class UnethicalPrayerPlugin extends Plugin
 			return;
 		}
 
-		for (PrayerConfig prayerConfig : config.npcs())
+		for (PrayerNpc prayerNpc : config.npcs())
 		{
 			// Jad's ranged attacks are delayed so check for the animation instead
-			if (prayerConfig.isJad())
+			if (prayerNpc.isJad())
 			{
 				continue;
 			}
@@ -74,14 +75,18 @@ public class UnethicalPrayerPlugin extends Plugin
 				continue;
 			}
 
-			for (PrayerConfig.Attack attack : prayerConfig.getAttacks())
+			for (PrayerNpc.Attack attack : prayerNpc.getAttacks())
 			{
 				for (int npcId : attack.getNpcIds())
 				{
-					if (npcId == event.getSource().getId() || npcId == event.getTarget().getId())
+					if (npcId == event.getSource().getId() && config.turnOnIfTargeted())
 					{
 						schedules.put(event.getSource(), new PrayerSchedule(attack, npcId, client.getTickCount() + 1));
-						return;
+					}
+
+					if (npcId == event.getTarget().getId() && config.turnOnIfTargeting())
+					{
+						schedules.put(event.getTarget(), new PrayerSchedule(attack, npcId, client.getTickCount() + 1));
 					}
 				}
 			}
@@ -114,7 +119,6 @@ public class UnethicalPrayerPlugin extends Plugin
 			if (weapon != null)
 			{
 				ourLastAttack = currentTick;
-				return;
 			}
 		}
 
@@ -138,7 +142,7 @@ public class UnethicalPrayerPlugin extends Plugin
 
 		if (schedule != null)
 		{
-			PrayerConfig.Attack attack = schedule.getAttack();
+			PrayerNpc.Attack attack = schedule.getAttack();
 
 			if (animation == attack.getAnimationId() || (ourLastAttack == currentTick && schedule.getNextAttackTick() == currentTick))
 			{
@@ -157,8 +161,14 @@ public class UnethicalPrayerPlugin extends Plugin
 						nextAttack);
 
 				// Turn off
-				if (config.turnOffAfterAttack() && Prayers.isEnabled(protectionPrayer) && !isAttackScheduledNextTick())
+				if (config.turnOffAfterAttack() && Prayers.isEnabled(protectionPrayer))
 				{
+					if (isAttackScheduledNextTick())
+					{
+						log.info("Attack scheduled in the next tick, not disabling pray");
+						return;
+					}
+
 					log.info("Turning off {} after attack", protectionPrayer);
 					togglePrayer(protectionPrayer);
 				}
@@ -166,9 +176,9 @@ public class UnethicalPrayerPlugin extends Plugin
 		}
 		else
 		{
-			for (PrayerConfig prayerConfig : config.npcs())
+			for (PrayerNpc prayerNpc : config.npcs())
 			{
-				for (PrayerConfig.Attack attack : prayerConfig.getAttacks())
+				for (PrayerNpc.Attack attack : prayerNpc.getAttacks())
 				{
 					for (int npcId : attack.getNpcIds())
 					{
@@ -178,7 +188,7 @@ public class UnethicalPrayerPlugin extends Plugin
 
 						if (animationId == animation && npcId == actor.getId())
 						{
-							if (prayerConfig.isJad())
+							if (prayerNpc.isJad())
 							{
 								nextAttack = currentTick + 2;
 							}
@@ -188,7 +198,7 @@ public class UnethicalPrayerPlugin extends Plugin
 							log.info("Adding schedule with {}'s next attack at {}", npcId, nextAttack);
 
 							// Don't toggle on if it's jad because its attacks are delayed
-							if (prayerConfig.isJad())
+							if (prayerNpc.isJad())
 							{
 								return;
 							}
@@ -216,7 +226,7 @@ public class UnethicalPrayerPlugin extends Plugin
 
 		for (PrayerSchedule schedule : schedules.values())
 		{
-			PrayerConfig.Attack attack = schedule.getAttack();
+			PrayerNpc.Attack attack = schedule.getAttack();
 			int attackTick = schedule.getNextAttackTick();
 
 			// Toggle prayer on if next tick will be the attack tick
@@ -270,9 +280,9 @@ public class UnethicalPrayerPlugin extends Plugin
 	}
 
 	@Provides
-	UnethicalPrayerConfig provideConfig(ConfigManager configManager)
+	PrayerConfig provideConfig(ConfigManager configManager)
 	{
-		return configManager.getConfig(UnethicalPrayerConfig.class);
+		return configManager.getConfig(PrayerConfig.class);
 	}
 
 	private static void togglePrayer(Prayer prayer)
