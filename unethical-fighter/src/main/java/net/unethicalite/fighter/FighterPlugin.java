@@ -172,7 +172,7 @@ public class FighterPlugin extends LoopedPlugin
 					x.getTile().getWorldLocation().distanceTo(local.getWorldLocation()) < config.attackRange()
 							&& !notOurItems.contains(x)
 							&& ((x.getName() != null && itemsToLoot.contains(x.getName())
-							|| (config.lootValue() > -1 && itemManager.getItemPrice(x.getId()) * x.getQuantity() > config.lootValue())
+							|| (config.lootValue() > 0 && itemManager.getItemPrice(x.getId()) * x.getQuantity() > config.lootValue())
 							|| (config.untradables() && (!x.isTradable()) || x.hasInventoryAction("Destroy"))))
 			);
 			if (loot != null)
