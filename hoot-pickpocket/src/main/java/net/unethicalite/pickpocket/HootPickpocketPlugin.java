@@ -33,6 +33,8 @@ public class HootPickpocketPlugin extends LoopedPlugin
 
 	private WorldPoint lastNpcPosition = null;
 
+	private int maxPouches = 5;
+
 	@Override
 	protected int loop()
 	{
@@ -45,9 +47,10 @@ public class HootPickpocketPlugin extends LoopedPlugin
 		}
 
 		Item pouch = Inventory.getFirst("Coin pouch");
-		if (pouch != null && pouch.getQuantity() > 5)
+		if (pouch != null && pouch.getQuantity() >= maxPouches)
 		{
 			pouch.interact("Open-all");
+			maxPouches = Rand.nextInt(1, 29);
 			log.debug("Opening pouches");
 			return -1;
 		}
