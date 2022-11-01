@@ -125,13 +125,13 @@ public interface FighterConfig extends Config
 	@ConfigItem(
 			keyName = "lootValue",
 			name = "Loot GP value",
-			description = "Items to loot by value, -1 to check by name only",
+			description = "Items to loot by value, 0 to check by name only",
 			position = 1,
 			section = loot
 	)
 	default int lootValue()
 	{
-		return -1;
+		return 0;
 	}
 
 	@ConfigItem(
