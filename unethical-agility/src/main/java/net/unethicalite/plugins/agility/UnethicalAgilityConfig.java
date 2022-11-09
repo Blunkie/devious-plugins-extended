@@ -124,4 +124,14 @@ public interface UnethicalAgilityConfig extends Config
 	{
 		return false;
 	}
+
+	@ConfigItem(
+			keyName = "stopIfNoFood",
+			name = "Stop plugin if no food",
+			description = "Stop if no food left, or idle until hp regens"
+	)
+	default boolean stopIfNoFood()
+	{
+		return true;
+	}
 }

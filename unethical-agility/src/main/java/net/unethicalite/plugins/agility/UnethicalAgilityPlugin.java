@@ -124,8 +124,12 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 			var itemToEat = Inventory.query().actions("Eat").results().first();
 			if (itemToEat == null)
 			{
-				MessageUtils.addMessage("Ran out of food, stopping plugin");
-				SwingUtilities.invokeLater(() -> Plugins.stopPlugin(this));
+				if (config.stopIfNoFood())
+				{
+					MessageUtils.addMessage("Ran out of food, stopping plugin");
+					SwingUtilities.invokeLater(() -> Plugins.stopPlugin(this));
+				}
+
 				return -1;
 			}
 
