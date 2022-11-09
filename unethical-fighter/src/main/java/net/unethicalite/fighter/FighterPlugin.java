@@ -1,6 +1,8 @@
 package net.unethicalite.fighter;
 
 import com.google.inject.Provides;
+import net.runelite.api.ItemID;
+import net.runelite.client.util.WildcardMatcher;
 import net.unethicalite.api.entities.Players;
 import net.unethicalite.api.entities.TileItems;
 import net.unethicalite.api.game.Combat;
@@ -46,6 +48,7 @@ import java.util.stream.Collectors;
 public class FighterPlugin extends LoopedPlugin
 {
 	private ScheduledExecutorService executor;
+
 	@Inject
 	private FighterConfig config;
 
@@ -165,15 +168,12 @@ public class FighterPlugin extends LoopedPlugin
 		}
 
 		Player local = Players.getLocal();
-		List<String> itemsToLoot = List.of(config.loot().split(","));
 		if (!Inventory.isFull())
 		{
 			TileItem loot = TileItems.getNearest(x ->
 					x.getTile().getWorldLocation().distanceTo(local.getWorldLocation()) < config.attackRange()
 							&& !notOurItems.contains(x)
-							&& ((x.getName() != null && itemsToLoot.contains(x.getName())
-							|| (config.lootValue() > 0 && itemManager.getItemPrice(x.getId()) * x.getQuantity() > config.lootValue())
-							|| (config.untradables() && (!x.isTradable()) || x.hasInventoryAction("Destroy"))))
+							&& !shouldNotLoot(x) && (shouldLootByName(x) || shouldLootUntradable(x) || shouldLootByValue(x))
 			);
 			if (loot != null)
 			{
@@ -194,7 +194,7 @@ public class FighterPlugin extends LoopedPlugin
 			if (alchSpell.canCast())
 			{
 				List<String> alchItems = List.of(config.alchItems().split(","));
-				Item alchItem = Inventory.getFirst(x -> x.getName() != null && alchItems.contains(x.getName()));
+				Item alchItem = Inventory.getFirst(x -> x.getName() != null && matchesItem(alchItems, x.getName()));
 				if (alchItem != null)
 				{
 					Magic.cast(alchSpell.getSpell(), alchItem);
@@ -263,5 +263,34 @@ public class FighterPlugin extends LoopedPlugin
 		{
 			SwingUtilities.invokeLater(() -> Plugins.stopPlugin(this));
 		}
+	}
+
+	private boolean shouldNotLoot(TileItem item)
+	{
+		return matchesItem(List.of(config.dontLoot().split(",")), item.getName());
+	}
+
+	private boolean shouldLootUntradable(TileItem item)
+	{
+		return config.untradables()
+				&& (!item.isTradable() || item.hasInventoryAction("Destroy"))
+				&& item.getId() != ItemID.COINS_995;
+	}
+
+	private boolean shouldLootByValue(TileItem item)
+	{
+		return config.lootByValue()
+				&& config.lootValue() > 0
+				&& itemManager.getItemPrice(item.getId()) * item.getQuantity() > config.lootValue();
+	}
+
+	private boolean shouldLootByName(TileItem item)
+	{
+		return matchesItem(List.of(config.loots().split(",")), item.getName());
+	}
+
+	private boolean matchesItem(List<String> itemNames, String itemName)
+	{
+		return itemNames.stream().anyMatch(name -> WildcardMatcher.matches(name, itemName));
 	}
 }

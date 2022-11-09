@@ -117,17 +117,43 @@ public interface FighterConfig extends Config
 			position = 0,
 			section = loot
 	)
-	default String loot()
+	default String loots()
 	{
-		return "Any";
+		return "Bones";
+	}
+
+	@ConfigItem(
+			keyName = "dontLoot",
+			name = "Don't loot",
+			description = "Items to not loot separated by comma. ex: Lobster,Tuna",
+			position = 0,
+			section = loot
+	)
+	default String dontLoot()
+	{
+		return "Bones";
+	}
+
+	@ConfigItem(
+			keyName = "lootByValue",
+			name = "Loot items by value",
+			description = "",
+			position = 1,
+			section = loot
+	)
+	default boolean lootByValue()
+	{
+		return true;
 	}
 
 	@ConfigItem(
 			keyName = "lootValue",
 			name = "Loot GP value",
-			description = "Items to loot by value, 0 to check by name only",
+			description = "Min. value for item to loot",
 			position = 1,
-			section = loot
+			section = loot,
+			hidden = true,
+			unhide = "lootByValue"
 	)
 	default int lootValue()
 	{
