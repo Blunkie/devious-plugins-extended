@@ -2,6 +2,7 @@ package net.unethicalite.fighter;
 
 import com.google.inject.Provides;
 import net.runelite.api.ItemID;
+import net.runelite.api.util.Text;
 import net.runelite.client.util.WildcardMatcher;
 import net.unethicalite.api.entities.Players;
 import net.unethicalite.api.entities.TileItems;
@@ -121,7 +122,7 @@ public class FighterPlugin extends LoopedPlugin
 
 		if (config.eat() && Combat.getHealthPercent() <= config.healthPercent())
 		{
-			List<String> foods = List.of(config.foods().split(","));
+			List<String> foods = Text.fromCSV(config.foods());
 			Item food = Inventory.getFirst(x -> (x.getName() != null && foods.stream().anyMatch(a -> x.getName().contains(a)))
 					|| (foods.contains("Any") && x.hasAction("Eat")));
 			if (food != null)
@@ -193,7 +194,7 @@ public class FighterPlugin extends LoopedPlugin
 			AlchSpell alchSpell = config.alchSpell();
 			if (alchSpell.canCast())
 			{
-				List<String> alchItems = List.of(config.alchItems().split(","));
+				List<String> alchItems = Text.fromCSV(config.alchItems());
 				Item alchItem = Inventory.getFirst(x -> x.getName() != null && matchesItem(alchItems, x.getName()));
 				if (alchItem != null)
 				{
@@ -267,7 +268,7 @@ public class FighterPlugin extends LoopedPlugin
 
 	private boolean shouldNotLoot(TileItem item)
 	{
-		return matchesItem(List.of(config.dontLoot().split(",")), item.getName());
+		return matchesItem(Text.fromCSV(config.dontLoot()), item.getName());
 	}
 
 	private boolean shouldLootUntradable(TileItem item)
@@ -286,7 +287,7 @@ public class FighterPlugin extends LoopedPlugin
 
 	private boolean shouldLootByName(TileItem item)
 	{
-		return matchesItem(List.of(config.loots().split(",")), item.getName());
+		return matchesItem(Text.fromCSV(config.loots()), item.getName());
 	}
 
 	private boolean matchesItem(List<String> itemNames, String itemName)
