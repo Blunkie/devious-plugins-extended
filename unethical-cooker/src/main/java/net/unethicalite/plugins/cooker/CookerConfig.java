@@ -5,7 +5,7 @@ import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 
 @ConfigGroup("unethicalcooker")
-public interface UnethicalCookerConfig extends Config
+public interface CookerConfig extends Config
 {
 	@ConfigItem(
 			keyName = "item",

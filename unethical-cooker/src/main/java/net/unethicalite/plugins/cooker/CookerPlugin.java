@@ -1,6 +1,9 @@
 package net.unethicalite.plugins.cooker;
 
+import com.google.inject.Inject;
 import com.google.inject.Provides;
+import lombok.Getter;
+import net.runelite.api.Client;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.unethicalite.api.plugins.Task;
@@ -13,12 +16,20 @@ import org.pf4j.Extension;
 		name = "Unethical Cooker",
 		enabledByDefault = false
 )
-public class UnethicalCookerPlugin extends TaskPlugin
+public class CookerPlugin extends TaskPlugin
 {
 	private final Task[] tasks =
 			{
-					new Cook()
+					new Cook(this)
 			};
+
+	@Inject
+	@Getter
+	private CookerConfig config;
+
+	@Inject
+	@Getter
+	private Client client;
 
 	@Override
 	public Task[] getTasks()
@@ -27,8 +38,8 @@ public class UnethicalCookerPlugin extends TaskPlugin
 	}
 
 	@Provides
-	UnethicalCookerConfig provideConfig(ConfigManager configManager)
+	CookerConfig provideConfig(ConfigManager configManager)
 	{
-		return configManager.getConfig(UnethicalCookerConfig.class);
+		return configManager.getConfig(CookerConfig.class);
 	}
 }

@@ -1,11 +1,8 @@
 package net.unethicalite.plugins.cooker;
 
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.runelite.api.ItemID;
 
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 @Getter
 public enum Meat
 {
@@ -26,7 +23,7 @@ public enum Meat
 	BASS(ItemID.RAW_BASS, ItemID.BASS, 4),
 	SWORDFISH(ItemID.RAW_SWORDFISH, ItemID.SWORDFISH, 4),
 	MONKFISH(ItemID.RAW_MONKFISH, ItemID.MONKFISH, 4),
-	KARAMBWAN(ItemID.RAW_KARAMBWAN, ItemID.COOKED_KARAMBWAN, 4),
+	KARAMBWAN(ItemID.RAW_KARAMBWAN, ItemID.COOKED_KARAMBWAN, 4, 1),
 	SHARK(ItemID.RAW_SHARK, ItemID.SHARK, 4),
 	SEA_TURTLE(ItemID.RAW_SEA_TURTLE, ItemID.SEA_TURTLE, 4),
 	ANGLERFISH(ItemID.RAW_ANGLERFISH, ItemID.ANGLERFISH, 4),
@@ -38,4 +35,18 @@ public enum Meat
 	private final int rawId;
 	private final int cookedId;
 	private final int cookTicks;
+	private final int productionIndex;
+
+	Meat(int rawId, int cookedId, int cookTicks, int productionIndex)
+	{
+		this.rawId = rawId;
+		this.cookedId = cookedId;
+		this.cookTicks = cookTicks;
+		this.productionIndex = productionIndex;
+	}
+
+	Meat(int rawId, int cookedId, int cookTicks)
+	{
+		this(rawId, cookedId, cookTicks, 0);
+	}
 }

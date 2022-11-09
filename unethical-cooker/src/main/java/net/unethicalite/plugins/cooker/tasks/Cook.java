@@ -5,28 +5,27 @@ import net.runelite.api.Item;
 import net.runelite.api.NPC;
 import net.runelite.api.Player;
 import net.runelite.api.TileObject;
-import net.runelite.api.events.GameTick;
+import net.runelite.api.widgets.WidgetID;
 import net.runelite.client.chat.ChatColorType;
-import net.runelite.client.eventbus.Subscribe;
 import net.unethicalite.api.entities.NPCs;
 import net.unethicalite.api.entities.Players;
 import net.unethicalite.api.entities.TileObjects;
 import net.unethicalite.api.items.Bank;
 import net.unethicalite.api.items.Inventory;
-import net.unethicalite.api.plugins.Task;
 import net.unethicalite.api.utils.MessageUtils;
 import net.unethicalite.api.widgets.Production;
-import net.unethicalite.plugins.cooker.UnethicalCookerConfig;
+import net.unethicalite.api.widgets.Widgets;
+import net.unethicalite.plugins.cooker.CookerPlugin;
+import net.unethicalite.plugins.cooker.Meat;
 
-import javax.inject.Inject;
 import java.util.function.Predicate;
 
-public class Cook implements Task
+public class Cook extends CookerTask
 {
-	private int cooldown = 0;
-
-	@Inject
-	private UnethicalCookerConfig config;
+	public Cook(CookerPlugin context)
+	{
+		super(context);
+	}
 
 	@Override
 	public boolean validate()
@@ -37,19 +36,20 @@ public class Cook implements Task
 	@Override
 	public int execute()
 	{
-		Item raw = Inventory.getFirst(config.item().getRawId());
+		Meat meat = getConfig().item();
+		Item raw = Inventory.getFirst(meat.getRawId());
 		if (raw == null)
 		{
 			if (Bank.isOpen())
 			{
-				Predicate<Item> rawPredicate = x -> x.getId() == config.item().getRawId();
+				Predicate<Item> rawPredicate = x -> x.getId() == meat.getRawId();
 				if (Inventory.contains(rawPredicate.negate()))
 				{
 					Bank.depositInventory();
 					return -2;
 				}
 
-				Bank.withdrawAll(config.item().getRawId(), Bank.WithdrawMode.ITEM);
+				Bank.withdrawAll(meat.getRawId(), Bank.WithdrawMode.ITEM);
 				return -2;
 			}
 
@@ -67,18 +67,18 @@ public class Cook implements Task
 		Player local = Players.getLocal();
 		if (local.getAnimation() == AnimationID.COOKING_RANGE || local.getAnimation() == AnimationID.COOKING_FIRE)
 		{
-			cooldown = config.item().getCookTicks();
+			taskCooldown = getClient().getTickCount() + meat.getCookTicks();
 			return -1;
 		}
 
-		if (cooldown > 0)
+		if (getClient().getTickCount() < taskCooldown)
 		{
 			return -1;
 		}
 
 		TileObject cookingObject = TileObjects.getFirstSurrounding(
 				local.getWorldLocation(),
-				5,
+				10,
 				x -> x.hasAction("Cook")
 		);
 		if (cookingObject == null)
@@ -87,33 +87,19 @@ public class Cook implements Task
 			return -1;
 		}
 
+
 		if (Production.isOpen())
 		{
-			Production.selectItem(config.item().getCookedId());
-			return -1;
+			Widgets.get(WidgetID.MULTISKILL_MENU_GROUP_ID, 14 + meat.getProductionIndex()).interact(0);
+			return -meat.getCookTicks();
 		}
 
 		cookingObject.interact("Cook");
 		return 1000;
 	}
 
-	@Subscribe
-	private void onGameTick(GameTick e)
-	{
-		if (cooldown > 0)
-		{
-			cooldown--;
-		}
-	}
-
 	@Override
 	public boolean subscribe()
-	{
-		return true;
-	}
-
-	@Override
-	public boolean inject()
 	{
 		return true;
 	}
