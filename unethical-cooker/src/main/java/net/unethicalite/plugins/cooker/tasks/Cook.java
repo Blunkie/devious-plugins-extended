@@ -38,6 +38,8 @@ public class Cook extends CookerTask
 	{
 		Meat meat = getConfig().item();
 		Item raw = Inventory.getFirst(meat.getRawId());
+		Player local = Players.getLocal();
+
 		if (raw == null)
 		{
 			if (Bank.isOpen())
@@ -53,18 +55,17 @@ public class Cook extends CookerTask
 				return -2;
 			}
 
-			NPC banker = NPCs.getNearest(x -> x.hasAction("Collect"));
-			if (banker != null)
+			TileObject bank = TileObjects.getFirstSurrounding(local.getWorldLocation(), 10, obj -> obj.hasAction("Collect", "Use"));
+			if (bank != null)
 			{
-				banker.interact("Bank");
+				bank.interact("Bank", "Use");
 				return -3;
 			}
 
-			MessageUtils.addMessage("Bank NPC not found.", ChatColorType.HIGHLIGHT);
+			MessageUtils.addMessage("Bank not found.", ChatColorType.HIGHLIGHT);
 			return -1;
 		}
 
-		Player local = Players.getLocal();
 		if (local.getAnimation() == AnimationID.COOKING_RANGE || local.getAnimation() == AnimationID.COOKING_FIRE)
 		{
 			taskCooldown = getClient().getTickCount() + meat.getCookTicks();
