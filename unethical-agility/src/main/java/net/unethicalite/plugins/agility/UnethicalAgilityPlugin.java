@@ -168,7 +168,7 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 		}
 
 		TileItem mark = TileItems.getFirstSurrounding(Players.getLocal().getWorldLocation(), 10, "Mark of grace");
-		if (mark != null && obstacle.getArea().contains(mark.getTile()))
+		if (mark != null && obstacle.getArea().contains(mark.getTile()) && !Inventory.isFull())
 		{
 			TileItem gold = TileItems.getFirstAt(mark.getWorldLocation(), ItemID.COINS_995);
 			if (gold != null)
