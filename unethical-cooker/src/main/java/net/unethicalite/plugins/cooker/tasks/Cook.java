@@ -2,10 +2,12 @@ package net.unethicalite.plugins.cooker.tasks;
 
 import net.runelite.api.AnimationID;
 import net.runelite.api.Item;
+import net.runelite.api.NPC;
 import net.runelite.api.Player;
 import net.runelite.api.TileObject;
 import net.runelite.api.widgets.WidgetID;
 import net.runelite.client.chat.ChatColorType;
+import net.unethicalite.api.entities.NPCs;
 import net.unethicalite.api.entities.Players;
 import net.unethicalite.api.entities.TileObjects;
 import net.unethicalite.api.items.Bank;
@@ -53,7 +55,14 @@ public class Cook extends CookerTask
 				return -2;
 			}
 
-			TileObject bank = TileObjects.getFirstSurrounding(local.getWorldLocation(), 10, obj -> obj.hasAction("Collect", "Use"));
+			NPC banker = NPCs.getNearest(npc -> npc.hasAction("Collect"));
+			if (banker != null)
+			{
+				banker.interact("Bank");
+				return -3;
+			}
+
+			TileObject bank = TileObjects.getFirstSurrounding(local.getWorldLocation(), 10, obj -> obj.hasAction("Collect") || obj.getName().startsWith("Bank"));
 			if (bank != null)
 			{
 				bank.interact("Bank", "Use");
