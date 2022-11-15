@@ -240,7 +240,7 @@ public class ExplorerPlugin extends LoopedPlugin
 
 		if (Movement.isWalking())
 		{
-			return -1;
+			return -4;
 		}
 
 		if (destination == null
@@ -253,7 +253,7 @@ public class ExplorerPlugin extends LoopedPlugin
 		}
 
 		Movement.walkTo(destination);
-		return -1;
+		return -4;
 	}
 
 	private WorldPoint getWorldPointLocation(String name)
