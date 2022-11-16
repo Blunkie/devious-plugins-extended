@@ -7,29 +7,32 @@ import net.runelite.api.Item;
 import net.runelite.api.ItemID;
 import net.runelite.api.NPC;
 import net.runelite.api.Player;
+import net.runelite.api.TileObject;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.unethicalite.api.commons.Rand;
 import net.unethicalite.api.entities.NPCs;
 import net.unethicalite.api.entities.Players;
+import net.unethicalite.api.entities.TileObjects;
 import net.unethicalite.api.game.Combat;
 import net.unethicalite.api.items.Bank;
 import net.unethicalite.api.items.Inventory;
 import net.unethicalite.api.movement.Movement;
 import net.unethicalite.api.movement.Reachable;
-import net.unethicalite.api.movement.pathfinder.model.BankLocation;
 import net.unethicalite.api.plugins.LoopedPlugin;
 import net.unethicalite.api.widgets.Dialog;
 import org.pf4j.Extension;
 
-@PluginDescriptor(name = "Hoot Pickpocket", enabledByDefault = false)
+import java.util.Comparator;
+
+@PluginDescriptor(name = "Unethical Pickpocket", enabledByDefault = false)
 @Extension
 @Slf4j
-public class HootPickpocketPlugin extends LoopedPlugin
+public class PickpocketPlugin extends LoopedPlugin
 {
 	@Inject
-	private HootPickpocketConfig config;
+	private PickpocketConfig config;
 
 	private WorldPoint lastNpcPosition = null;
 
@@ -67,27 +70,42 @@ public class HootPickpocketPlugin extends LoopedPlugin
 					return -1;
 				}
 
-				if (Bank.isOpen())
+				if (config.bank())
 				{
-					Bank.withdraw(config.foodId(), 10, Bank.WithdrawMode.ITEM);
-					log.debug("Withdrawing food");
-					return -1;
-				}
+					if (Bank.isOpen())
+					{
+						Bank.withdraw(config.foodId(), 10, Bank.WithdrawMode.ITEM);
+						log.debug("Withdrawing food");
+						return -1;
+					}
 
-				if (Movement.isWalking())
-				{
+					if (Movement.isWalking())
+					{
+						return -4;
+					}
+
+					NPC banker = NPCs.getNearest("Banker");
+					if (banker != null)
+					{
+						banker.interact("Bank");
+						return -1;
+					}
+
+					TileObject bank = TileObjects.within(config.bankLocation().getArea(), obj -> obj.hasAction("Collect"))
+							.stream()
+							.min(Comparator.comparingInt(obj -> obj.distanceTo(Players.getLocal())))
+							.orElse(null);
+					if (bank != null)
+					{
+						bank.interact("Bank", "Use");
+						return -4;
+					}
+
+					Movement.walkTo(config.bankLocation());
 					return -4;
 				}
 
-				NPC banker = NPCs.getNearest("Banker");
-				if (banker != null)
-				{
-					banker.interact("Bank");
-					return -1;
-				}
-
-				Movement.walkTo(BankLocation.getNearest());
-				return -4;
+				return -5;
 			}
 		}
 
@@ -137,8 +155,8 @@ public class HootPickpocketPlugin extends LoopedPlugin
 	}
 
 	@Provides
-	HootPickpocketConfig getConfig(ConfigManager configManager)
+	PickpocketConfig getConfig(ConfigManager configManager)
 	{
-		return configManager.getConfig(HootPickpocketConfig.class);
+		return configManager.getConfig(PickpocketConfig.class);
 	}
 }

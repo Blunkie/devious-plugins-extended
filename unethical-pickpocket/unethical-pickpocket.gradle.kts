@@ -1,6 +1,6 @@
-version = "0.0.5"
+version = "0.0.1"
 
-project.extra["PluginName"] = "Hoot Pickpocket"
+project.extra["PluginName"] = "Unethical Pickpocket"
 project.extra["PluginDescription"] = "Configurable pickpocketer"
 
 tasks {
