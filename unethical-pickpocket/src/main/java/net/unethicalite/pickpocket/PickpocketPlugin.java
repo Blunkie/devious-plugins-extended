@@ -94,7 +94,7 @@ public class PickpocketPlugin extends LoopedPlugin
 						return -1;
 					}
 
-					TileObject bank = TileObjects.within(config.bankLocation().getArea(), obj -> obj.hasAction("Collect"))
+					TileObject bank = TileObjects.within(config.bankLocation().getArea().offset(2), obj -> obj.hasAction("Collect"))
 							.stream()
 							.min(Comparator.comparingInt(obj -> obj.distanceTo(Players.getLocal())))
 							.orElse(null);
