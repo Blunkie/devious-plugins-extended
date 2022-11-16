@@ -9,8 +9,10 @@ import net.runelite.api.NPC;
 import net.runelite.api.Player;
 import net.runelite.api.TileObject;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.util.Text;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.util.WildcardMatcher;
 import net.unethicalite.api.commons.Rand;
 import net.unethicalite.api.entities.NPCs;
 import net.unethicalite.api.entities.Players;
@@ -25,6 +27,7 @@ import net.unethicalite.api.widgets.Dialog;
 import org.pf4j.Extension;
 
 import java.util.Comparator;
+import java.util.List;
 
 @PluginDescriptor(name = "Unethical Pickpocket", enabledByDefault = false)
 @Extension
@@ -41,11 +44,11 @@ public class PickpocketPlugin extends LoopedPlugin
 	@Override
 	protected int loop()
 	{
-		Item jug = Inventory.getFirst("Jug");
-		if (jug != null && config.foodId() == ItemID.JUG_OF_WINE)
+		Item junk = Inventory.getFirst(item -> shouldDrop(Text.fromCSV(config.junk()), item.getName()));
+		if (junk != null)
 		{
-			jug.interact("Drop");
-			log.debug("Dropping jug");
+			junk.interact("Drop");
+			log.debug("Dropping junk");
 			return -1;
 		}
 
@@ -58,7 +61,7 @@ public class PickpocketPlugin extends LoopedPlugin
 			return -1;
 		}
 
-		if (config.eat())
+		if (config.eat() || Inventory.isFull())
 		{
 			if (Combat.getMissingHealth() >= config.eatHp())
 			{
@@ -158,5 +161,10 @@ public class PickpocketPlugin extends LoopedPlugin
 	PickpocketConfig getConfig(ConfigManager configManager)
 	{
 		return configManager.getConfig(PickpocketConfig.class);
+	}
+
+	private boolean shouldDrop(List<String> itemNames, String itemName)
+	{
+		return itemNames.stream().anyMatch(name -> WildcardMatcher.matches(name, itemName));
 	}
 }

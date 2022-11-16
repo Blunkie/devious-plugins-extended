@@ -73,4 +73,15 @@ public interface PickpocketConfig extends Config
 	{
 		return 11;
 	}
+
+	@ConfigItem(
+			keyName = "junk",
+			name = "Items to drop",
+			description = "",
+			position = 6
+	)
+	default String junk()
+	{
+		return "Jug, Potato seed";
+	}
 }
