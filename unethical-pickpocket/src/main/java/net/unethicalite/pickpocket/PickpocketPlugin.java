@@ -28,6 +28,7 @@ import org.pf4j.Extension;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 @PluginDescriptor(name = "Unethical Pickpocket", enabledByDefault = false)
 @Extension
@@ -53,7 +54,7 @@ public class PickpocketPlugin extends LoopedPlugin
 		}
 
 		Item pouch = Inventory.getFirst("Coin pouch");
-		if (pouch != null && pouch.getQuantity() >= maxPouches)
+		if (pouch != null && pouch.getQuantity() >= maxPouches && !Inventory.isFull())
 		{
 			pouch.interact("Open-all");
 			maxPouches = Rand.nextInt(1, 29);
@@ -61,55 +62,74 @@ public class PickpocketPlugin extends LoopedPlugin
 			return -1;
 		}
 
-		if (config.eat() || Inventory.isFull())
+		if (config.eat())
 		{
 			if (Combat.getMissingHealth() >= config.eatHp())
 			{
-				Item food = Inventory.getFirst(config.foodId());
+				Item food = Inventory.getFirst(config.foodName());
 				if (food != null)
 				{
 					food.interact(1);
 					log.debug("Eating food");
-					return -1;
+					return -2;
 				}
-
-				if (config.bank())
-				{
-					if (Bank.isOpen())
-					{
-						Bank.withdraw(config.foodId(), 10, Bank.WithdrawMode.ITEM);
-						log.debug("Withdrawing food");
-						return -1;
-					}
-
-					if (Movement.isWalking())
-					{
-						return -4;
-					}
-
-					NPC banker = NPCs.getNearest("Banker");
-					if (banker != null)
-					{
-						banker.interact("Bank");
-						return -1;
-					}
-
-					TileObject bank = TileObjects.within(config.bankLocation().getArea().offset(2), obj -> obj.hasAction("Collect"))
-							.stream()
-							.min(Comparator.comparingInt(obj -> obj.distanceTo(Players.getLocal())))
-							.orElse(null);
-					if (bank != null)
-					{
-						bank.interact("Bank", "Use");
-						return -4;
-					}
-
-					Movement.walkTo(config.bankLocation());
-					return -4;
-				}
-
-				return -5;
 			}
+		}
+
+		if (config.bank() && (Inventory.isFull() || !Inventory.contains(config.foodName())))
+		{
+			if (Bank.isOpen())
+			{
+				Item unneeded = Inventory.getFirst(item ->
+						(!config.eat() || !Objects.equals(item.getName(), config.foodName()))
+							&& item.getId() != ItemID.COINS_995
+							&& !Objects.equals(item.getName(), "Coin pouch")
+				);
+				if (unneeded != null)
+				{
+					Bank.depositAll(unneeded.getId());
+					return -2;
+				}
+
+				if (config.eat())
+				{
+					if (Inventory.getCount(config.foodName()) > config.foodAmount())
+					{
+						Bank.depositAll(config.foodName());
+						return -2;
+					}
+					Bank.withdraw(config.foodName(), config.foodAmount(), Bank.WithdrawMode.ITEM);
+					log.debug("Withdrawing food");
+					return -2;
+				}
+				
+				return -2;
+			}
+
+			if (Movement.isWalking())
+			{
+				return -4;
+			}
+
+			TileObject bank = TileObjects.within(config.bankLocation().getArea().offset(2), obj -> obj.hasAction("Collect"))
+					.stream()
+					.min(Comparator.comparingInt(obj -> obj.distanceTo(Players.getLocal())))
+					.orElse(null);
+			if (bank != null)
+			{
+				bank.interact("Bank", "Use");
+				return -4;
+			}
+
+			NPC banker = NPCs.getNearest("Banker");
+			if (banker != null)
+			{
+				banker.interact("Bank");
+				return -4;
+			}
+
+			Movement.walkTo(config.bankLocation());
+			return -4;
 		}
 
 		NPC target = NPCs.getNearest(config.npcName());

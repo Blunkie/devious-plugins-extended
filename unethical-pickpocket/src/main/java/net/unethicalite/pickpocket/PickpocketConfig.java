@@ -23,7 +23,9 @@ public interface PickpocketConfig extends Config
 			keyName = "bankLocation",
 			name = "Bank Location",
 			description = "",
-			position = 1
+			position = 1,
+			hidden = true,
+			unhide = "bank"
 	)
 	default BankLocation bankLocation()
 	{
@@ -53,21 +55,38 @@ public interface PickpocketConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "foodId",
-			name = "Food ID",
+			keyName = "foodName",
+			name = "Food name",
 			description = "",
-			position = 4
+			position = 4,
+			hidden = true,
+			unhide = "eat"
 	)
-	default int foodId()
+	default String foodName()
 	{
-		return 1993;
+		return "Jug of wine";
+	}
+
+	@ConfigItem(
+			keyName = "foodAmount",
+			name = "Food withdraw amount",
+			description = "",
+			position = 5,
+			hidden = true,
+			unhide = "eat"
+	)
+	default int foodAmount()
+	{
+		return 10;
 	}
 
 	@ConfigItem(
 			keyName = "eatHp",
 			name = "Eat at X missing HP",
 			description = "",
-			position = 5
+			position = 6,
+			hidden = true,
+			unhide = "eat"
 	)
 	default int eatHp()
 	{
@@ -78,7 +97,7 @@ public interface PickpocketConfig extends Config
 			keyName = "junk",
 			name = "Items to drop",
 			description = "",
-			position = 6
+			position = 7
 	)
 	default String junk()
 	{
