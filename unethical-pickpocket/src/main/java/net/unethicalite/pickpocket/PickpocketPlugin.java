@@ -14,6 +14,7 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.util.WildcardMatcher;
 import net.unethicalite.api.commons.Rand;
+import net.unethicalite.api.commons.Time;
 import net.unethicalite.api.entities.NPCs;
 import net.unethicalite.api.entities.Players;
 import net.unethicalite.api.entities.TileObjects;
@@ -78,15 +79,20 @@ public class PickpocketPlugin extends LoopedPlugin
 		
 		if (Bank.isOpen())
 		{
-			Item unneeded = Inventory.getFirst(item ->
+			List<Item> unneeded = Inventory.getAll(item ->
 					(!config.eat() || !Objects.equals(item.getName(), config.foodName()))
 							&& item.getId() != ItemID.COINS_995
 							&& !Objects.equals(item.getName(), "Coin pouch")
 			);
-			if (unneeded != null)
+			if (!unneeded.isEmpty())
 			{
-				Bank.depositAll(unneeded.getId());
-				return -2;
+				for (Item item : unneeded)
+				{
+					Bank.depositAll(item.getId());
+					Time.sleep(100);
+				}
+
+				return -1;
 			}
 
 			if (config.eat())
