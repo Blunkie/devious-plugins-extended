@@ -75,37 +75,39 @@ public class PickpocketPlugin extends LoopedPlugin
 				}
 			}
 		}
-
-		if (config.bank() && (Inventory.isFull() || !Inventory.contains(config.foodName())))
+		
+		if (Bank.isOpen())
 		{
-			if (Bank.isOpen())
-			{
-				Item unneeded = Inventory.getFirst(item ->
-						(!config.eat() || !Objects.equals(item.getName(), config.foodName()))
+			Item unneeded = Inventory.getFirst(item ->
+					(!config.eat() || !Objects.equals(item.getName(), config.foodName()))
 							&& item.getId() != ItemID.COINS_995
 							&& !Objects.equals(item.getName(), "Coin pouch")
-				);
-				if (unneeded != null)
+			);
+			if (unneeded != null)
+			{
+				Bank.depositAll(unneeded.getId());
+				return -2;
+			}
+
+			if (config.eat())
+			{
+				if (Inventory.getCount(config.foodName()) > config.foodAmount())
 				{
-					Bank.depositAll(unneeded.getId());
+					Bank.depositAll(config.foodName());
 					return -2;
 				}
 
-				if (config.eat())
+				if (!Inventory.contains(config.foodName()))
 				{
-					if (Inventory.getCount(config.foodName()) > config.foodAmount())
-					{
-						Bank.depositAll(config.foodName());
-						return -2;
-					}
 					Bank.withdraw(config.foodName(), config.foodAmount(), Bank.WithdrawMode.ITEM);
 					log.debug("Withdrawing food");
 					return -2;
 				}
-				
-				return -2;
 			}
+		}
 
+		if (config.bank() && (Inventory.isFull() || !Inventory.contains(config.foodName())))
+		{
 			if (Movement.isWalking())
 			{
 				return -4;
