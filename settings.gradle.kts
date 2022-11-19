@@ -52,6 +52,7 @@ include("unethical-tempoross")
 include("unethical-pickpocket")
 
 include("m-autoswitcher")
+include("m-powerfisher")
 
 //include("example-kotlin")
 
