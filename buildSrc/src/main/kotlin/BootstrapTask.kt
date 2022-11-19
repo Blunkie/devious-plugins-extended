@@ -61,11 +61,7 @@ open class BootstrapTask : DefaultTask() {
                             "version" to it.project.version,
                             "requires" to ProjectVersions.apiVersion,
                             "date" to formatDate(Date()),
-                            "url" to "https://raw.githubusercontent.com/${project.rootProject.extra.get("GithubUserName")}/${
-                                project.rootProject.extra.get(
-                                    "GithubRepoName"
-                                )
-                            }/master/${it.project.name}-${it.project.version}.jar",
+                            "url" to "${project.rootProject.extra.get("GithubUrl")}/blob/master/release/${it.project.name}-${it.project.version}.jar?raw=true",
                             "sha512sum" to sha512
                         )
                     )
