@@ -118,7 +118,7 @@ public class ExplorerPlugin extends LoopedPlugin
 				}
 				if (location != null)
 				{
-					setDestination(Movement.getNearestWalkableTile(location));
+					setDestination(location);
 				}
 				else
 				{
@@ -207,7 +207,7 @@ public class ExplorerPlugin extends LoopedPlugin
 		}
 		if (location != null)
 		{
-			setDestination(Movement.getNearestWalkableTile(location));
+			setDestination(location);
 		}
 		else
 		{
@@ -217,7 +217,7 @@ public class ExplorerPlugin extends LoopedPlugin
 
 	private void setDestination(WorldPoint wp)
 	{
-		destination = Movement.getNearestWalkableTile(wp);
+		destination = wp;
 		log.debug("Walking to {}", destination);
 	}
 

@@ -144,10 +144,4 @@ public class GatherTools extends BirdHouseTask
 				.count() * config.seedType().getQuantity())
 				- Inventory.getCount(true, config.seedType().getItemId());
 	}
-
-	@Override
-	public boolean inject()
-	{
-		return true;
-	}
 }

@@ -145,10 +145,4 @@ public class GatherTools extends TemporossTask
 		int hammerCount = Inventory.getCount(ITEM_HAMMER);
 		return hammerCount != 1 && getScriptState() != TemporossPlugin.State.ATTACK_TEMPOROSS;
 	}
-
-	@Override
-	public boolean inject()
-	{
-		return true;
-	}
 }

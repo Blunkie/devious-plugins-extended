@@ -97,7 +97,11 @@ public class ChopperPlugin extends LoopedPlugin
 						.filter(t ->
 						{
 							Tile tile = Tiles.getAt(t.getWorldLocation());
-							return tile != null && tile.isEmpty();
+							return tile != null && tile.getGameObjects() == null
+								&& tile.getDecorativeObject() == null
+								&& tile.getGroundObject() == null
+								&& tile.getGroundItems() == null
+								&& tile.getWallObject() == null;
 						})
 						.min(Comparator.comparingInt(wp -> wp.distanceTo(local)))
 						.orElse(null);
@@ -167,7 +171,11 @@ public class ChopperPlugin extends LoopedPlugin
 	private List<Tile> generateFireArea(int radius)
 	{
 		return Tiles.getSurrounding(Players.getLocal().getWorldLocation(), radius).stream()
-				.filter(tile -> tile.isEmpty() && !tile.isObstructed() && Reachable.isWalkable(tile.getWorldLocation()))
+				.filter(tile -> tile.getGameObjects() == null
+					&& tile.getDecorativeObject() == null
+					&& tile.getGroundObject() == null
+					&& tile.getGroundItems() == null
+					&& Reachable.isWalkable(tile.getWorldLocation()))
 				.collect(Collectors.toUnmodifiableList());
 	}
 }

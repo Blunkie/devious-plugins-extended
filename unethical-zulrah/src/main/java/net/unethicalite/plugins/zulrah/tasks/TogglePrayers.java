@@ -99,10 +99,4 @@ public class TogglePrayers extends ZulrahTask
 	{
 		return false;
 	}
-
-	@Override
-	public boolean inject()
-	{
-		return true;
-	}
 }

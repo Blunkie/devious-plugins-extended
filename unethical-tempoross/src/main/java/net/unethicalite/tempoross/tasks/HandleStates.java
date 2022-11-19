@@ -50,7 +50,7 @@ public class HandleStates extends TemporossTask
 			case THIRD_CATCH:
 				NPC fishSpot = NPCs.getNearest(it ->
 						NPC_DOUBLE_FISH_SPOT == it.getId()
-								&& !inCloud(Movement.getNearestWalkableTile(it.getWorldLocation()))
+								&& !inCloud(it.getWorldLocation())
 								&& it.getWorldLocation().distanceTo(getWorkArea().getRangePoint()) <= 20
 				);
 
@@ -58,7 +58,7 @@ public class HandleStates extends TemporossTask
 				{
 					fishSpot = NPCs.getNearest(it ->
 							Set.of(NPC_SINGLE_FISH_SPOT, NPC_SINGLE_FISH_SPOT_SECOND).contains(it.getId())
-									&& !inCloud(Movement.getNearestWalkableTile(it.getWorldLocation()))
+									&& !inCloud(it.getWorldLocation())
 									&& it.getWorldLocation().distanceTo(getWorkArea().getRangePoint()) <= 20
 					);
 				}
@@ -80,7 +80,7 @@ public class HandleStates extends TemporossTask
 				else
 				{
 					// if fish are null walk to the totem pole since it's in the center of the fish spots.
-					if (!Movement.walkTo(getWorkArea().getTotemPoint(), getCollisionMap()))
+					if (!Movement.walkTo(getWorkArea().getTotemPoint()))
 					{
 						log.debug("Path was blocked");
 					}
@@ -110,7 +110,7 @@ public class HandleStates extends TemporossTask
 				}
 				else if (range == null)
 				{
-					if (!Movement.walkTo(getWorkArea().getRangePoint(), getCollisionMap()))
+					if (!Movement.walkTo(getWorkArea().getRangePoint()))
 					{
 						log.debug("Path was incomplete");
 					}
@@ -123,7 +123,7 @@ public class HandleStates extends TemporossTask
 				NPC ammoCrate = NPCs.getNearest(x -> x.hasAction("Fill")
 						&& x.getWorldLocation().distanceTo(getWorkArea().getSafePoint()) <= 10
 						&& x.hasAction("Check-ammo")
-						&& !inCloud(Movement.getNearestWalkableTile(x.getWorldLocation())));
+						&& !inCloud(x.getWorldLocation()));
 				if (ammoCrate != null && (!ammoCrate.equals(local.getInteracting()) || Dialog.isOpen()))
 				{
 					if (needToClearFire(client, ammoCrate))
@@ -174,7 +174,7 @@ public class HandleStates extends TemporossTask
 
 					if (getWorkArea().getBossPoint().distanceTo(Players.getLocal()) > 3)
 					{
-						Movement.walkTo(getWorkArea().getBossPoint(), getCollisionMap());
+						Movement.walkTo(getWorkArea().getBossPoint());
 					}
 				}
 
@@ -182,11 +182,5 @@ public class HandleStates extends TemporossTask
 		}
 
 		return -1;
-	}
-
-	@Override
-	public boolean inject()
-	{
-		return true;
 	}
 }

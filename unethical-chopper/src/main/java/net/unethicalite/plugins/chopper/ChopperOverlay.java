@@ -33,7 +33,11 @@ class ChopperOverlay extends Overlay
 	{
 		for (Tile tile : fireArea)
 		{
-			if (tile.isEmpty())
+			if (tile.getGameObjects() == null
+				&& tile.getDecorativeObject() == null
+				&& tile.getGroundObject() == null
+				&& tile.getGroundItems() == null
+				&& tile.getWallObject() == null)
 			{
 				tile.getWorldLocation().outline(client, graphics2D, Color.GREEN, "Empty tile");
 			}

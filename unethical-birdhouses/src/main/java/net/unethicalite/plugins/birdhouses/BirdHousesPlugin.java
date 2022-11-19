@@ -16,16 +16,16 @@ import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.util.ImageUtil;
 import net.unethicalite.api.account.GameAccount;
-import net.unethicalite.api.commons.SpriteUtil;
 import net.unethicalite.api.game.Game;
 import net.unethicalite.api.game.Vars;
 import net.unethicalite.api.plugins.Task;
-import net.unethicalite.api.plugins.TaskScript;
+import net.unethicalite.api.plugins.TaskPlugin;
+import net.unethicalite.api.script.blocking_events.BlockingEventManager;
 import net.unethicalite.api.script.blocking_events.LoginEvent;
-import net.unethicalite.client.managers.UnethicalPluginManager;
 import net.unethicalite.plugins.birdhouses.model.BirdHouse;
 import net.unethicalite.plugins.birdhouses.model.BirdHouseLocation;
 import net.unethicalite.plugins.birdhouses.model.BirdHouseState;
@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 @Extension
 @PluginDescriptor(name = "Unethical Bird Houses", enabledByDefault = false)
 @Slf4j
-public class BirdHousesPlugin extends TaskScript
+public class BirdHousesPlugin extends TaskPlugin
 {
 	private static final int FIVE_MINUTES_IN_TICKS = 500;
 
@@ -71,8 +71,11 @@ public class BirdHousesPlugin extends TaskScript
 					new Break(this),
 			};
 
+	@Inject
+	private BlockingEventManager blockingEventManager;
+
 	@Getter
-	private final LoginEvent loginEvent = new LoginEvent(getBlockingEventManager());
+	private final LoginEvent loginEvent = new LoginEvent(this.blockingEventManager);
 
 	private Class<?> previousTask = null;
 
@@ -83,7 +86,10 @@ public class BirdHousesPlugin extends TaskScript
 	private ChatMessageManager chatMessageManager;
 
 	@Inject
-	private UnethicalPluginManager unethicalPluginManager;
+	private ClientToolbar clientToolbar;
+
+	@Inject
+	private NavigationButton navButton;
 
 	@Override
 	public Task[] getTasks()
@@ -92,16 +98,17 @@ public class BirdHousesPlugin extends TaskScript
 	}
 
 	@Override
-	public void onStart(String... args)
+	protected void startUp()
 	{
-		unethicalPluginManager.registerButton(this, NavigationButton.builder()
-				.tooltip("Unethical Bird Houses")
-				.icon(ImageUtil.loadImageResource(getClass(), "birdhouses.png"))
-				.priority(0)
-				.panel(new BirdHousesPanel(this))
-				.build());
+		navButton = NavigationButton.builder()
+			.tooltip("Unethical Bird Houses")
+			.icon(ImageUtil.loadImageResource(getClass(), "birdhouses.png"))
+			.priority(0)
+			.panel(new BirdHousesPanel(this))
+			.build();
 
-		getBlockingEventManager().remove(LoginEvent.class);
+		clientToolbar.addNavigation(navButton);
+		blockingEventManager.remove(LoginEvent.class);
 
 		if (client.getUsername() != null && !client.getUsername().isBlank())
 		{
@@ -117,6 +124,12 @@ public class BirdHousesPlugin extends TaskScript
 
 			printState();
 		}
+	}
+
+	@Override
+	protected void shutDown()
+	{
+		clientToolbar.removeNavigation(navButton);
 	}
 
 	public List<BirdHouse> getAvailableBirdHouses()
@@ -146,7 +159,6 @@ public class BirdHousesPlugin extends TaskScript
 		chatMessageManager.queue(QueuedMessage.builder()
 				.runeLiteFormattedMessage(
 						new ChatMessageBuilder()
-								.img(SpriteUtil.getUnethicaliteEmojiIdx())
 								.append(ChatColorType.NORMAL)
 								.append("[Bird Houses] ")
 								.append(ChatColorType.HIGHLIGHT)
@@ -176,7 +188,7 @@ public class BirdHousesPlugin extends TaskScript
 	{
 		if (!Objects.equals(previousTask, getCurrentTask()))
 		{
-			previousTask = getCurrentTask();
+			previousTask = getCurrentTask().getClass();
 			printMessage("Task changed: " + (previousTask == null ? "Idle" : previousTask.getSimpleName()));
 		}
 

@@ -36,7 +36,7 @@ public class BirdHousesPanel extends PluginPanel
 	{
 		container.removeAll();
 
-		container.add(new JLabel("Task: " + (getCurrentTask() != null ? getCurrentTask().getSimpleName() : "None")));
+		container.add(new JLabel("Task: " + (getCurrentTask() != null ? getCurrentTask().getClass().getSimpleName() : "None")));
 
 		for (BirdHouse birdHouse : getBirdHouses())
 		{

@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
+import net.runelite.api.Player;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.ClientTick;
@@ -19,8 +20,6 @@ import net.unethicalite.api.entities.NPCs;
 import net.unethicalite.api.entities.Players;
 import net.unethicalite.api.items.Inventory;
 import net.unethicalite.api.movement.Movement;
-import net.unethicalite.api.movement.pathfinder.LocalCollisionMap;
-import net.unethicalite.api.movement.pathfinder.model.TilePath;
 import net.unethicalite.api.plugins.Task;
 import net.unethicalite.api.plugins.TaskPlugin;
 import net.unethicalite.tempoross.tasks.AwaitStart;
@@ -39,12 +38,11 @@ import net.unethicalite.tempoross.tasks.Untether;
 import org.pf4j.Extension;
 
 import javax.inject.Inject;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.function.BooleanSupplier;
 
 import static net.unethicalite.tempoross.TemporossID.ITEM_COOKED_FISH;
@@ -92,8 +90,6 @@ public class TemporossPlugin extends TaskPlugin
 	private NPC fireToClear = null;
 	@Getter @Setter
 	private WorldPoint lastDestination = null;
-	@Getter @Setter
-	private TilePath lastPath = null;
 	@Getter @Setter
 	private State scriptState = State.INITIAL_CATCH;
 	@Getter @Setter
@@ -186,7 +182,6 @@ public class TemporossPlugin extends TaskPlugin
 		if (Objects.equals(lastDestination, Players.getLocal().getWorldLocation()))
 		{
 			lastDestination = null;
-			lastPath = null;
 			return;
 		}
 
@@ -194,33 +189,24 @@ public class TemporossPlugin extends TaskPlugin
 		if (destination != null && (lastDestination == null || !lastDestination.equals(destination)))
 		{
 			lastDestination = destination;
-
-			try
-			{
-				lastPath = EXECUTOR.submit(() -> Movement.getPath(lastDestination, new LocalCollisionMap(true))).get(100, TimeUnit.MILLISECONDS);
-			}
-			catch (InterruptedException | ExecutionException | TimeoutException ex)
-			{
-				throw new RuntimeException(ex);
-			}
 		}
 
-		if (lastPath != null)
-		{
-			NPC fire = NPCs.query()
-					.ids(NPC_FIRE)
-					.filter(npc -> npc.getWorldArea().toWorldPointList().stream().anyMatch(fireTile -> lastPath.contains(fireTile)))
-					.results()
-					.nearest();
-			if (fire != null)
-			{
-				fireToClear = fire;
-			}
+		Player player = Players.getLocal();
+		List<WorldPoint> path = player.getWorldLocation().pathTo(client, destination);
+		List<NPC> firesBlockingPath = NPCs.getAll(x -> x.getId() == NPC_FIRE &&
+			x.getWorldArea().toWorldPointList().stream().anyMatch(path::contains));
+		NPC fire = firesBlockingPath.stream()
+			.min(Comparator.comparing(x -> x.getWorldLocation().distanceTo(player.getWorldLocation())))
+			.orElse(null);
 
-			if (fireToClear != null && client.getCachedNPCs()[fireToClear.getIndex()] == null)
-			{
-				fireToClear = null;
-			}
+		if (fire != null)
+		{
+			fireToClear = fire;
+		}
+
+		if (fireToClear != null && client.getCachedNPCs()[fireToClear.getIndex()] == null)
+		{
+			fireToClear = null;
 		}
 	}
 

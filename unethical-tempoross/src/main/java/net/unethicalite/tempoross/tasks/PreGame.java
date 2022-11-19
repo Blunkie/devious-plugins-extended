@@ -68,10 +68,4 @@ public class PreGame extends TemporossTask
 
 		return -1;
 	}
-
-	@Override
-	public boolean inject()
-	{
-		return true;
-	}
 }

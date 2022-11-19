@@ -32,10 +32,4 @@ public class CycleState extends TemporossTask
 
 		return 10;
 	}
-
-	@Override
-	public boolean inject()
-	{
-		return true;
-	}
 }

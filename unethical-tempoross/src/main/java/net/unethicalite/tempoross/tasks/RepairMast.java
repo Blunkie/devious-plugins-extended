@@ -52,10 +52,4 @@ public class RepairMast extends TemporossTask
 	{
 		return TileObjects.getFirstAt(Tiles.getAt(getWorkArea().getMastPoint()), OBJECT_DAMAGED_MAST);
 	}
-
-	@Override
-	public boolean inject()
-	{
-		return true;
-	}
 }

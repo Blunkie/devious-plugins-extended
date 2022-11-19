@@ -72,10 +72,4 @@ public class JadPhase extends ZulrahTask
 
 		return 1000;
 	}
-
-	@Override
-	public boolean inject()
-	{
-		return true;
-	}
 }

@@ -97,10 +97,4 @@ public class SetupBirdHouse extends BirdHouseTask
 
 		return -2;
 	}
-
-	@Override
-	public boolean inject()
-	{
-		return true;
-	}
 }

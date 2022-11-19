@@ -18,7 +18,6 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.unethicalite.api.entities.Players;
-import net.unethicalite.api.interaction.InteractMethod;
 import net.unethicalite.api.widgets.Prayers;
 import net.unethicalite.api.widgets.Widgets;
 import org.pf4j.Extension;
@@ -290,7 +289,7 @@ public class PrayerPlugin extends Plugin
 		Widget widget = Widgets.get(prayer.getWidgetInfo());
 		if (widget != null)
 		{
-			widget.interact(InteractMethod.PACKETS, 0);
+			widget.interact(0);
 		}
 	}
 }

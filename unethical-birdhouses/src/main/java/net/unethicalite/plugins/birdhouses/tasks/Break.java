@@ -32,10 +32,4 @@ public class Break extends BirdHouseTask
 
 		return -1;
 	}
-
-	@Override
-	public boolean inject()
-	{
-		return true;
-	}
 }
