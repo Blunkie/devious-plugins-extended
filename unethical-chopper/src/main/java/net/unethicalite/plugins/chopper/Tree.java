@@ -7,7 +7,7 @@ public enum Tree
 {
 	REGULAR(1, "Tree", "Evergreen"),
 	OAK(15, "Oak"),
-	WILLOW(30, "Willow");
+	WILLOW(30, "Willow"),
 	TEAK(35, "Teak"),
 	MAPLE(45, "Maple tree"),
 	MAHOGANY(50, "Mahogany"),
