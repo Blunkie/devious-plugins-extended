@@ -13,17 +13,17 @@ plugins {
     kotlin("jvm") version "1.6.21"
 }
 
-project.extra["GithubUrl"] = "https://github.com/unethicalite/unethicalite-plugins-release"
-project.extra["GithubUserName"] = "unethicalite"
-project.extra["GithubRepoName"] = "unethicalite-plugins-release"
+project.extra["GithubUrl"] = "https://github.com/melxin/devious-plugins-extended"
+project.extra["GithubUserName"] = "melxin"
+project.extra["GithubRepoName"] = "devious-plugins-extended"
 
 apply<BootstrapPlugin>()
 
 allprojects {
     group = "net.unethicalite"
 
-    project.extra["PluginProvider"] = "unethicalite"
-    project.extra["ProjectSupportUrl"] = "https://discord.gg/WTvTbSPknJ"
+    project.extra["PluginProvider"] = "melxin"
+    project.extra["ProjectSupportUrl"] = ""
     project.extra["PluginLicense"] = "3-Clause BSD License"
 
     apply<JavaPlugin>()
@@ -34,18 +34,6 @@ allprojects {
     repositories {
         mavenCentral()
         mavenLocal()
-        maven {
-            url = uri("https://repo.unethicalite.net/releases/")
-            mavenContent {
-                releasesOnly()
-            }
-        }
-        maven {
-            url = uri("https://repo.unethicalite.net/snapshots/")
-            mavenContent {
-                snapshotsOnly()
-            }
-        }
     }
 
     dependencies {
@@ -55,6 +43,7 @@ allprojects {
         compileOnly("net.unethicalite:http-api:$unethicaliteVersion+")
         compileOnly("net.unethicalite:runelite-api:$unethicaliteVersion+")
         compileOnly("net.unethicalite:runelite-client:$unethicaliteVersion+")
+        compileOnly("net.unethicalite.rs:runescape-api:$unethicaliteVersion+")
 
         compileOnly(Libraries.guice)
         compileOnly(Libraries.javax)
