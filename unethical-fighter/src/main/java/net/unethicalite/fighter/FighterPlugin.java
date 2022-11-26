@@ -218,7 +218,7 @@ public class FighterPlugin extends LoopedPlugin
 			if (alchSpell.canCast())
 			{
 				List<String> alchItems = Text.fromCSV(config.alchItems());
-				Item alchItem = Inventory.getFirst(x -> x.getName() != null && matchesItem(alchItems, x.getName()));
+				Item alchItem = Inventory.getFirst(x -> x.getName() != null && textMatches(alchItems, x.getName()));
 				if (alchItem != null)
 				{
 					Magic.cast(alchSpell.getSpell(), alchItem);
@@ -247,8 +247,9 @@ public class FighterPlugin extends LoopedPlugin
 			}
 		}
 
+		List<String> mobs = Text.fromCSV(config.monster());
 		NPC mob = Combat.getAttackableNPC(x -> x.getName() != null
-				&& x.getName().toLowerCase().contains(config.monster().toLowerCase()) && !x.isDead()
+				&& textMatches(mobs, x.getName()) && !x.isDead()
 				&& x.getWorldLocation().distanceTo(center) < config.attackRange()
 		);
 		if (mob == null)
@@ -323,7 +324,7 @@ public class FighterPlugin extends LoopedPlugin
 
 	private boolean shouldNotLoot(TileItem item)
 	{
-		return matchesItem(Text.fromCSV(config.dontLoot()), item.getName());
+		return textMatches(Text.fromCSV(config.dontLoot()), item.getName());
 	}
 
 	private boolean shouldLootUntradable(TileItem item)
@@ -342,10 +343,10 @@ public class FighterPlugin extends LoopedPlugin
 
 	private boolean shouldLootByName(TileItem item)
 	{
-		return matchesItem(Text.fromCSV(config.loots()), item.getName());
+		return textMatches(Text.fromCSV(config.loots()), item.getName());
 	}
 
-	private boolean matchesItem(List<String> itemNames, String itemName)
+	private boolean textMatches(List<String> itemNames, String itemName)
 	{
 		return itemNames.stream().anyMatch(name -> WildcardMatcher.matches(name, itemName));
 	}

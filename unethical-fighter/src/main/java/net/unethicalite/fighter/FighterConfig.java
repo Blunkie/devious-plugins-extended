@@ -84,7 +84,7 @@ public interface FighterConfig extends Config
 	@ConfigItem(
 			keyName = "monster",
 			name = "Monster",
-			description = "Monster to kill",
+			description = "Monster(s) to kill",
 			position = 0,
 			section = general
 	)
@@ -103,7 +103,7 @@ public interface FighterConfig extends Config
 	)
 	default int attackRange()
 	{
-		return 15;
+		return 10;
 	}
 
 	@ConfigItem(
