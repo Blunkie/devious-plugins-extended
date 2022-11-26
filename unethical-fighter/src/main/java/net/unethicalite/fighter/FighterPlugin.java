@@ -1,11 +1,14 @@
 package net.unethicalite.fighter;
 
 import com.google.inject.Provides;
+import net.runelite.api.Client;
 import net.runelite.api.ItemID;
+import net.runelite.api.Tile;
 import net.runelite.api.util.Text;
 import net.runelite.client.util.WildcardMatcher;
 import net.unethicalite.api.entities.Players;
 import net.unethicalite.api.entities.TileItems;
+import net.unethicalite.api.events.GameDrawn;
 import net.unethicalite.api.game.Combat;
 import net.unethicalite.api.game.Game;
 import net.unethicalite.api.items.Inventory;
@@ -14,6 +17,7 @@ import net.unethicalite.api.movement.Movement;
 import net.unethicalite.api.movement.Reachable;
 import net.unethicalite.api.plugins.LoopedPlugin;
 import net.unethicalite.api.plugins.Plugins;
+import net.unethicalite.api.scene.Tiles;
 import net.unethicalite.api.utils.MessageUtils;
 import net.unethicalite.api.widgets.Dialog;
 import net.unethicalite.api.widgets.Prayers;
@@ -32,11 +36,14 @@ import org.pf4j.Extension;
 
 import javax.inject.Inject;
 import javax.swing.SwingUtilities;
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @PluginDescriptor(
@@ -48,6 +55,8 @@ import java.util.stream.Collectors;
 @Extension
 public class FighterPlugin extends LoopedPlugin
 {
+	private static final Pattern WORLD_POINT_PATTERN = Pattern.compile("^\\d{4,5} \\d{4,5} \\d$");
+
 	private ScheduledExecutorService executor;
 
 	@Inject
@@ -56,7 +65,11 @@ public class FighterPlugin extends LoopedPlugin
 	@Inject
 	private ItemManager itemManager;
 
-	private WorldPoint startPoint;
+	@Inject
+	private Client client;
+
+	@Inject
+	private ConfigManager configManager;
 
 	private final List<TileItem> notOurItems = new ArrayList<>();
 
@@ -87,7 +100,7 @@ public class FighterPlugin extends LoopedPlugin
 
 		if (Game.isLoggedIn())
 		{
-			startPoint = Players.getLocal().getWorldLocation();
+			setCenter(Players.getLocal().getWorldLocation());
 		}
 	}
 
@@ -109,6 +122,16 @@ public class FighterPlugin extends LoopedPlugin
 	@Override
 	protected int loop()
 	{
+		WorldPoint center = getCenter();
+		if (center == null)
+		{
+			if (Game.isLoggedIn())
+			{
+				setCenter(Players.getLocal().getWorldLocation());
+			}
+
+			return -1;
+		}
 
 		if (Movement.isWalking())
 		{
@@ -172,7 +195,7 @@ public class FighterPlugin extends LoopedPlugin
 		if (!Inventory.isFull())
 		{
 			TileItem loot = TileItems.getNearest(x ->
-					x.getTile().getWorldLocation().distanceTo(local.getWorldLocation()) < config.attackRange()
+					x.getTile().getWorldLocation().distanceTo(center) < config.attackRange()
 							&& !notOurItems.contains(x)
 							&& !shouldNotLoot(x) && (shouldLootByName(x) || shouldLootUntradable(x) || shouldLootByValue(x))
 			);
@@ -209,7 +232,7 @@ public class FighterPlugin extends LoopedPlugin
 			return -1;
 		}
 
-		if (config.antifire() && (!Combat.isAntifired() && !Combat.isSuperAntifired()) )
+		if (config.antifire() && (!Combat.isAntifired() && !Combat.isSuperAntifired()))
 		{
 			Item antifire = Inventory.getFirst(
 					config.antifireType().getDose1(),
@@ -226,17 +249,17 @@ public class FighterPlugin extends LoopedPlugin
 
 		NPC mob = Combat.getAttackableNPC(x -> x.getName() != null
 				&& x.getName().toLowerCase().contains(config.monster().toLowerCase()) && !x.isDead()
-				&& x.getWorldLocation().distanceTo(local.getWorldLocation()) < config.attackRange()
+				&& x.getWorldLocation().distanceTo(center) < config.attackRange()
 		);
 		if (mob == null)
 		{
-			if (startPoint == null)
+			if (local.getWorldLocation().distanceTo(center) < 3)
 			{
 				MessageUtils.addMessage("No attackable monsters in area");
 				return -1;
 			}
 
-			Movement.walkTo(startPoint);
+			Movement.walkTo(center);
 			return -4;
 		}
 
@@ -263,6 +286,38 @@ public class FighterPlugin extends LoopedPlugin
 		else if (config.disableAfterSlayerTask() && message.contains("You have completed your task!"))
 		{
 			SwingUtilities.invokeLater(() -> Plugins.stopPlugin(this));
+		}
+	}
+
+	@Subscribe
+	public void onGameDrawn(GameDrawn e)
+	{
+		WorldPoint center = getCenter();
+		if (center == null)
+		{
+			return;
+		}
+
+		if (config.drawCenter())
+		{
+			center.outline(client, e.getGraphics(), Color.ORANGE, String.format("Center: %s", config.centerTile()));
+		}
+
+		if (config.drawRadius())
+		{
+			List<Tile> tiles = Tiles.getSurrounding(center, config.attackRange());
+			for (Tile tile : tiles)
+			{
+				if (tile == null)
+				{
+					continue;
+				}
+
+				if (tile.distanceTo(center) >= config.attackRange())
+				{
+					tile.getWorldLocation().outline(client, e.getGraphics(), Color.WHITE);
+				}
+			}
 		}
 	}
 
@@ -293,5 +348,29 @@ public class FighterPlugin extends LoopedPlugin
 	private boolean matchesItem(List<String> itemNames, String itemName)
 	{
 		return itemNames.stream().anyMatch(name -> WildcardMatcher.matches(name, itemName));
+	}
+
+	private void setCenter(WorldPoint worldPoint)
+	{
+		configManager.setConfiguration(
+				"hootfighter",
+				"centerTile",
+				String.format("%s %s %s", worldPoint.getX(), worldPoint.getY(), worldPoint.getPlane())
+		);
+	}
+
+	private WorldPoint getCenter()
+	{
+		String textValue = config.centerTile();
+		if (textValue.isBlank() || !WORLD_POINT_PATTERN.matcher(textValue).matches())
+		{
+			return null;
+		}
+
+		List<Integer> split = Arrays.stream(textValue.split(" "))
+				.map(Integer::parseInt)
+				.collect(Collectors.toList());
+
+		return new WorldPoint(split.get(0), split.get(1), split.get(2));
 	}
 }

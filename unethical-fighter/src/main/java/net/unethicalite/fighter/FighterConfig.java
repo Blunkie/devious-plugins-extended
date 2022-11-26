@@ -12,7 +12,7 @@ public interface FighterConfig extends Config
 	@ConfigSection(
 			name = "General",
 			description = "General settings",
-			position = 0,
+			position = 991,
 			closedByDefault = true
 	)
 	String general = "General";
@@ -20,7 +20,7 @@ public interface FighterConfig extends Config
 	@ConfigSection(
 			name = "Health",
 			description = "General settings",
-			position = 1,
+			position = 992,
 			closedByDefault = true
 	)
 	String health = "Health";
@@ -28,7 +28,7 @@ public interface FighterConfig extends Config
 	@ConfigSection(
 			name = "Loot",
 			description = "Loot settings",
-			position = 2,
+			position = 993,
 			closedByDefault = true
 	)
 	String loot = "Loot";
@@ -36,7 +36,7 @@ public interface FighterConfig extends Config
 	@ConfigSection(
 			name = "Prayers",
 			description = "Prayers settings",
-			position = 3,
+			position = 994,
 			closedByDefault = true
 	)
 	String prayers = "Prayers";
@@ -44,7 +44,7 @@ public interface FighterConfig extends Config
 	@ConfigSection(
 			name = "Alching",
 			description = "Alching settings",
-			position = 4,
+			position = 995,
 			closedByDefault = true
 	)
 	String alching = "Alching";
@@ -52,7 +52,7 @@ public interface FighterConfig extends Config
 	@ConfigSection(
 			name = "Antipoison",
 			description = "Antipoison settings",
-			position = 5,
+			position = 996,
 			closedByDefault = true
 	)
 	String antipoison = "Antipoison";
@@ -60,7 +60,7 @@ public interface FighterConfig extends Config
 	@ConfigSection(
 			name = "Slayer",
 			description = "Slayer settings",
-			position = 6,
+			position = 997,
 			closedByDefault = true
 	)
 	String slayer = "Slayer";
@@ -68,10 +68,18 @@ public interface FighterConfig extends Config
 	@ConfigSection(
 			name = "Antifire",
 			description = "Automatically uses antifire",
-			position = 7,
+			position = 998,
 			closedByDefault = true
 	)
 	String antifire = "Antifire";
+
+	@ConfigSection(
+			name = "Debug",
+			description = "Debugging settings",
+			position = 999,
+			closedByDefault = true
+	)
+	String debug = "Debug";
 
 	@ConfigItem(
 			keyName = "monster",
@@ -99,10 +107,22 @@ public interface FighterConfig extends Config
 	}
 
 	@ConfigItem(
+			keyName = "centerTile",
+			name = "Center tile",
+			description = "",
+			position = 2,
+			section = general
+	)
+	default String centerTile()
+	{
+		return "0 0 0";
+	}
+
+	@ConfigItem(
 			keyName = "bury",
 			name = "Bury bones",
 			description = "Bury bones",
-			position = 2,
+			position = 3,
 			section = general
 	)
 	default boolean buryBones()
@@ -339,5 +359,29 @@ public interface FighterConfig extends Config
 	default AntifireType antifireType()
 	{
 		return AntifireType.ANTIFIRE;
+	}
+
+	@ConfigItem(
+			keyName = "drawRadius",
+			name = "Draw attack area",
+			description = "",
+			position = 0,
+			section = debug
+	)
+	default boolean drawRadius()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+			keyName = "drawCenter",
+			name = "Draw center tile",
+			description = "",
+			position = 1,
+			section = debug
+	)
+	default boolean drawCenter()
+	{
+		return false;
 	}
 }
