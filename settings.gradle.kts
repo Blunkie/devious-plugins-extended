@@ -50,6 +50,7 @@ include("unethical-cooker")
 include("unethical-bankpin")
 include("unethical-tempoross")
 include("unethical-pickpocket")
+include("unethical-logout")
 
 include("m-autoswitcher")
 include("m-powerfisher")
