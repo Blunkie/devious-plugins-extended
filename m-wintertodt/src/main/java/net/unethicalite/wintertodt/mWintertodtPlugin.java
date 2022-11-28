@@ -50,7 +50,6 @@ import net.runelite.api.GameState;
 import net.runelite.api.ItemID;
 import net.runelite.api.MenuAction;
 import net.runelite.api.MessageNode;
-import net.runelite.api.Skill;
 import net.runelite.api.TileObject;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ChatMessage;
@@ -203,7 +202,7 @@ public class mWintertodtPlugin extends LoopedPlugin
 
 	private enum State
 	{
-		BANK, ENTER_WINTERTODT, EAT_FOOD, CUT_TREE, FLETCH_LOGS, FIX_BRAZIER, LIT_BRAZIER, FEED_BRAZIER, LEAVE_WINTERTODT, SLEEP
+		BANK, ENTER_WINTERTODT, WALK_TO_BRAZIER, EAT_FOOD, CUT_TREE, FLETCH_LOGS, FIX_BRAZIER, LIT_BRAZIER, FEED_BRAZIER, LEAVE_WINTERTODT, SLEEP
 	}
 
 	private State getState()
@@ -267,6 +266,10 @@ public class mWintertodtPlugin extends LoopedPlugin
 			{
 				return State.LEAVE_WINTERTODT;
 			}
+			else if (client.getLocalPlayer().distanceTo(config.brazierLocation().getWorldPoint()) > 1)
+			{
+				return State.WALK_TO_BRAZIER;
+			}
 		}
 		return State.SLEEP;
 	}
@@ -274,19 +277,8 @@ public class mWintertodtPlugin extends LoopedPlugin
 	@Override
 	protected int loop()
 	{
-		if (!scriptStarted)
+		if (!scriptStarted || client.getGameState() == GameState.LOGIN_SCREEN)
 		{
-			return -1;
-		}
-
-		// Stop when on login screen or level is reached..
-		if (client.getGameState() == GameState.LOGIN_SCREEN
-			|| client.getBoostedSkillLevel(Skill.FIREMAKING) >= config.destinationLevel())
-		{
-			if (scriptStarted)
-			{
-				scriptStarted = false;
-			}
 			return -1;
 		}
 
@@ -339,19 +331,25 @@ public class mWintertodtPlugin extends LoopedPlugin
 			case ENTER_WINTERTODT:
 				if (!isInWintertodtRegion())
 				{
-					Walker.walkTo(new WorldPoint(1630, 3962, 0));
 					TileObject door = TileObjects.getFirstSurrounding(client.getLocalPlayer().getWorldLocation(), 10, obj -> obj.getName().startsWith("Door") && obj.hasAction("Enter"));
-					sleepUntil(() -> door != null, 1000);
-
 					if (door != null)
 					{
 						door.interact("Enter");
 						sleepUntil(this::isInWintertodtRegion, 5000);
+						sleep(2000);
+					}
+					else
+					{
+						Walker.walkTo(new WorldPoint(1630, 3962, 0));
+						sleepUntil(() -> door != null, 800);
 					}
 				}
+				break;
 
-				sleep(2000);
-				Walker.walkTo(config.brazierLocation().getWorldPoint());
+			case WALK_TO_BRAZIER:
+				WorldPoint brazierLocation = config.brazierLocation().getWorldPoint();
+				Walker.walkTo(brazierLocation);
+				sleepUntil(() -> client.getLocalPlayer().distanceTo(brazierLocation) <= 1, 800);
 				break;
 
 			case EAT_FOOD:
@@ -390,7 +388,7 @@ public class mWintertodtPlugin extends LoopedPlugin
 				if (brokenBrazier != null)
 				{
 					brokenBrazier.interact("Fix");
-					sleepUntil(() -> brokenBrazier == null, 3000);
+					sleepUntil(() -> brokenBrazier == null, 2500);
 				}
 				break;
 
@@ -399,7 +397,7 @@ public class mWintertodtPlugin extends LoopedPlugin
 				if (unlitBrazier != null)
 				{
 					unlitBrazier.interact("Light");
-					sleepUntil(() -> unlitBrazier == null, 3000);
+					sleepUntil(() -> unlitBrazier == null, 2500);
 				}
 				break;
 
@@ -410,9 +408,9 @@ public class mWintertodtPlugin extends LoopedPlugin
 					if (burningBrazier != null)
 					{
 						burningBrazier.interact("Feed");
+						sleep(500);
+						sleepUntil(() -> burningBrazier == null || !Inventory.contains(ItemID.BRUMA_KINDLING), 7500);
 					}
-					sleep(500);
-					sleepUntil(() -> burningBrazier == null || !Inventory.contains(ItemID.BRUMA_KINDLING), 5500);
 				}
 				break;
 
@@ -440,7 +438,7 @@ public class mWintertodtPlugin extends LoopedPlugin
 				break;
 
 			case SLEEP:
-				return 1000;
+				return 100;
 		}
 		return 100;
 	}

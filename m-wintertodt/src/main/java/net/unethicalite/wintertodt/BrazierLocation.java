@@ -8,8 +8,8 @@ import net.runelite.api.coords.WorldPoint;
 @Getter
 public enum BrazierLocation
 {
-	SOUTH(new WorldPoint(1621, 3991, 0)),
-	EAST(new WorldPoint(1646, 3997, 0)),
+	SOUTH(new WorldPoint(1620, 3997, 0)),
+	EAST(new WorldPoint(1638, 3997, 0)),
 	;
 
 	private WorldPoint worldPoint;

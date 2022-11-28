@@ -42,20 +42,13 @@ public interface mWintertodtConfig extends Config
         return 8;
     }
 
-    @Range(max = 99)
-    @ConfigItem(keyName = "Destination level", name = "Destination level", description = "Stop when level is reached", position = 6)
-    default int destinationLevel()
-    {
-        return 99;
-    }
-
-    @ConfigItem(keyName = "Overlay enabled", name = "Overlay enabled", description = "Enables overlay", position = 7)
+    @ConfigItem(keyName = "Overlay enabled", name = "Overlay enabled", description = "Enables overlay", position = 6)
     default boolean overlayEnabled()
     {
         return true;
     }
 
-    @ConfigItem(keyName = "Start", name = "Start/Stop", description = "Start/Stop button", position = 8)
+    @ConfigItem(keyName = "Start", name = "Start/Stop", description = "Start/Stop button", position = 7)
     default Button startStopButton()
     {
         return new Button();
