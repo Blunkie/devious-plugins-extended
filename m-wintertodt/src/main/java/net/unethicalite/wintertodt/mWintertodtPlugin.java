@@ -259,7 +259,7 @@ public class mWintertodtPlugin extends LoopedPlugin
 				{
 					return State.FEED_BRAZIER;
 				}
-				else if (Inventory.isFull() || Inventory.getCount(ItemID.BRUMA_ROOT) + Inventory.getCount(ItemID.BRUMA_KINDLING) >= config.maxResources())
+				else if (Inventory.isFull() || Inventory.getCount(ItemID.BRUMA_ROOT) + Inventory.getCount(ItemID.BRUMA_KINDLING) > config.maxResources())
 				{
 					return State.FEED_BRAZIER;
 				}
