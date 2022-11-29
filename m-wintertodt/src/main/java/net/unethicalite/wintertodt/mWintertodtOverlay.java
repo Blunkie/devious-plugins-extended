@@ -5,11 +5,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import net.runelite.api.Client;
-import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
+import net.runelite.client.ui.overlay.OverlayPanel;
 import net.runelite.client.ui.overlay.OverlayPosition;
+import net.runelite.client.ui.overlay.components.LineComponent;
+import net.runelite.client.ui.overlay.components.TitleComponent;
 
-public class mWintertodtOverlay extends Overlay
+public class mWintertodtOverlay extends OverlayPanel
 {
 	private final Client client;
 	private final mWintertodtPlugin plugin;
@@ -18,11 +20,11 @@ public class mWintertodtOverlay extends Overlay
 	@Inject
 	private mWintertodtOverlay(Client client, mWintertodtPlugin plugin, mWintertodtConfig config)
 	{
-		setPosition(OverlayPosition.DYNAMIC);
-		setLayer(OverlayLayer.ABOVE_SCENE);
 		this.client = client;
 		this.plugin = plugin;
 		this.config = config;
+		setPosition(OverlayPosition.BOTTOM_LEFT);
+		setLayer(OverlayLayer.ABOVE_SCENE);
 	}
 
 	@Override
@@ -30,12 +32,31 @@ public class mWintertodtOverlay extends Overlay
 	{
 		if (plugin.isScriptStarted() && config.overlayEnabled())
 		{
-			graphics.setColor(Color.RED);
-			graphics.drawString("Time running: " + plugin.getTimeRunning(), 10, 190);
-			graphics.drawString("State: " + plugin.getCurrentState(), 10, 205);
-			graphics.drawString("Games won: " + plugin.getWon(), 10, 220);
-			graphics.drawString("Games lost: " + plugin.getLost(), 10, 235);
+			panelComponent.getChildren().add(TitleComponent.builder()
+				.text("mWintertodt")
+				.color(Color.GREEN)
+				.build());
+
+			panelComponent.getChildren().add(LineComponent.builder()
+				.left(plugin.getTimeRunning())
+				.leftColor(Color.WHITE)
+				.build());
+
+			panelComponent.getChildren().add(LineComponent.builder()
+				.left("State: " + plugin.getCurrentState())
+				.leftColor(Color.WHITE)
+				.build());
+
+			panelComponent.getChildren().add(LineComponent.builder()
+				.left("Games won: " + plugin.getWon())
+				.leftColor(Color.WHITE)
+				.build());
+
+			panelComponent.getChildren().add(LineComponent.builder()
+				.left("Games lost: " + plugin.getLost())
+				.leftColor(Color.WHITE)
+				.build());
 		}
-		return null;
+		return super.render(graphics);
 	}
 }

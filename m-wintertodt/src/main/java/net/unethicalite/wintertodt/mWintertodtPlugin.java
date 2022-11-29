@@ -30,6 +30,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.unethicalite.api.game.Combat;
 import net.unethicalite.api.input.Keyboard;
+import net.unethicalite.api.movement.Movement;
 import net.unethicalite.wintertodt.utils.TimeUtils;
 import org.pf4j.Extension;
 import javax.inject.Inject;
@@ -37,7 +38,6 @@ import javax.inject.Singleton;
 import net.unethicalite.api.entities.TileObjects;
 import net.unethicalite.api.items.Bank;
 import net.unethicalite.api.items.Inventory;
-import net.unethicalite.api.movement.pathfinder.Walker;
 import net.unethicalite.api.plugins.LoopedPlugin;
 import net.unethicalite.api.widgets.Widgets;
 import static net.unethicalite.api.commons.Time.sleep;
@@ -46,6 +46,7 @@ import java.time.Instant;
 import net.runelite.api.AnimationID;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
+import net.runelite.api.Constants;
 import net.runelite.api.GameState;
 import net.runelite.api.ItemID;
 import net.runelite.api.MenuAction;
@@ -166,7 +167,7 @@ public class mWintertodtPlugin extends LoopedPlugin
 		ChatMessageType chatMessageType = chatMessage.getType();
 		MessageNode messageNode = chatMessage.getMessageNode();
 
-		if (!isInWintertodtRegion() && chatMessageType != ChatMessageType.GAMEMESSAGE && chatMessageType != ChatMessageType.SPAM)
+		if (!isInWintertodtRegion() || chatMessageType != ChatMessageType.GAMEMESSAGE && chatMessageType != ChatMessageType.SPAM)
 		{
 			return;
 		}
@@ -195,7 +196,8 @@ public class mWintertodtPlugin extends LoopedPlugin
 	{
 		if (isInWintertodtRegion())
 		{
-			return !Widgets.get(396, 3).getText().contains("The Wintertodt returns");
+			Widget w = Widgets.get(396, 3);
+			return w == null ? true : !w.getText().contains("The Wintertodt returns");
 		}
 		return false;
 	}
@@ -249,11 +251,19 @@ public class mWintertodtPlugin extends LoopedPlugin
 				{
 					return State.LIT_BRAZIER;
 				}
-				else if (Inventory.getCount(ItemID.BRUMA_KINDLING) >= config.maxResources() || Inventory.contains(ItemID.BRUMA_KINDLING) && burningBrazier != null && client.getLocalPlayer().distanceTo(burningBrazier.getWorldLocation()) <= 4)
+				else if (Inventory.getCount(ItemID.BRUMA_KINDLING) >= config.maxResources() && config.fletchingEnabled() || Inventory.contains(ItemID.BRUMA_KINDLING) && burningBrazier != null && client.getLocalPlayer().distanceTo(burningBrazier.getWorldLocation()) <= 4)
 				{
 					return State.FEED_BRAZIER;
 				}
-				else if (Inventory.contains(ItemID.BRUMA_ROOT))
+				else if (Inventory.getCount(ItemID.BRUMA_ROOT) >= config.maxResources() && !config.fletchingEnabled() || Inventory.contains(ItemID.BRUMA_ROOT) && burningBrazier != null && client.getLocalPlayer().distanceTo(burningBrazier.getWorldLocation()) <= 4)
+				{
+					return State.FEED_BRAZIER;
+				}
+				else if (Inventory.isFull() || Inventory.getCount(ItemID.BRUMA_ROOT) + Inventory.getCount(ItemID.BRUMA_KINDLING) >= config.maxResources())
+				{
+					return State.FEED_BRAZIER;
+				}
+				else if (Inventory.contains(ItemID.BRUMA_ROOT) && config.fletchingEnabled())
 				{
 					return State.FLETCH_LOGS;
 				}
@@ -323,7 +333,7 @@ public class mWintertodtPlugin extends LoopedPlugin
 				}
 				else
 				{
-					Walker.walkTo(new WorldPoint(1640, 3944, 0));
+					Movement.walkTo(new WorldPoint(1640, 3944, 0));
 					sleepUntil(() -> bank != null, 800);
 				}
 				break;
@@ -340,7 +350,7 @@ public class mWintertodtPlugin extends LoopedPlugin
 					}
 					else
 					{
-						Walker.walkTo(new WorldPoint(1630, 3962, 0));
+						Movement.walkTo(new WorldPoint(1630, 3962, 0));
 						sleepUntil(() -> door != null, 800);
 					}
 				}
@@ -348,7 +358,7 @@ public class mWintertodtPlugin extends LoopedPlugin
 
 			case WALK_TO_BRAZIER:
 				WorldPoint brazierLocation = config.brazierLocation().getWorldPoint();
-				Walker.walkTo(brazierLocation);
+				Movement.walkTo(brazierLocation);
 				sleepUntil(() -> client.getLocalPlayer().distanceTo(brazierLocation) <= 1, 800);
 				break;
 
@@ -367,7 +377,7 @@ public class mWintertodtPlugin extends LoopedPlugin
 					}
 					else
 					{
-						Walker.walkTo(config.brazierLocation().getWorldPoint());
+						Movement.walkTo(config.brazierLocation().getWorldPoint());
 						sleepUntil(() -> tree != null, 800);
 					}
 				}
@@ -403,13 +413,14 @@ public class mWintertodtPlugin extends LoopedPlugin
 
 			case FEED_BRAZIER:
 				TileObject burningBrazier = TileObjects.getFirstSurrounding(client.getLocalPlayer().getWorldLocation(), 10, obj -> obj.hasAction("Feed") || obj.getName().startsWith("Burning brazier"));
-				if (!client.getLocalPlayer().isAnimating() && isInWintertodtRegion())
+				if (!client.getLocalPlayer().isAnimating() && isInWintertodtRegion()
+					|| Inventory.getCount(ItemID.BRUMA_ROOT) >= config.maxResources() && client.getLocalPlayer().getAnimation() != AnimationID.LOOKING_INTO)
 				{
 					if (burningBrazier != null)
 					{
 						burningBrazier.interact("Feed");
 						sleep(500);
-						sleepUntil(() -> burningBrazier == null || !Inventory.contains(ItemID.BRUMA_KINDLING), 7500);
+						sleepUntil(() -> burningBrazier == null || !Inventory.contains(ItemID.BRUMA_KINDLING) && !Inventory.contains(ItemID.BRUMA_ROOT), 7500);
 					}
 				}
 				break;
@@ -418,7 +429,7 @@ public class mWintertodtPlugin extends LoopedPlugin
 				if (isInWintertodtRegion())
 				{
 					TileObject door = TileObjects.getFirstSurrounding(client.getLocalPlayer().getWorldLocation(), 10, obj -> obj.getName().startsWith("Door") && obj.hasAction("Enter"));
-					if (door != null)
+					if (door != null && client.getLocalPlayer().distanceTo(door.getWorldLocation()) <= 3)
 					{
 						door.interact("Enter");
 						Widget skipDialog = Widgets.get(WidgetInfo.DIALOG_OPTION_OPTION1);
@@ -427,18 +438,19 @@ public class mWintertodtPlugin extends LoopedPlugin
 						{
 							skipDialog.interact(MenuAction.WIDGET_CONTINUE.getId());
 							sleepUntil(() -> !isInWintertodtRegion(), 1000);
+							sleep(2200);
 						}
 					}
 					else
 					{
-						Walker.walkTo(new WorldPoint(631, 3969, 0));
+						Movement.walkTo(new WorldPoint(631, 3969, 0));
 						sleepUntil(() -> door != null, 800);
 					}
 				}
 				break;
 
 			case SLEEP:
-				return 100;
+				return Constants.CLIENT_TICK_LENGTH;
 		}
 		return 100;
 	}

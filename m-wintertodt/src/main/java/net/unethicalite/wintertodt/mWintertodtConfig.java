@@ -35,20 +35,26 @@ public interface mWintertodtConfig extends Config
         return BrazierLocation.EAST;
     }
 
+    @ConfigItem(keyName = "Fletching enabled", name = "Fletching enabled", description = "Enables fletching", position = 5)
+    default boolean fletchingEnabled()
+    {
+        return true;
+    }
+
     @Range(max = 24)
-    @ConfigItem(keyName = "Max resources", name = "Max resources", description = "Max amount of Bruma kindling/roots", position = 5)
+    @ConfigItem(keyName = "Max resources", name = "Max resources", description = "Max amount of Bruma kindling/roots in inventory before feeding the brazier", position = 6)
     default int maxResources()
     {
         return 8;
     }
 
-    @ConfigItem(keyName = "Overlay enabled", name = "Overlay enabled", description = "Enables overlay", position = 6)
+    @ConfigItem(keyName = "Overlay enabled", name = "Overlay enabled", description = "Enables overlay", position = 7)
     default boolean overlayEnabled()
     {
         return true;
     }
 
-    @ConfigItem(keyName = "Start", name = "Start/Stop", description = "Start/Stop button", position = 7)
+    @ConfigItem(keyName = "Start", name = "Start/Stop", description = "Start/Stop button", position = 8)
     default Button startStopButton()
     {
         return new Button();
