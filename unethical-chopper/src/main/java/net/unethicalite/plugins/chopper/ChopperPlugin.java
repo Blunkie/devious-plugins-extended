@@ -1,9 +1,12 @@
 package net.unethicalite.plugins.chopper;
 
 import com.google.inject.Provides;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Tile;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.ConfigButtonClicked;
 import net.runelite.api.events.GameTick;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -19,6 +22,7 @@ import net.unethicalite.api.scene.Tiles;
 import org.pf4j.Extension;
 
 import javax.inject.Inject;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -43,17 +47,18 @@ public class ChopperPlugin extends LoopedPlugin
 	private ChopperOverlay chopperOverlay;
 
 	private int fmCooldown = 0;
+
+	@Getter(AccessLevel.PROTECTED)
 	private List<Tile> fireArea;
+
 	private WorldPoint startLocation = null;
+
+	@Getter(AccessLevel.PROTECTED)
+	private boolean scriptStarted;
 
 	@Override
 	protected void startUp()
 	{
-		startLocation = Players.getLocal().getWorldLocation();
-		fireArea = generateFireArea(3);
-
-		chopperOverlay.setFireArea(fireArea);
-
 		overlayManager.add(chopperOverlay);
 	}
 
@@ -64,15 +69,52 @@ public class ChopperPlugin extends LoopedPlugin
 		overlayManager.remove(chopperOverlay);
 	}
 
+	@Subscribe
+	public void onConfigButtonPressed(ConfigButtonClicked event)
+	{
+		if (!event.getGroup().contains("unethical-chopper") || !event.getKey().toLowerCase().contains("start"))
+		{
+			return;
+		}
+
+		if (scriptStarted)
+		{
+			scriptStarted = false;
+		}
+		else
+		{
+			var local = Players.getLocal();
+			if (local == null)
+			{
+				return;
+			}
+			startLocation = local.getWorldLocation();
+			fireArea = generateFireArea(3);
+			this.scriptStarted = true;
+			log.info("Script started");
+		}
+	}
+
+	public boolean isEmptyTile(Tile tile)
+	{
+		return tile != null
+			&& Arrays.asList(tile.getGameObjects()).stream().filter(o -> o != null).noneMatch(o -> o.getId() > -1);
+	}
+
 	@Override
 	protected int loop()
 	{
-		if (fmCooldown > 0)
+		if (fmCooldown > 0 || !scriptStarted)
 		{
 			return -1;
 		}
 
 		var local = Players.getLocal();
+		if (local == null)
+		{
+			return -1;
+		}
+
 		var tree = TileObjects
 				.getSurrounding(startLocation, 8, config.tree().getNames())
 				.stream()
@@ -85,26 +127,22 @@ public class ChopperPlugin extends LoopedPlugin
 			var tinderbox = Inventory.getFirst("Tinderbox");
 			if (logs != null && tinderbox != null)
 			{
-				if (fireArea.isEmpty())
+				var emptyTile = fireArea == null || fireArea.isEmpty() ? null : fireArea.stream()
+						.filter(t ->
+						{
+							Tile tile = Tiles.getAt(t.getWorldLocation());
+							return tile != null && isEmptyTile(tile);
+						})
+						.min(Comparator.comparingInt(wp -> wp.distanceTo(local)))
+						.orElse(null);
+
+				if (fireArea.isEmpty() || emptyTile == null)
 				{
 					fireArea = generateFireArea(3);
-					chopperOverlay.setFireArea(fireArea);
 					log.debug("Re-Generating fire area");
 					return 1000;
 				}
 
-				var emptyTile = fireArea.stream()
-						.filter(t ->
-						{
-							Tile tile = Tiles.getAt(t.getWorldLocation());
-							return tile != null && tile.getGameObjects() == null
-								&& tile.getDecorativeObject() == null
-								&& tile.getGroundObject() == null
-								&& tile.getGroundItems() == null
-								&& tile.getWallObject() == null;
-						})
-						.min(Comparator.comparingInt(wp -> wp.distanceTo(local)))
-						.orElse(null);
 				if (emptyTile != null)
 				{
 					if (!emptyTile.getWorldLocation().equals(local.getWorldLocation()))
@@ -171,10 +209,8 @@ public class ChopperPlugin extends LoopedPlugin
 	private List<Tile> generateFireArea(int radius)
 	{
 		return Tiles.getSurrounding(Players.getLocal().getWorldLocation(), radius).stream()
-				.filter(tile -> tile.getGameObjects() == null
-					&& tile.getDecorativeObject() == null
-					&& tile.getGroundObject() == null
-					&& tile.getGroundItems() == null
+				.filter(tile -> tile != null
+					&& isEmptyTile(tile)
 					&& Reachable.isWalkable(tile.getWorldLocation()))
 				.collect(Collectors.toUnmodifiableList());
 	}
