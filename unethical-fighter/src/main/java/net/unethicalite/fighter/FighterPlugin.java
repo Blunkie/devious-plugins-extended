@@ -3,12 +3,11 @@ package net.unethicalite.fighter;
 import com.google.inject.Provides;
 import net.runelite.api.Client;
 import net.runelite.api.ItemID;
-import net.runelite.api.Tile;
 import net.runelite.api.util.Text;
+import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.WildcardMatcher;
 import net.unethicalite.api.entities.Players;
 import net.unethicalite.api.entities.TileItems;
-import net.unethicalite.api.events.GameDrawn;
 import net.unethicalite.api.game.Combat;
 import net.unethicalite.api.game.Game;
 import net.unethicalite.api.items.Inventory;
@@ -17,7 +16,6 @@ import net.unethicalite.api.movement.Movement;
 import net.unethicalite.api.movement.Reachable;
 import net.unethicalite.api.plugins.LoopedPlugin;
 import net.unethicalite.api.plugins.Plugins;
-import net.unethicalite.api.scene.Tiles;
 import net.unethicalite.api.utils.MessageUtils;
 import net.unethicalite.api.widgets.Dialog;
 import net.unethicalite.api.widgets.Prayers;
@@ -36,7 +34,6 @@ import org.pf4j.Extension;
 
 import javax.inject.Inject;
 import javax.swing.SwingUtilities;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -71,12 +68,19 @@ public class FighterPlugin extends LoopedPlugin
 	@Inject
 	private ConfigManager configManager;
 
+	@Inject
+	private OverlayManager overlayManager;
+
+	@Inject
+	private FighterOverlay fighterOverlay;
+
 	private final List<TileItem> notOurItems = new ArrayList<>();
 
 	@Override
 	public void startUp() throws Exception
 	{
 		super.startUp();
+		overlayManager.add(fighterOverlay);
 		executor = Executors.newSingleThreadScheduledExecutor();
 		executor.scheduleWithFixedDelay(() ->
 		{
@@ -113,6 +117,7 @@ public class FighterPlugin extends LoopedPlugin
 	@Override
 	public void shutDown()
 	{
+		overlayManager.remove(fighterOverlay);
 		if (executor != null)
 		{
 			executor.shutdown();
@@ -290,38 +295,6 @@ public class FighterPlugin extends LoopedPlugin
 		}
 	}
 
-	@Subscribe
-	public void onGameDrawn(GameDrawn e)
-	{
-		WorldPoint center = getCenter();
-		if (center == null)
-		{
-			return;
-		}
-
-		if (config.drawCenter())
-		{
-			center.outline(client, e.getGraphics(), Color.ORANGE, String.format("Center: %s", config.centerTile()));
-		}
-
-		if (config.drawRadius())
-		{
-			List<Tile> tiles = Tiles.getSurrounding(center, config.attackRange());
-			for (Tile tile : tiles)
-			{
-				if (tile == null)
-				{
-					continue;
-				}
-
-				if (tile.distanceTo(center) >= config.attackRange())
-				{
-					tile.getWorldLocation().outline(client, e.getGraphics(), Color.WHITE);
-				}
-			}
-		}
-	}
-
 	private boolean shouldNotLoot(TileItem item)
 	{
 		return textMatches(Text.fromCSV(config.dontLoot()), item.getName());
@@ -360,7 +333,7 @@ public class FighterPlugin extends LoopedPlugin
 		);
 	}
 
-	private WorldPoint getCenter()
+	protected WorldPoint getCenter()
 	{
 		String textValue = config.centerTile();
 		if (textValue.isBlank() || !WORLD_POINT_PATTERN.matcher(textValue).matches())
