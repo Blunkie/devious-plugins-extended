@@ -4,6 +4,7 @@ import com.google.inject.Provides;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.GameObject;
 import net.runelite.api.Tile;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ConfigButtonClicked;
@@ -17,12 +18,12 @@ import net.unethicalite.api.entities.TileObjects;
 import net.unethicalite.api.items.Inventory;
 import net.unethicalite.api.movement.Movement;
 import net.unethicalite.api.movement.Reachable;
+import net.unethicalite.api.movement.pathfinder.GlobalCollisionMap;
 import net.unethicalite.api.plugins.LoopedPlugin;
 import net.unethicalite.api.scene.Tiles;
 import org.pf4j.Extension;
 
 import javax.inject.Inject;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -45,6 +46,9 @@ public class ChopperPlugin extends LoopedPlugin
 
 	@Inject
 	private ChopperOverlay chopperOverlay;
+
+	@Inject
+	private GlobalCollisionMap collisionMap;
 
 	private int fmCooldown = 0;
 
@@ -95,10 +99,11 @@ public class ChopperPlugin extends LoopedPlugin
 		}
 	}
 
-	public boolean isEmptyTile(Tile tile)
+	protected boolean isEmptyTile(Tile tile)
 	{
 		return tile != null
-			&& Arrays.asList(tile.getGameObjects()).stream().filter(o -> o != null).noneMatch(o -> o.getId() > -1);
+			&& TileObjects.getFirstAt(tile, a -> a instanceof GameObject) == null
+			&& !collisionMap.fullBlock(tile.getWorldLocation());
 	}
 
 	@Override
@@ -139,7 +144,7 @@ public class ChopperPlugin extends LoopedPlugin
 				if (fireArea.isEmpty() || emptyTile == null)
 				{
 					fireArea = generateFireArea(3);
-					log.debug("Re-Generating fire area");
+					log.debug("Generating fire area");
 					return 1000;
 				}
 
