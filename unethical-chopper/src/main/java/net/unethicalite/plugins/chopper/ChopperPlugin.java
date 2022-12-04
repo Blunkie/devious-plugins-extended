@@ -174,7 +174,7 @@ public class ChopperPlugin extends LoopedPlugin
 		}
 		else
 		{
-			if (logs != null)
+			if (logs != null && !local.isAnimating())
 			{
 				logs.drop();
 				return 500;
