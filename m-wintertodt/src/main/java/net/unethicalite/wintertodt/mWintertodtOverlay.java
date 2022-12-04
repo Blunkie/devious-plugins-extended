@@ -34,27 +34,66 @@ public class mWintertodtOverlay extends OverlayPanel
 		{
 			panelComponent.getChildren().add(TitleComponent.builder()
 				.text("mWintertodt")
-				.color(Color.GREEN)
+				.color(Color.WHITE)
 				.build());
 
 			panelComponent.getChildren().add(LineComponent.builder()
-				.left(plugin.getTimeRunning())
-				.leftColor(Color.WHITE)
+				.left("Running: " + plugin.getTimeRunning())
+				.leftColor(Color.GREEN)
 				.build());
 
 			panelComponent.getChildren().add(LineComponent.builder()
 				.left("State: " + plugin.getCurrentState())
-				.leftColor(Color.WHITE)
+				.leftColor(Color.YELLOW)
 				.build());
 
 			panelComponent.getChildren().add(LineComponent.builder()
 				.left("Games won: " + plugin.getWon())
-				.leftColor(Color.WHITE)
+				.leftColor(Color.GREEN)
 				.build());
 
 			panelComponent.getChildren().add(LineComponent.builder()
 				.left("Games lost: " + plugin.getLost())
-				.leftColor(Color.WHITE)
+				.leftColor(Color.RED)
+				.build());
+
+			panelComponent.getChildren().add(LineComponent.builder()
+				.left("Logs cut: " + plugin.getLogsCut())
+				.leftColor(Color.GREEN)
+				.build());
+
+			if (config.fletchingEnabled())
+			{
+				panelComponent.getChildren().add(LineComponent.builder()
+					.left("Logs fletched: " + plugin.getLogsFletched())
+					.leftColor(Color.GREEN)
+					.build());
+			}
+
+			if (config.fixBrokenBrazier())
+			{
+				panelComponent.getChildren().add(LineComponent.builder()
+					.left("Braziers fixed: " + plugin.getBraziersFixed())
+					.leftColor(Color.GREEN)
+					.build());
+			}
+
+			if (config.lightUnlitBrazier())
+			{
+				panelComponent.getChildren().add(LineComponent.builder()
+					.left("Braziers lit: " + plugin.getBraziersLit())
+					.leftColor(Color.GREEN)
+					.build());
+			}
+
+			panelComponent.getChildren().add(LineComponent.builder()
+				.left("Food consumed: " + plugin.getFoodConsumed())
+				.leftColor(Color.GREEN)
+				.build());
+
+			panelComponent.getChildren().add(LineComponent.builder()
+				.left("Times banked: " + plugin.getTimesBanked())
+				.leftColor(Color.GREEN)
 				.build());
 		}
 		return super.render(graphics);

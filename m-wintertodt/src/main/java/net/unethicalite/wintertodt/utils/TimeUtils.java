@@ -2,7 +2,7 @@ package net.unethicalite.wintertodt.utils;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.concurrent.TimeUnit;
+
 
 public class TimeUtils
 {
@@ -15,23 +15,10 @@ public class TimeUtils
 	 */
 	public static String getTimeBetween(Instant start, Instant finish)
 	{
-		long timeElapsed = Duration.between(start, finish).getSeconds();
-		int days = (int) TimeUnit.SECONDS.toDays(timeElapsed);
-		long hours = TimeUnit.SECONDS.toHours(timeElapsed) - (days * 24);
-		long minutes = TimeUnit.SECONDS.toMinutes(timeElapsed) - (TimeUnit.SECONDS.toHours(timeElapsed) * 60);
-		long seconds = TimeUnit.SECONDS.toSeconds(timeElapsed) - (TimeUnit.SECONDS.toMinutes(timeElapsed) * 60);
-
-		String timeAsString = new StringBuilder()
-			.append(days)
-			.append("\r Days \r")
-			.append(hours)
-			.append("\r Hours \r")
-			.append(minutes)
-			.append("\r Minutes \r")
-			.append(seconds)
-			.append("\r Seconds \r")
-			.toString();
-
-		return timeAsString;
+		Duration duration = Duration.between(start, finish);
+		return String.format("%d:%02d:%02d",
+			duration.toHours(),
+			duration.toMinutesPart(),
+			duration.toSecondsPart());
 	}
 }
