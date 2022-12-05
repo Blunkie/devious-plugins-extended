@@ -45,9 +45,9 @@
   "id": "mwintertodt-plugin",
   "releases": [{
     "date": "2022-12-05",
-    "sha512sum": "FF6680B100CF00480345B96B81BD1C3B11D36749C031495CD6B78FED960202D9A4D6D25BF0D257D7770819018F267E739A22E3B826D3B23435BE0EA432ADA952",
-    "version": "0.0.1",
-    "url": "https://github.com/melxin/devious-plugins-extended/blob/master/release/m-wintertodt-0.0.1.jar?raw=true",
+    "sha512sum": "9B1B14320BB6E952D73AB3F4A5F025E9089817A7A8976C648A62D25288D0EDDABECC3FE4D4B8F5CFBD06D1F72AD8F2BE6AE46684D8081947F8EF6D5200131839",
+    "version": "0.0.2",
+    "url": "https://github.com/melxin/devious-plugins-extended/blob/master/release/m-wintertodt-0.0.2.jar?raw=true",
     "requires": "^1.0.0"
   }]
 }, {

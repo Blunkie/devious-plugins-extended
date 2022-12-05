@@ -12,5 +12,5 @@ public enum BrazierLocation
 	EAST(new WorldPoint(1638, 3997, 0)),
 	;
 
-	private WorldPoint worldPoint;
+	private final WorldPoint worldPoint;
 }
