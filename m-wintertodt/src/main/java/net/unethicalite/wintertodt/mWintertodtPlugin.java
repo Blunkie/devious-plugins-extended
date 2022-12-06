@@ -30,6 +30,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.pf4j.Extension;
 import java.time.Instant;
+import java.util.SplittableRandom;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import net.runelite.api.AnimationID;
@@ -56,6 +57,7 @@ import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.unethicalite.api.entities.TileObjects;
@@ -144,6 +146,25 @@ public class mWintertodtPlugin extends LoopedPlugin
 		return scriptStartTime != null ? TimeUtils.getFormattedDurationBetween(scriptStartTime, Instant.now()) : "";
 	}
 
+	private int random;
+	private static final SplittableRandom splittableRandom = new SplittableRandom();
+
+	private void generateRandom()
+	{
+		this.random = splittableRandom.nextInt(0, BrazierLocation.values().length - 1);
+	}
+
+	protected BrazierLocation getBrazierLocation()
+	{
+		final BrazierLocation brazierLocation = config.brazierLocation();
+
+		if (brazierLocation == BrazierLocation.RANDOM)
+		{
+			return random <= random / 2 ? BrazierLocation.WEST : BrazierLocation.EAST;
+		}
+		return brazierLocation;
+	}
+
 	@Override
 	protected void startUp()
 	{
@@ -170,6 +191,7 @@ public class mWintertodtPlugin extends LoopedPlugin
 		this.braziersLit = 0;
 		this.foodConsumed = 0;
 		this.timesBanked = 0;
+		this.random = 0;
 		this.currentState = null;
 		this.scriptStartTime = null;
 		this.scriptStarted = false;
@@ -192,6 +214,22 @@ public class mWintertodtPlugin extends LoopedPlugin
 		{
 			this.scriptStartTime = Instant.now();
 			this.scriptStarted = true;
+			this.generateRandom();
+		}
+	}
+
+	@Subscribe
+	public void onConfigChanged(ConfigChanged event)
+	{
+		if (!event.getGroup().contains("mwintertodt"))
+		{
+			return;
+		}
+
+		if (event.getKey().contains("Brazier location")
+			&& config.brazierLocation() == BrazierLocation.RANDOM)
+		{
+			this.generateRandom();
 		}
 	}
 
@@ -443,7 +481,7 @@ public class mWintertodtPlugin extends LoopedPlugin
 			{
 				return State.LEAVE_WINTERTODT;
 			}
-			else if (localPlayer.distanceTo(config.brazierLocation().getWorldPoint()) > 1)
+			else if (localPlayer.distanceTo(getBrazierLocation().getWorldPoint()) > 1)
 			{
 				return State.WALK_TO_BRAZIER;
 			}
@@ -494,6 +532,7 @@ public class mWintertodtPlugin extends LoopedPlugin
 
 					Bank.close();
 					timesBanked++;
+					this.generateRandom();
 				}
 				else if (bank != null)
 				{
@@ -524,8 +563,7 @@ public class mWintertodtPlugin extends LoopedPlugin
 				return -1;
 
 			case WALK_TO_BRAZIER:
-				WorldPoint brazierLocation = config.brazierLocation().getWorldPoint();
-				Movement.walkTo(brazierLocation);
+				Movement.walkTo(getBrazierLocation().getWorldPoint());
 				return -1;
 
 			case EAT_FOOD:
@@ -542,7 +580,7 @@ public class mWintertodtPlugin extends LoopedPlugin
 				if (!localPlayer.isAnimating()
 					&& isInWintertodtRegion())
 				{
-					TileObject tree = TileObjects.getFirstSurrounding(config.brazierLocation().getWorldPoint(), 10, obj -> obj.hasAction("Chop") || obj.getName().startsWith("Bruma roots"));
+					TileObject tree = TileObjects.getFirstSurrounding(getBrazierLocation().getWorldPoint(), 10, obj -> obj.hasAction("Chop") || obj.getName().startsWith("Bruma roots"));
 					if (tree != null)
 					{
 						tree.interact("Chop");
@@ -550,7 +588,7 @@ public class mWintertodtPlugin extends LoopedPlugin
 					}
 					else
 					{
-						Movement.walkTo(config.brazierLocation().getWorldPoint());
+						Movement.walkTo(getBrazierLocation().getWorldPoint());
 					}
 				}
 				return -1;

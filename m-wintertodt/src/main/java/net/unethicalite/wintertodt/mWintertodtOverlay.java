@@ -48,27 +48,32 @@ public class mWintertodtOverlay extends OverlayPanel
 				.build());
 
 			panelComponent.getChildren().add(LineComponent.builder()
-				.left("Games won: " + plugin.getWon())
+				.left("Won: " + plugin.getWon())
 				.leftColor(Color.GREEN)
 				.build());
 
 			panelComponent.getChildren().add(LineComponent.builder()
-				.left("Games lost: " + plugin.getLost())
+				.left("Lost: " + plugin.getLost())
 				.leftColor(Color.RED)
 				.build());
 
 			panelComponent.getChildren().add(LineComponent.builder()
-				.left("Logs cut: " + plugin.getLogsCut())
+				.left("Cut: " + plugin.getLogsCut())
 				.leftColor(Color.GREEN)
 				.build());
 
 			if (config.fletchingEnabled())
 			{
 				panelComponent.getChildren().add(LineComponent.builder()
-					.left("Logs fletched: " + plugin.getLogsFletched())
+					.left("Fletched: " + plugin.getLogsFletched())
 					.leftColor(Color.GREEN)
 					.build());
 			}
+
+				panelComponent.getChildren().add(LineComponent.builder()
+					.left("Brazier: " + plugin.getBrazierLocation().name())
+					.leftColor(Color.MAGENTA)
+					.build());
 
 			if (config.fixBrokenBrazier())
 			{
