@@ -58,9 +58,9 @@
   "id": "unethicalagility-plugin",
   "releases": [{
     "date": "2022-12-06",
-    "sha512sum": "6080717F26181138C3404BFF87C288560585B94C6915F6A372A9066783D10B42F51FB612ECA02750B2949B9C9F7588C265A20DC613DFF750255F86796E659F01",
-    "version": "0.0.5",
-    "url": "https://github.com/melxin/devious-plugins-extended/blob/master/release/unethical-agility-0.0.5.jar?raw=true",
+    "sha512sum": "EA7488B04EA58FA82B99E41CFBD317624EFC54B6276CAB8098E97EE419648DB0FFEE8FC42998351FF548CC6606B0EC7ACCD0B92FA7D5AEEB2CB25564DB66ABA6",
+    "version": "0.0.6",
+    "url": "https://github.com/melxin/devious-plugins-extended/blob/master/release/unethical-agility-0.0.6.jar?raw=true",
     "requires": "^1.0.0"
   }]
 }, {
