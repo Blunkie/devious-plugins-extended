@@ -129,7 +129,7 @@ public class PowerFisherPlugin extends Plugin
         // No required items found
         if (!Inventory.contains(fishingType.getRequiredItems()))
         {
-            log.error("Make sure you have required items in inventory: {}", fishingType.getRequiredItems());
+            log.error("Make sure you have required items in inventory: {}", fishingType.getRequiredItems().toString());
             reset();
             return;
         }
@@ -137,8 +137,12 @@ public class PowerFisherPlugin extends Plugin
         // Idle
         if (client.getLocalPlayer().getAnimation() == -1)
         {
-            // Drop
-            dropAllFish(fishingType);
+            // Drop fish
+            if (Inventory.contains(fishingType.getFishToDrop()))
+            {
+                Inventory.getAll(fishingType.getFishToDrop()).forEach(Item::drop);
+                return;
+            }
 
             // Fish
             NPC fishingSpot = client.getNpcs()
@@ -154,16 +158,6 @@ public class PowerFisherPlugin extends Plugin
 
             fishingSpot.interact(fishingType.getAction());
         }
-    }
-
-    /**
-     * Drop all fish in inventory
-     */
-    public void dropAllFish(FishingType fishingType)
-    {
-        Inventory.getAll(fishingType.getFishToDrop())
-                .stream()
-                .forEach(Item::drop);
     }
 
     @Subscribe
