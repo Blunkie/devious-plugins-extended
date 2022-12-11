@@ -258,7 +258,7 @@ public class mWintertodtPlugin extends LoopedPlugin
 
 		if (messageNode.getValue().startsWith("The brazier has gone out"))
 		{
-			if (config.fixBrokenBrazier()
+			if (config.lightUnlitBrazier()
 				&& Inventory.contains(ItemID.TINDERBOX))
 			{
 				this.currentState = State.LIGHT_BRAZIER;

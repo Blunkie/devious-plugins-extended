@@ -32,7 +32,7 @@ public interface mWintertodtConfig extends Config
 	@ConfigItem(keyName = "Brazier location", name = "Brazier location", description = "The brazier to use", position = 4)
 	default BrazierLocation brazierLocation()
 	{
-		return BrazierLocation.WEST;
+		return BrazierLocation.RANDOM;
 	}
 
 	@ConfigItem(keyName = "Fix brazier", name = "Fix broken brazier", description = "Fixes broken brazier if has hammer in inventory", position = 5)
