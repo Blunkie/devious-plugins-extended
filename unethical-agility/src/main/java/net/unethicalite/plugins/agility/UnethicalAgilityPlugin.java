@@ -30,7 +30,6 @@ import net.unethicalite.api.plugins.LoopedPlugin;
 import net.unethicalite.api.plugins.Plugins;
 import net.unethicalite.api.utils.MessageUtils;
 import net.unethicalite.api.widgets.Dialog;
-import net.unethicalite.client.Static;
 import org.pf4j.Extension;
 
 import javax.swing.SwingUtilities;
@@ -85,12 +84,6 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 		if (Dialog.canContinue())
 		{
 			Dialog.continueSpace();
-			return -1;
-		}
-
-		if (!Movement.isRunEnabled() && Static.getClient().getEnergy() > 5)
-		{
-			Movement.toggleRun();
 			return -1;
 		}
 
@@ -168,10 +161,10 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 		}
 
 		TileItem mark = TileItems.getFirstSurrounding(Players.getLocal().getWorldLocation(), 10, "Mark of grace");
-		if (mark != null && obstacle.getArea().contains(mark.getTile()) && !Inventory.isFull())
+		if (mark != null && obstacle.getArea().contains(mark.getTile()) && canPick(mark))
 		{
 			TileItem gold = TileItems.getFirstAt(mark.getWorldLocation(), ItemID.COINS_995);
-			if (gold != null)
+			if (gold != null && canPick(gold))
 			{
 				gold.pickup();
 				return -1;
@@ -218,5 +211,10 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 			return obstacle.getId() != 0 ? TileObjects.getNearest(obstacle.getId())
 					: TileObjects.getNearest(x -> x.hasAction(obstacle.getAction()) && x.getName().equals(obstacle.getName()));
 		}
+	}
+
+	protected boolean canPick(TileItem tileItem)
+	{
+		return tileItem != null && tileItem.distanceTo(client.getLocalPlayer().getWorldLocation()) <= 5 && !Inventory.isFull();
 	}
 }
