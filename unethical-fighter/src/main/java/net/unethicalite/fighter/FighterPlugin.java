@@ -197,24 +197,20 @@ public class FighterPlugin extends LoopedPlugin
 		}
 
 		Player local = Players.getLocal();
-		if (!Inventory.isFull())
+		TileItem loot = TileItems.getFirstSurrounding(center, config.attackRange(), x ->
+				!notOurItems.contains(x)
+						&& !shouldNotLoot(x) && (shouldLootByName(x) || shouldLootUntradable(x) || shouldLootByValue(x))
+		);
+		if (loot != null && canPick(loot))
 		{
-			TileItem loot = TileItems.getNearest(x ->
-					x.getTile().getWorldLocation().distanceTo(center) < config.attackRange()
-							&& !notOurItems.contains(x)
-							&& !shouldNotLoot(x) && (shouldLootByName(x) || shouldLootUntradable(x) || shouldLootByValue(x))
-			);
-			if (loot != null)
+			if (!Reachable.isInteractable(loot.getTile()))
 			{
-				if (!Reachable.isInteractable(loot.getTile()))
-				{
-					Movement.walkTo(loot.getTile().getWorldLocation());
-					return -4;
-				}
-
-				loot.pickup();
-				return -3;
+				Movement.walkTo(loot.getTile().getWorldLocation());
+				return -4;
 			}
+
+			loot.pickup();
+			return -3;
 		}
 
 		if (config.alching())
@@ -346,5 +342,10 @@ public class FighterPlugin extends LoopedPlugin
 				.collect(Collectors.toList());
 
 		return new WorldPoint(split.get(0), split.get(1), split.get(2));
+	}
+
+	protected boolean canPick(TileItem tileItem)
+	{
+		return tileItem != null && tileItem.distanceTo(client.getLocalPlayer().getWorldLocation()) <= 5 && !Inventory.isFull();
 	}
 }
