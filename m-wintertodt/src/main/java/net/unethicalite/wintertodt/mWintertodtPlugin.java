@@ -36,17 +36,16 @@ import javax.inject.Singleton;
 import net.runelite.api.AnimationID;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
+import net.runelite.api.Constants;
 import net.runelite.api.GameState;
 import net.runelite.api.Item;
 import net.runelite.api.ItemID;
-import net.runelite.api.MenuAction;
 import net.runelite.api.MessageNode;
 import net.runelite.api.Player;
 import net.runelite.api.Skill;
 import net.runelite.api.TileObject;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ChatMessage;
-import net.runelite.api.events.ClientTick;
 import net.runelite.api.events.ConfigButtonClicked;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.widgets.Widget;
@@ -68,6 +67,7 @@ import net.unethicalite.api.items.Bank;
 import net.unethicalite.api.items.Inventory;
 import net.unethicalite.api.movement.Movement;
 import net.unethicalite.api.plugins.LoopedPlugin;
+import net.unethicalite.api.widgets.Dialog;
 import net.unethicalite.api.widgets.Widgets;
 import net.unethicalite.wintertodt.utils.TimeUtils;
 import static net.unethicalite.api.commons.Time.sleep;
@@ -284,6 +284,11 @@ public class mWintertodtPlugin extends LoopedPlugin
 		{
 			lost++;
 		}
+
+		if (messageNode.getValue().startsWith("Your hands are too cold to fletch here"))
+		{
+			Movement.walkTo(getBrazierLocation().getWorldPoint());
+		}
 	}
 
 	/**
@@ -330,6 +335,15 @@ public class mWintertodtPlugin extends LoopedPlugin
 			return;
 		}
 
+		// Skip dialog when leaving wintertodt area and game is started
+		Widget skipDialog = Widgets.get(WidgetInfo.DIALOG_OPTION_OPTION1);
+		if (isGameStarted()
+			&& skipDialog != null
+			&& skipDialog.isVisible())
+		{
+			Dialog.chooseOption(1);
+		}
+
 		// Try to remove this widget when bank is closed and widget is still there
 		Widget enterAmountWidget = Widgets.get(WidgetInfo.CHATBOX_TITLE);
 		if (!Bank.isOpen()
@@ -340,24 +354,6 @@ public class mWintertodtPlugin extends LoopedPlugin
 		{
 			Keyboard.type(0);
 			Keyboard.sendEnter();
-		}
-	}
-
-	@Subscribe
-	public void onClientTick(ClientTick event)
-	{
-		if (!scriptStarted)
-		{
-			return;
-		}
-
-		// Skip dialog when leaving wintertodt area and game is started
-		Widget skipDialog = Widgets.get(WidgetInfo.DIALOG_OPTION_OPTION1);
-		if (isGameStarted()
-			&& skipDialog != null
-			&& skipDialog.isVisible())
-		{
-			skipDialog.interact(MenuAction.WIDGET_CONTINUE.getId());
 		}
 	}
 
@@ -465,15 +461,15 @@ public class mWintertodtPlugin extends LoopedPlugin
 					}
 				}
 
-				if (Inventory.contains(ItemID.BRUMA_ROOT)
+				if (Inventory.getCount(ItemID.BRUMA_ROOT) + Inventory.getCount(ItemID.BRUMA_KINDLING) < config.maxResources())
+				{
+					return State.CUT_TREE;
+				}
+				else if (Inventory.contains(ItemID.BRUMA_ROOT)
 					&& Inventory.contains(ItemID.KNIFE)
 					&& config.fletchingEnabled())
 				{
 					return State.FLETCH_LOGS;
-				}
-				else
-				{
-					return State.CUT_TREE;
 				}
 			}
 			else if (Inventory.getCount(i -> i != null && i.getName().toLowerCase().contains(config.foodName().toLowerCase())) < config.foodAmount()
@@ -511,9 +507,9 @@ public class mWintertodtPlugin extends LoopedPlugin
 				TileObject bank = TileObjects.getFirstSurrounding(localPlayer.getWorldLocation(), 10, obj -> obj.hasAction("Bank") || obj.getName().startsWith("Collect"));
 				if (Bank.isOpen())
 				{
-					sleep(1000);
+					sleep(Constants.GAME_TICK_LENGTH);
 					Bank.depositAllExcept(item -> item != null && item.getName().toLowerCase().contains(config.foodName().toLowerCase()) || item.getName().endsWith("axe") || item.getName().equals("Knife") || item.getName().equals("Hammer") || item.getName().equals("Tinderbox"));
-					sleep(1500);
+					sleep(Constants.GAME_TICK_LENGTH);
 
 					if (Bank.getFirst(i -> i != null && i.getName().toLowerCase().contains(config.foodName().toLowerCase())) == null)
 					{
@@ -527,6 +523,7 @@ public class mWintertodtPlugin extends LoopedPlugin
 					if (foodAmountToWithdraw > 0)
 					{
 						Bank.withdraw(i -> i != null && i.getName().toLowerCase().contains(config.foodName().toLowerCase()), foodAmountToWithdraw, Bank.WithdrawMode.ITEM);
+						sleep(Constants.GAME_TICK_LENGTH);
 						sleepUntil(() -> Inventory.getCount(i -> i != null && i.getName().toLowerCase().contains(config.foodName().toLowerCase())) == config.foodAmount(), 3000);
 					}
 
@@ -553,7 +550,7 @@ public class mWintertodtPlugin extends LoopedPlugin
 					{
 						door.interact("Enter");
 						sleepUntil(this::isInWintertodtRegion, 5000);
-						sleep(2000);
+						sleep(Constants.GAME_TICK_LENGTH);
 					}
 					else
 					{
@@ -571,7 +568,7 @@ public class mWintertodtPlugin extends LoopedPlugin
 				if (item != null)
 				{
 					item.interact(x -> x != null && (x.toLowerCase().contains("eat") || x.toLowerCase().contains("drink")));
-					sleep(500);
+					sleep(Constants.GAME_TICK_LENGTH);
 					foodConsumed++;
 				}
 				return -1;
@@ -584,7 +581,7 @@ public class mWintertodtPlugin extends LoopedPlugin
 					if (tree != null)
 					{
 						tree.interact("Chop");
-						sleep(500);
+						sleep(Constants.GAME_TICK_LENGTH);
 					}
 					else
 					{
@@ -600,7 +597,7 @@ public class mWintertodtPlugin extends LoopedPlugin
 					&& localPlayer.getAnimation() != AnimationID.FLETCHING_BOW_CUTTING)
 				{
 					Inventory.getFirst(ItemID.KNIFE).useOn(Inventory.getFirst(ItemID.BRUMA_ROOT));
-					sleep(500);
+					sleep(Constants.GAME_TICK_LENGTH);
 					sleepUntil(() -> !Inventory.contains(ItemID.BRUMA_ROOT) || localPlayer.getAnimation() != AnimationID.FLETCHING_BOW_CUTTING, 5500);
 				}
 				return -1;
@@ -610,7 +607,7 @@ public class mWintertodtPlugin extends LoopedPlugin
 				if (brokenBrazier != null)
 				{
 					brokenBrazier.interact("Fix");
-					sleep(500);
+					sleep(Constants.GAME_TICK_LENGTH);
 				}
 				return -1;
 
@@ -619,7 +616,7 @@ public class mWintertodtPlugin extends LoopedPlugin
 				if (unlitBrazier != null)
 				{
 					unlitBrazier.interact("Light");
-					sleep(500);
+					sleep(Constants.GAME_TICK_LENGTH);
 				}
 				return -1;
 
@@ -632,7 +629,7 @@ public class mWintertodtPlugin extends LoopedPlugin
 						if (burningBrazier != null)
 						{
 							burningBrazier.interact("Feed");
-							sleep(500);
+							sleep(Constants.GAME_TICK_LENGTH);
 							sleepUntil(() -> currentState != State.FEED_BRAZIER || burningBrazier == null || !Inventory.contains(ItemID.BRUMA_KINDLING) && !Inventory.contains(ItemID.BRUMA_ROOT), 7500);
 						}
 					}
