@@ -163,15 +163,18 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 		TileItem mark = TileItems.getFirstSurrounding(Players.getLocal().getWorldLocation(), 10, "Mark of grace");
 		if (mark != null && obstacle.getArea().contains(mark.getTile()) && canPick(mark))
 		{
-			TileItem gold = TileItems.getFirstAt(mark.getWorldLocation(), ItemID.COINS_995);
-			if (gold != null && canPick(gold))
+			if (mark.getTile().getGroundItems().contains(mark)) //failsafe sometimes onItemDespawned doesn't capture mog despawn
 			{
-				gold.pickup();
+				TileItem gold = TileItems.getFirstAt(mark.getWorldLocation(), ItemID.COINS_995);
+				if (gold != null && canPick(gold))
+				{
+					gold.pickup();
+					return -1;
+				}
+
+				mark.pickup();
 				return -1;
 			}
-
-			mark.pickup();
-			return -1;
 		}
 
 		if (obs != null)
@@ -215,6 +218,6 @@ public class UnethicalAgilityPlugin extends LoopedPlugin
 
 	protected boolean canPick(TileItem tileItem)
 	{
-		return tileItem != null && tileItem.distanceTo(client.getLocalPlayer().getWorldLocation()) <= 5 && !Inventory.isFull();
+		return tileItem != null && !Inventory.isFull();
 	}
 }
