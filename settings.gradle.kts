@@ -55,7 +55,7 @@ include("unethical-logout")
 include("m-autoswitcher")
 include("m-powerfisher")
 include("m-wintertodt")
-
+include("m-random-dat-spoofer")
 //include("example-kotlin")
 
 for (project in rootProject.children) {
